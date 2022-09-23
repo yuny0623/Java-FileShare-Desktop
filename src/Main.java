@@ -1,6 +1,8 @@
+import FileController.FileHandler;
 import Key.Key;
 import Server.Connection;
 
+import java.io.File;
 import java.util.Scanner;
 
 public class Main {
@@ -9,6 +11,7 @@ public class Main {
 
         System.out.println("1. create key pair as string");
         System.out.println("2. create key pair as pem file.");
+        System.out.println("3. upload file.");
         System.out.println("3. send file to server.");
         System.out.println("4. exit.");
         System.out.println();
@@ -32,7 +35,15 @@ public class Main {
             }else if(input == 2){
                 Connection connection = new Connection();
                 connection.connectServer();
+
             }else if(input == 3){
+                System.out.println("Enter file path: ");
+                String filePath = sc.next();
+                FileHandler fileHandler = new FileHandler();
+                File file = fileHandler.uploadFile(filePath);
+                System.out.println(file.getName());
+            }
+            else if(input == 4){
                 System.exit(0);
             }else{
                 System.out.println("1. create key pair.");

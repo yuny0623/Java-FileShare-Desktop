@@ -6,17 +6,18 @@ import java.util.Base64;
 public class FileHandler {
     private File file;
 
-    public void uploadFile(String filePath){
+    public File uploadFile(String filePath){
         this.file = new File(filePath);
+        return this.file;
     }
 
-    public String transferFile2String(){
+    public String transferFile2String(File file){
         String out = new String();
         FileInputStream fis = null;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         try{
-            fis = new FileInputStream(this.file);
+            fis = new FileInputStream(file);
         }catch(FileNotFoundException e){
             e.printStackTrace();
         }
@@ -42,7 +43,7 @@ public class FileHandler {
         return encoder.encode(buffer);
     }
 
-    public File binaryToFile(String binaryFile, String filePath, String fileName){
+    public File transferString2File(String binaryFile, String filePath, String fileName){
         FileOutputStream fos = null ;
 
         File fileDir = new File(filePath);
