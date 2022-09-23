@@ -37,8 +37,36 @@ public class FileHandler {
         }
         return out;
     }
-    public static byte[] base64Enc(byte[] buffer){
+    public byte[] base64Enc(byte[] buffer){
         Base64.Encoder encoder = Base64.getEncoder();
         return encoder.encode(buffer);
+    }
+
+    public File binaryToFile(String binaryFile, String filePath, String fileName){
+        FileOutputStream fos = null ;
+
+        File fileDir = new File(filePath);
+        if(!fileDir.exists()){
+            fileDir.mkdirs();
+        }
+
+        File destFile = new File(filePath + fileName);
+        byte[] buff = binaryFile.getBytes();
+        String toStr = new String(buff);
+        byte[] b64dec = base64Dec(toStr);
+
+        try{
+            fos = new FileOutputStream(destFile);
+            fos.write(b64dec);
+            fos.close();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        return destFile;
+    }
+
+    public byte[] base64Dec(String toStr){
+        Base64.Decoder decoder = Base64.getDecoder();
+        return decoder.decode(toStr);
     }
 }
