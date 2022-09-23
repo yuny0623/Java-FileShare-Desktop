@@ -1,6 +1,6 @@
 package Server;
 
-public class Connect {
+public class Connection {
 
     public void checkServer(){
 
