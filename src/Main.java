@@ -11,6 +11,7 @@ public class Main {
         System.out.println("2. create key pair as pem file.");
         System.out.println("3. send file to server.");
         System.out.println("4. exit.");
+        System.out.println();
 
         Scanner sc = new Scanner(System.in);
 
@@ -19,18 +20,25 @@ public class Main {
 
             if(input == 1){
                 Key key = new Key();
-                System.out.println(key.getPrivateKey());
+                key.generateKeyPair();
+
+                System.out.println("**Public Key**");
                 System.out.println(key.getPublicKey());
+                System.out.println();
+                System.out.println("**Private Key**");
+                System.out.println(key.getPrivateKey());
+                System.out.println();
+
             }else if(input == 2){
                 Connection connection = new Connection();
                 connection.connectServer();
-
             }else if(input == 3){
                 System.exit(0);
             }else{
                 System.out.println("1. create key pair.");
                 System.out.println("2. send file to server.");
                 System.out.println("3. exit");
+                System.out.println();
             }
         }
     }
