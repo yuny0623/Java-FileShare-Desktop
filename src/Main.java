@@ -42,7 +42,9 @@ public class Main {
                 FileHandler fileHandler = new FileHandler();
                 // File file = fileHandler.uploadFile(filePath);
                 System.out.println("1. -----------------------------------");
-                File file = new File("C:\\Users\\dkapq\\OneDrive\\바탕 화면\\ImageGhost\\ImageGhostClient\\Image\\cat.jpg");
+                //File file = new File("C:\\Users\\dkapq\\OneDrive\\바탕 화면\\ImageGhost\\ImageGhostClient\\Image\\cat.jpg");
+                File file = new File("./Image/cat.jpg");
+
                 String result = fileHandler.transferFile2String(file);
                 System.out.println(result);
                 System.out.println("-----------------------------------");
