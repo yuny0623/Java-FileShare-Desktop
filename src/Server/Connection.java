@@ -2,14 +2,15 @@ package Server;
 
 public class Connection {
 
-    public void checkServer(){
-
+    public boolean checkServer(){
+        return true;
     }
 
     public void connectServer(){
 
     }
-    public void send2Server(){
 
+    public String callHttpApi(String urlPath, Object Message){
+        return "";
     }
 }
