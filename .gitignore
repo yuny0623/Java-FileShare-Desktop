@@ -29,6 +29,10 @@
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
 
+# 개발일지
+devLog.txt
+*.txt
+
 # Gradle
 .idea/**/gradle.xml
 .idea/**/libraries
