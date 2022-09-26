@@ -1,12 +1,16 @@
+import FileController.CipherHandler;
 import FileController.FileHandler;
 import Key.Key;
 import Server.Connection;
 
+import javax.crypto.SecretKey;
 import java.io.File;
 import java.util.Scanner;
 
+import static FileController.CipherHandler.getSecretEncryptionKey;
+
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception{
         System.out.println("ImageGhostClient");
 
         System.out.println("1. create key pair as string");
@@ -55,6 +59,20 @@ public class Main {
                 System.out.println(fileHandler.transferString2File(result, "./", "cat2.jpg").getName());
                 System.out.println();
                 System.out.println("-----------------------------------");
+
+                // *****************************************************
+                String plainText = result;
+
+                SecretKey seckey = CipherHandler.getSecretEncryptionKey();    // 대칭키를 받는다.
+                byte[] cipherText = CipherHandler.encryptText(plainText, seckey); // 평문을 암호화
+
+                String decryptedText = CipherHandler.decryptText(cipherText, seckey); // 복호화
+                System.out.println("Original Text : " + plainText);
+                System.out.println();
+                System.out.println();
+                System.out.println("AES Key (Hex) : " + seckey.getEncoded());
+                System.out.println("Encrypted Text (Hex) : " + cipherText);
+                System.out.println("Descrypted Text : " + decryptedText);
             }
             else if(input == 4){
                 System.exit(0);
@@ -65,8 +83,6 @@ public class Main {
                 System.out.println();
             }
         }
-
-
         // test code 실행해봅시다.
 
     }

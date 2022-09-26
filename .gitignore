@@ -33,6 +33,12 @@
 devLog.txt
 *.txt
 
+# 테스트 이미지
+*.jpg
+cat2.jpg
+cat.jpg
+*.png
+
 # Gradle
 .idea/**/gradle.xml
 .idea/**/libraries
