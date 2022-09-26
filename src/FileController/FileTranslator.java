@@ -17,7 +17,7 @@ public class FileTranslator {
     /*
         파일 -> 암호텍스트 변환기
      */
-    public String transferFile2String(File file){
+    public static String transferFile2String(File file){
         String out = new String();
         FileInputStream fis = null;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -44,7 +44,7 @@ public class FileTranslator {
         }
         return out;
     }
-    public byte[] base64Enc(byte[] buffer){
+    public static byte[] base64Enc(byte[] buffer){
         Base64.Encoder encoder = Base64.getEncoder();
         return encoder.encode(buffer);
     }
@@ -52,7 +52,7 @@ public class FileTranslator {
     /*
         암호텍스트 -> 파일 변환기
      */
-    public File transferString2File(String binaryFile, String filePath, String fileName){
+    public static File transferString2File(String binaryFile, String filePath, String fileName){
         FileOutputStream fos = null ;
 
         File fileDir = new File(filePath);
@@ -75,7 +75,7 @@ public class FileTranslator {
         return destFile;
     }
 
-    public byte[] base64Dec(String toStr){
+    public static byte[] base64Dec(String toStr){
         Base64.Decoder decoder = Base64.getDecoder();
         return decoder.decode(toStr);
     }

@@ -1,4 +1,4 @@
-import FileController.CipherMaker;
+import FileController.AESCipherMaker;
 import FileController.FileTranslator;
 import Key.AsymmetricKeyGenerator;
 import Server.Connection;
@@ -61,10 +61,10 @@ public class Main {
                 // *****************************************************
                 String plainText = result;
 
-                SecretKey seckey = CipherMaker.getSecretEncryptionKey();    // 대칭키를 받는다.
-                byte[] cipherText = CipherMaker.encryptText(plainText, seckey); // 평문을 암호화
+                SecretKey seckey = AESCipherMaker.getSecretEncryptionKey();    // 대칭키를 받는다.
+                byte[] cipherText = AESCipherMaker.encryptText(plainText, seckey); // 평문을 암호화
 
-                String decryptedText = CipherMaker.decryptText(cipherText, seckey); // 복호화
+                String decryptedText = AESCipherMaker.decryptText(cipherText, seckey); // 복호화
                 System.out.println("Original Text : " + plainText);
                 System.out.println();
                 System.out.println();

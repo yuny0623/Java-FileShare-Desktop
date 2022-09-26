@@ -1,24 +1,21 @@
 package Wallet;
 
+import javax.crypto.SecretKey;
 import java.util.HashMap;
 
-public class SymmetricKey implements EncKey{
-    private String AESKey;
+public class SymmetricKey{
+    private SecretKey AESKey;
     private String description;
 
-    public SymmetricKey(String aesKey, String description){
+    public SymmetricKey(SecretKey aesKey, String description){
         this.AESKey = aesKey;
         this.description = description;
     }
 
-    @Override
-    public HashMap<String, String> getKey() {
-        HashMap<String, String> keySet = new HashMap<>();
-        keySet.put("AESKey", this.AESKey);
-        return keySet;
+    public SecretKey getKey() {
+        return this.AESKey;
     }
 
-    @Override
     public String getDescription() {
         if(this.description == null){
             return "No description";
