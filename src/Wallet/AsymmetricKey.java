@@ -20,6 +20,9 @@ public class AsymmetricKey implements EncKey{
 
     @Override
     public String getDescription() {
+        if(this.description == null){
+            return "No description";
+        }
         return this.description;
     }
 }

@@ -3,7 +3,7 @@ package FileController;
 import java.io.*;
 import java.util.Base64;
 
-public class FileHandler {
+public class FileTranslator {
     private File file;
 
     /*

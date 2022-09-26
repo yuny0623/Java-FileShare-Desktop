@@ -4,7 +4,7 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
-public class CipherHandler {
+public class CipherMaker {
 
     /*
         AES 키 생성기

@@ -1,6 +1,6 @@
-import FileController.CipherHandler;
-import FileController.FileHandler;
-import Key.KeyMaker;
+import FileController.CipherMaker;
+import FileController.FileTranslator;
+import Key.AsymmetricKeyGenerator;
 import Server.Connection;
 
 import javax.crypto.SecretKey;
@@ -24,14 +24,14 @@ public class Main {
             int input = sc.nextInt();
 
             if(input == 1){
-                KeyMaker keyMaker = new KeyMaker();
-                keyMaker.generateKeyPair();
+                AsymmetricKeyGenerator asymmetricKeyGenerator = new AsymmetricKeyGenerator();
+                asymmetricKeyGenerator.generateKeyPair();
 
                 System.out.println("**Public Key**");
-                System.out.println(keyMaker.getPublicKey());
+                System.out.println(asymmetricKeyGenerator.getPublicKey());
                 System.out.println();
                 System.out.println("**Private Key**");
-                System.out.println(keyMaker.getPrivateKey());
+                System.out.println(asymmetricKeyGenerator.getPrivateKey());
                 System.out.println();
 
             }else if(input == 2){
@@ -41,30 +41,30 @@ public class Main {
             }else if(input == 3){
                 System.out.println("Enter file path: ");
                 String filePath = sc.next();
-                FileHandler fileHandler = new FileHandler();
+                FileTranslator fileTranslator = new FileTranslator();
                 // File file = fileHandler.uploadFile(filePath);
                 System.out.println("1. -----------------------------------");
                 //File file = new File("C:\\Users\\dkapq\\OneDrive\\바탕 화면\\ImageGhost\\ImageGhostClient\\Image\\cat.jpg");
                 File file = new File("./Image/cat.jpg");
 
-                String result = fileHandler.transferFile2String(file);
+                String result = fileTranslator.transferFile2String(file);
                 System.out.println(result);
                 System.out.println("-----------------------------------");
                 System.out.println();
                 System.out.println();
 
                 System.out.println("2. -----------------------------------");
-                System.out.println(fileHandler.transferString2File(result, "./", "cat2.jpg").getName());
+                System.out.println(fileTranslator.transferString2File(result, "./", "cat2.jpg").getName());
                 System.out.println();
                 System.out.println("-----------------------------------");
 
                 // *****************************************************
                 String plainText = result;
 
-                SecretKey seckey = CipherHandler.getSecretEncryptionKey();    // 대칭키를 받는다.
-                byte[] cipherText = CipherHandler.encryptText(plainText, seckey); // 평문을 암호화
+                SecretKey seckey = CipherMaker.getSecretEncryptionKey();    // 대칭키를 받는다.
+                byte[] cipherText = CipherMaker.encryptText(plainText, seckey); // 평문을 암호화
 
-                String decryptedText = CipherHandler.decryptText(cipherText, seckey); // 복호화
+                String decryptedText = CipherMaker.decryptText(cipherText, seckey); // 복호화
                 System.out.println("Original Text : " + plainText);
                 System.out.println();
                 System.out.println();

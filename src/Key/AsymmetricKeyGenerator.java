@@ -4,7 +4,7 @@ import java.security.*;
 import java.util.Base64;
 import java.util.HashMap;
 
-public class KeyMaker {
+public class AsymmetricKeyGenerator {
     static final int KEY_SIZE = 2048;
     private String privateKey;
     private String publicKey;
