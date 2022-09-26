@@ -6,6 +6,11 @@ public class SymmetricKey implements EncKey{
     private String AESKey;
     private String description;
 
+    public SymmetricKey(String aesKey, String description){
+        this.AESKey = aesKey;
+        this.description = description;
+    }
+
     @Override
     public HashMap<String, String> getKey() {
         HashMap<String, String> keySet = new HashMap<>();
