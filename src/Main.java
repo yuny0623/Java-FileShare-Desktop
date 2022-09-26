@@ -61,16 +61,16 @@ public class Main {
                 // *****************************************************
                 String plainText = result;
 
-                SecretKey seckey = AESCipherMaker.getSecretEncryptionKey();    // 대칭키를 받는다.
-                byte[] cipherText = AESCipherMaker.encryptText(plainText, seckey); // 평문을 암호화
-
-                String decryptedText = AESCipherMaker.decryptText(cipherText, seckey); // 복호화
-                System.out.println("Original Text : " + plainText);
-                System.out.println();
-                System.out.println();
-                System.out.println("AES Key (Hex) : " + seckey.getEncoded());
-                System.out.println("Encrypted Text (Hex) : " + cipherText);
-                System.out.println("Descrypted Text : " + decryptedText);
+//                SecretKey seckey = AESCipherMaker.getSecretEncryptionKey();    // 대칭키를 받는다.
+//                byte[] cipherText = AESCipherMaker.encryptText(plainText, seckey); // 평문을 암호화
+//
+//                String decryptedText = AESCipherMaker.decryptText(cipherText, seckey); // 복호화
+//                System.out.println("Original Text : " + plainText);
+//                System.out.println();
+//                System.out.println();
+//                System.out.println("AES Key (Hex) : " + seckey.getEncoded());
+//                System.out.println("Encrypted Text (Hex) : " + cipherText);
+//                System.out.println("Descrypted Text : " + decryptedText);
             }
             else if(input == 4){
                 System.exit(0);
