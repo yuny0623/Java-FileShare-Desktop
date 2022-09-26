@@ -3,7 +3,7 @@ package Key;
 import java.security.*;
 import java.util.Base64;
 
-public class Key {
+public class KeyMaker {
     static final int KEY_SIZE = 2048;
     private String privateKey;
     private String publicKey;

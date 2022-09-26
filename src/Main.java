@@ -1,13 +1,11 @@
 import FileController.CipherHandler;
 import FileController.FileHandler;
-import Key.Key;
+import Key.KeyMaker;
 import Server.Connection;
 
 import javax.crypto.SecretKey;
 import java.io.File;
 import java.util.Scanner;
-
-import static FileController.CipherHandler.getSecretEncryptionKey;
 
 public class Main {
     public static void main(String[] args) throws Exception{
@@ -26,14 +24,14 @@ public class Main {
             int input = sc.nextInt();
 
             if(input == 1){
-                Key key = new Key();
-                key.generateKeyPair();
+                KeyMaker keyMaker = new KeyMaker();
+                keyMaker.generateKeyPair();
 
                 System.out.println("**Public Key**");
-                System.out.println(key.getPublicKey());
+                System.out.println(keyMaker.getPublicKey());
                 System.out.println();
                 System.out.println("**Private Key**");
-                System.out.println(key.getPrivateKey());
+                System.out.println(keyMaker.getPrivateKey());
                 System.out.println();
 
             }else if(input == 2){
