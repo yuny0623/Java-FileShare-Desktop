@@ -42,7 +42,21 @@ public class AESFileTranslator {
     /*
         AES암호화된 텍스트 -> 이미지
      */
-//    public File AESCipherText2Image(String aesCipherText){
-//        return new File();
-//    }
+    public File AESCipherText2Image(String aesCipherText) {
+        SymmetricKey symmetricKey = KeyWallet.getMainKey();
+        if(symmetricKey == null){
+            // 어떻게 처리할건지?
+            // 복호화할때 symm key가 없으면 복호화를 못함.
+        }
+
+        String binaryData = null;
+        try {
+            binaryData = AESCipherMaker.decryptText(aesCipherText.getBytes(), symmetricKey.getKey());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        File file = FileTranslator.transferString2File(binaryData, "../Image", "test.jpg");
+        return file;
+    }
 }
