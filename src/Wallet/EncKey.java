@@ -1,6 +1,8 @@
 package Wallet;
 
+import java.util.HashMap;
+
 public interface EncKey {
-    String getKey();
+    HashMap<String, String> getKey();
     String getDescription();
 }

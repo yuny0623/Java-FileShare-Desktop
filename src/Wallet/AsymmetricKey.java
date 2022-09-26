@@ -1,6 +1,7 @@
 package Wallet;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class AsymmetricKey implements EncKey{
@@ -10,11 +11,11 @@ public class AsymmetricKey implements EncKey{
 
 
     @Override
-    public String getKey() {
-        List<String> keyList = new ArrayList<>();
-        keyList.add(publicKey);
-        keyList.add(privateKey);
-        return keyList.toString();
+    public HashMap<String, String> getKey() {
+        HashMap<String, String> keySet = new HashMap<>();
+        keySet.put("publicKey", this.publicKey);
+        keySet.put("privateKey", this.privateKey);
+        return keySet;
     }
 
     @Override

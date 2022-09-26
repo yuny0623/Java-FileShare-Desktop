@@ -6,11 +6,17 @@ import java.util.Base64;
 public class FileHandler {
     private File file;
 
+    /*
+        파일 객체 업로더
+     */
     public File uploadFile(String filePath){
         this.file = new File(filePath);
         return this.file;
     }
 
+    /*
+        파일 -> 암호텍스트 변환기
+     */
     public String transferFile2String(File file){
         String out = new String();
         FileInputStream fis = null;
@@ -43,6 +49,9 @@ public class FileHandler {
         return encoder.encode(buffer);
     }
 
+    /*
+        암호텍스트 -> 파일 변환기
+     */
     public File transferString2File(String binaryFile, String filePath, String fileName){
         FileOutputStream fos = null ;
 
