@@ -14,8 +14,9 @@ public class Main {
         System.out.println("1. create key pair as string");
         System.out.println("2. create key pair as pem file.");
         System.out.println("3. upload file.");
-        System.out.println("3. send file to server.");
-        System.out.println("4. exit.");
+        System.out.println("5. send file to server.");
+        System.out.println("6. check server live.");
+        System.out.println("7. exit.");
         System.out.println();
 
         Scanner sc = new Scanner(System.in);
@@ -35,8 +36,6 @@ public class Main {
                 System.out.println();
 
             }else if(input == 2){
-                Connection connection = new Connection();
-                connection.connectServer();
 
             }else if(input == 3){
                 System.out.println("Enter file path: ");
@@ -74,7 +73,12 @@ public class Main {
             }
             else if(input == 4){
                 System.exit(0);
-            }else{
+            }
+            else if(input == 6){
+                boolean isLive = Connection.checkServerLive();
+                System.out.println(isLive);
+            }
+            else{
                 System.out.println("1. create key pair.");
                 System.out.println("2. send file to server.");
                 System.out.println("3. exit");
