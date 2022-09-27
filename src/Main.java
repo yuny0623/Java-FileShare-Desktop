@@ -1,5 +1,6 @@
 import FileController.AESCipherMaker;
 import FileController.FileTranslator;
+import GUIComponents.MyFrame;
 import Key.AsymmetricKeyGenerator;
 import Server.Connection;
 
@@ -9,7 +10,12 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws Exception{
-        System.out.println("ImageGhostClient");
+        new MyFrame();
+    }
+}
+
+/*
+System.out.println("ImageGhostClient");
 
         System.out.println("1. create key pair as string");
         System.out.println("2. create key pair as pem file.");
@@ -86,5 +92,4 @@ public class Main {
             }
         }
         // test code 실행해봅시다.
-    }
-}
+ */

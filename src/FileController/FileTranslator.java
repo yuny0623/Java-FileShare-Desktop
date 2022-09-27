@@ -17,7 +17,7 @@ public class FileTranslator {
     /*
         파일 -> 암호텍스트 변환기
      */
-    public static String transferFile2String(File file){
+    public static String transferFile2Text(File file){
         String out = new String();
         FileInputStream fis = null;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -52,7 +52,7 @@ public class FileTranslator {
     /*
         암호텍스트 -> 파일 변환기
      */
-    public static File transferString2File(String binaryFile, String filePath, String fileName){
+    public static File transferText2File(String binaryFile, String filePath, String fileName){
         FileOutputStream fos = null ;
 
         File fileDir = new File(filePath);

@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.UUID;
 
 public class AESFileTranslator {
+
     /*
         이미지 -> AES 암호화된 텍스트
      */
@@ -21,7 +22,7 @@ public class AESFileTranslator {
                 symmetricKey = new SymmetricKey(secretKey, "Main Key1"); // 대칭키 객제 생성
                 KeyWallet.saveKeyAsMainKey(symmetricKey); // 키 지갑에 Main키로 저장
                 symmetricKey = KeyWallet.getMainKey();    // 저장된 Main 키를 불러오기
-                String fileString = FileTranslator.transferFile2String(new File(imagePath)); // 이미지를 Text로 변환
+                String fileString = FileTranslator.transferFile2Text(new File(imagePath)); // 이미지를 Text로 변환
                 cipherText = AESCipherMaker.encryptText(fileString, symmetricKey.getKey());  // Text 를 CipherText로 변환
             }catch(Exception e){
                 e.printStackTrace();
@@ -29,7 +30,7 @@ public class AESFileTranslator {
             return cipherText;
         }
         else {      // Main 키가 존재할 경우
-            String fileString = FileTranslator.transferFile2String(new File(imagePath)); // 이미지를 Text로 변환
+            String fileString = FileTranslator.transferFile2Text(new File(imagePath)); // 이미지를 Text로 변환
             byte[] cipherText = null;
             try {
                 cipherText = AESCipherMaker.encryptText(fileString, symmetricKey.getKey()); // Text를 CipherText로 변환
@@ -58,7 +59,7 @@ public class AESFileTranslator {
             e.printStackTrace();
         }
         String uuid = UUID.randomUUID().toString(); // 고유한 문자열 생성
-        File file = FileTranslator.transferString2File(textOfImage, "../Image", uuid + ".jpg");
+        File file = FileTranslator.transferText2File(textOfImage, "../Image", uuid + ".jpg");
 
         return file;
     }
