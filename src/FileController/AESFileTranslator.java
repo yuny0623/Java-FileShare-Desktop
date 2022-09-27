@@ -6,6 +6,7 @@ import Wallet.SymmetricKey;
 import javax.crypto.SecretKey;
 import java.io.File;
 import java.security.NoSuchAlgorithmException;
+import java.util.UUID;
 
 public class AESFileTranslator {
     /*
@@ -42,21 +43,19 @@ public class AESFileTranslator {
     /*
         AES 암호화된 텍스트 -> 이미지
      */
-    public File AESCipherText2Image(String aesCipherText) {
+    public File AESCipherText2Image(byte[] aesCipherText) {
         SymmetricKey symmetricKey = KeyWallet.getMainKey();
-        if(symmetricKey == null){
-            // 어떻게 처리할건지?
-            // 복호화할때 symm key가 없으면 복호화를 못함.
-        }
-
-        String binaryData = null;
+        /*
+            이미지가 없을 경우
+         */
+        String textOfImage = null;
         try {
-            binaryData = AESCipherMaker.decryptText(aesCipherText.getBytes(), symmetricKey.getKey());
+            textOfImage = AESCipherMaker.decryptText(aesCipherText, symmetricKey.getKey()); // CipherText 복호화
         }catch(Exception e){
             e.printStackTrace();
         }
-
-        File file = FileTranslator.transferString2File(binaryData, "../Image", "test.jpg");
+        String uuid = UUID.randomUUID().toString(); // 고유한 문자열 생성
+        File file = FileTranslator.transferString2File(textOfImage, "../Image", uuid + ".jpg");
         return file;
     }
 }
