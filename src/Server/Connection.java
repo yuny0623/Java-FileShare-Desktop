@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 
 public class Connection {
 
@@ -38,5 +39,12 @@ public class Connection {
             System.out.println(response);
             return false;
         }
+    }
+
+    public static HashMap<String, String> httpRequestGet(String urlPath, HashMap<String, String> data){
+
+    }
+    public static HashMap<String, String> httpRequestPost(String urlPath, HashMap<String, String> data){
+
     }
 }
