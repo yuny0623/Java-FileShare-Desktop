@@ -1,7 +1,7 @@
 package Key;
 
 public class NoKeyException extends RuntimeException{
-    NoKeyException(String message){
+    public NoKeyException(String message){
         super(message);
     }
 }

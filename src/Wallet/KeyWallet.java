@@ -1,5 +1,7 @@
 package Wallet;
 
+import Key.NoKeyException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +21,12 @@ public class KeyWallet {
         return keyMap;
     }
 
-    public static SymmetricKey getMainKey(){
-        return keyMap.get("Main");
+    public static SymmetricKey getMainKey() throws NoKeyException{
+        SymmetricKey findSymmetricKey =  keyMap.get("Main");
+        if(findSymmetricKey == null){
+            throw new NoKeyException("No Symmetric Key for Decrption");
+        }else{
+            return findSymmetricKey;
+        }
     }
 }

@@ -1,11 +1,11 @@
 package FileController;
 
+import Key.NoKeyException;
 import Wallet.KeyWallet;
 import Wallet.SymmetricKey;
 
 import javax.crypto.SecretKey;
 import java.io.File;
-import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 public class AESFileTranslator {
@@ -43,19 +43,23 @@ public class AESFileTranslator {
     /*
         AES 암호화된 텍스트 -> 이미지
      */
-    public File AESCipherText2Image(byte[] aesCipherText) {
-        SymmetricKey symmetricKey = KeyWallet.getMainKey();
-        /*
-            이미지가 없을 경우
-         */
+    public File AESCipherText2Image(byte[] aesCipherText){
+        SymmetricKey symmetricKey = null;
+        try {
+            symmetricKey = KeyWallet.getMainKey();
+        }catch(NoKeyException e){
+            e.printStackTrace();
+        }
+
         String textOfImage = null;
         try {
-            textOfImage = AESCipherMaker.decryptText(aesCipherText, symmetricKey.getKey()); // CipherText 복호화
+            textOfImage = AESCipherMaker.decryptText(aesCipherText, symmetricKey.getKey()); // CipherText 복호화 
         }catch(Exception e){
             e.printStackTrace();
         }
         String uuid = UUID.randomUUID().toString(); // 고유한 문자열 생성
         File file = FileTranslator.transferString2File(textOfImage, "../Image", uuid + ".jpg");
+
         return file;
     }
 }
