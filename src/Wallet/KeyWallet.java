@@ -29,4 +29,9 @@ public class KeyWallet {
             return findSymmetricKey;
         }
     }
+
+    public static void deleteAllKeys(){
+        keyMap.clear();
+        number = 0;
+    }
 }

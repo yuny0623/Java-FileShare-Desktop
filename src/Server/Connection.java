@@ -6,11 +6,12 @@ public class Connection {
         return true;
     }
 
-    public void connectServer(){
-
-    }
-
-    public String callHttpApi(String urlPath, Object Message){
-        return "";
-    }
+//    public String callHttpApi(String urlPath, Object Message){
+//        if(checkServer()){
+//            return "";
+//        }
+//        else{
+//            return "";
+//        }
+//    }
 }
