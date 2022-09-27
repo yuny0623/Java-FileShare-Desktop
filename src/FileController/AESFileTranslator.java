@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.UUID;
 
 public class AESFileTranslator {
+
     /*
         이미지 -> AES 암호화된 텍스트
      */
