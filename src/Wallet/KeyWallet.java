@@ -1,10 +1,8 @@
 package Wallet;
 
-import Key.NoKeyException;
+import ClientCustomException.NoKeyException;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class KeyWallet {
     private static HashMap<String, SymmetricKey> keyMap = new HashMap<>(); // AES 키 전용 지갑

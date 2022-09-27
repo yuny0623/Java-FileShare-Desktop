@@ -1,4 +1,4 @@
-package Key;
+package ClientCustomException;
 
 public class NoKeyException extends RuntimeException{
     public NoKeyException(String message){

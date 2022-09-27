@@ -1,6 +1,6 @@
 package FileController;
 
-import Key.NoKeyException;
+import ClientCustomException.NoKeyException;
 import Wallet.KeyWallet;
 import Wallet.SymmetricKey;
 

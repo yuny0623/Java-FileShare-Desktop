@@ -1,5 +1,7 @@
 package Key;
 
+import ClientCustomException.NoKeyException;
+
 import java.security.*;
 import java.util.Base64;
 import java.util.HashMap;
