@@ -22,7 +22,7 @@ public class KeyWallet {
     public static SymmetricKey getMainKey() throws NoKeyException{
         SymmetricKey findSymmetricKey =  keyMap.get("Main");
         if(findSymmetricKey == null){
-            throw new NoKeyException("No Symmetric Key for Decrption");
+            throw new NoKeyException("No Main Symmetric Key");
         }else{
             return findSymmetricKey;
         }

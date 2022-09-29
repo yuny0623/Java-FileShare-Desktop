@@ -8,11 +8,11 @@ public class AESCipherMaker {
     /*
         AES 암호화
      */
-    public static byte[] encryptText(String plainText, SecretKey secKey) throws Exception {
+    public static String encryptText(String plainText, SecretKey secKey) throws Exception {
         Cipher aesCipher = Cipher.getInstance("AES");
         aesCipher.init(Cipher.ENCRYPT_MODE, secKey);
         byte[] byteCipherText = aesCipher.doFinal(plainText.getBytes());    // 암호문 생성
-        return byteCipherText;
+        return new String(byteCipherText);
     }
 
     /*
