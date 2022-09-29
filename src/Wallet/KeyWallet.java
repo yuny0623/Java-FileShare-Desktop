@@ -5,22 +5,23 @@ import ClientCustomException.NoKeyException;
 import java.util.HashMap;
 
 public class KeyWallet {
-    private static HashMap<String, SymmetricKey> keyMap = new HashMap<>(); // AES 키 전용 지갑
+    private static HashMap<String, SymmetricKey> symmetricKeyMap = new HashMap<>(); // 대칭키 전용 지갑 (AES)
+    private static HashMap<String, ASymmetricKey> asymmetricKeyMap = new HashMap<>(); // 비대칭키 전용 지갑 (RSA)
     private static int number = 0;
 
     public static void saveKey(SymmetricKey encKey){
-        keyMap.put(String.valueOf(++number), encKey);
+        symmetricKeyMap.put(String.valueOf(++number), encKey);
     }
     public static void saveKeyAsMainKey(SymmetricKey encKey){
-        keyMap.put("MainKey", encKey);
+        symmetricKeyMap.put("MainKey", encKey);
     }
 
     public static HashMap<String, SymmetricKey> getAllKey(){
-        return keyMap;
+        return symmetricKeyMap;
     }
 
     public static SymmetricKey getMainKey() throws NoKeyException{
-        SymmetricKey findSymmetricKey =  keyMap.get("Main");
+        SymmetricKey findSymmetricKey =  symmetricKeyMap.get("Main");
         if(findSymmetricKey == null){
             throw new NoKeyException("No Main Symmetric Key");
         }else{
@@ -29,7 +30,7 @@ public class KeyWallet {
     }
 
     public static void deleteAllKeys(){
-        keyMap.clear();
+        symmetricKeyMap.clear();
         number = 0;
     }
 }

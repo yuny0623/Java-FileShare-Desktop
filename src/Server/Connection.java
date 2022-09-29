@@ -65,15 +65,15 @@ public class Connection {
     }
 
     /*
-        body 로 데이터 전달 
+        body 로 데이터 전달
         Server Post Request
      */
-    public static HashMap<String, String> httpRequestPost(String urlPath, HashMap<String, String> data){
+    public static boolean httpRequestPost(String urlPath, HashMap<String, String> data){
         if(Connection.checkServerLive()){
             throw new NoServerException("Server is not running.");
         }
 
-        return new HashMap<>();
+        return true;
     }
 
     /*

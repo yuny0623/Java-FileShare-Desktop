@@ -16,6 +16,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.List;
 
 public class MyFrame extends JFrame implements ActionListener {
     JButton button1 = null;
@@ -29,13 +30,13 @@ public class MyFrame extends JFrame implements ActionListener {
     JTextField textField4 = null;
 
     JTextArea textArea1 = null;
-
+    JTextArea textArea2 = null;
     JPanel panel1 = null;
     JPanel panel2 = null;
 
     public MyFrame(){
         setTitle("ImageGhostClient");
-        setSize(800, 500);
+        setSize(800, 300);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.getContentPane().setBackground(Color.DARK_GRAY);
 
@@ -69,7 +70,8 @@ public class MyFrame extends JFrame implements ActionListener {
         button4.addActionListener(this);
 
         textField1 = new JTextField();
-        textArea1 = new JTextArea("file path.", 10, 20);
+        textArea1 = new JTextArea("Type file path here.", 10, 20);
+        textArea2 = new JTextArea("Result status,", 10, 20);
 
         panel1.add(button1);
         panel1.add(button2);
@@ -78,10 +80,11 @@ public class MyFrame extends JFrame implements ActionListener {
         panel1.setBackground(Color.DARK_GRAY);
 
         panel2.add(textArea1);
+        panel2.add(textArea2);
         panel2.setBackground(Color.DARK_GRAY);
 
         this.add(panel1, BorderLayout.NORTH);
-        this.add(panel2, BorderLayout.SOUTH);
+        this.add(panel2, BorderLayout.CENTER);
 
         setVisible(true);
         setLocationRelativeTo(null); // 실행시 window 가운데에 위치
@@ -103,23 +106,26 @@ public class MyFrame extends JFrame implements ActionListener {
         }else if(e.getSource() == button2){
             // asymmetric key pair 생성
             AsymmetricKeyGenerator asymmetricKeyGenerator = new AsymmetricKeyGenerator();
-            HashMap<String, String> keyPair = asymmetricKeyGenerator.generateKeyPair();
+            List<String> keyList = asymmetricKeyGenerator.generateKeyPair();
 
-            System.out.println(keyPair.toString());
+            System.out.println(keyList.toString());
 
         }else if(e.getSource() == button3){
             // 서버로 CipherText 전송
             String filePath = textArea1.getText();
+            String cipherText = null;
             if(filePath.equals("file path.")){
                 // 에러 발생.
             }else{
                 try {
-                    String cipherText = AESCipherMaker.encryptText(filePath, KeyWallet.getMainKey().getKey());
+                    cipherText = AESCipherMaker.encryptText(filePath, KeyWallet.getMainKey().getKey());
                 }catch(Exception error){
                     error.printStackTrace();
                 }
                 try {
-                    // Connection.httpRequestPost(); // Server에 Post 요청
+                    HashMap<String, String> sendData = new HashMap<>();
+                    sendData.put("", cipherText);
+                    Connection.httpRequestPost("http://localhost:8080/test1", sendData); // Server에 Post 요청
                 }catch(NoServerException error){
                     error.printStackTrace();
                 }
