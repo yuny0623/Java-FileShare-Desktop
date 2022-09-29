@@ -96,11 +96,11 @@ public class MyFrame extends JFrame implements ActionListener {
             SecretKey secretKey = AESKeyMaker.generateAESKey(); // symmetric key 생성
             SymmetricKey symmetricKey = new SymmetricKey(secretKey, "new AES key");
             try{
-                SymmetricKey symmetricKey1 = KeyWallet.getMainKey(); // 메인 키를 불러옴.
-                KeyWallet.saveKey(symmetricKey); // 일반 키로 저장
+                SymmetricKey symmetricKey1 = KeyWallet.getMainKeyForSymmetricKey(); // 메인 키를 불러옴.
+                KeyWallet.saveKeyForSymmetricKey(symmetricKey); // 일반 키로 저장
             }catch(NoKeyException error){ // Main AES Key가 없을 경우 NoKeyException 발생
                 error.printStackTrace();
-                KeyWallet.saveKeyAsMainKey(symmetricKey); // 메인 키로 저장
+                KeyWallet.saveKeyAsMainKeyForSymmetricKey(symmetricKey); // 메인 키로 저장
             }
             System.out.println(secretKey.getEncoded());
         }else if(e.getSource() == button2){
@@ -118,7 +118,7 @@ public class MyFrame extends JFrame implements ActionListener {
                 // 에러 발생.
             }else{
                 try {
-                    cipherText = AESCipherMaker.encryptText(filePath, KeyWallet.getMainKey().getKey());
+                    cipherText = AESCipherMaker.encryptText(filePath, KeyWallet.getMainKeyForSymmetricKey().getKey());
                 }catch(Exception error){
                     error.printStackTrace();
                 }

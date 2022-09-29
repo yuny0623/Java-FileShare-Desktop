@@ -14,14 +14,14 @@ public class AESFileTranslator {
         이미지 -> AES 암호화된 텍스트
      */
     public String Image2AESCipherText(String imagePath){
-        SymmetricKey symmetricKey = KeyWallet.getMainKey();
+        SymmetricKey symmetricKey = KeyWallet.getMainKeyForSymmetricKey();
         if(symmetricKey == null){ // MainKey 가 존재하지 않을 경우
             String cipherText = null;
             try {
                 SecretKey secretKey = AESKeyMaker.generateAESKey(); // 새로운 AES 키 생성 
                 symmetricKey = new SymmetricKey(secretKey, "Main Key1"); // 대칭키 객제 생성
-                KeyWallet.saveKeyAsMainKey(symmetricKey); // 키 지갑에 Main키로 저장
-                symmetricKey = KeyWallet.getMainKey();    // 저장된 Main 키를 불러오기
+                KeyWallet.saveKeyAsMainKeyForSymmetricKey(symmetricKey); // 키 지갑에 Main키로 저장
+                symmetricKey = KeyWallet.getMainKeyForSymmetricKey();    // 저장된 Main 키를 불러오기
                 String fileString = FileTranslator.transferFile2Text(new File(imagePath)); // 이미지를 Text로 변환
                 cipherText = AESCipherMaker.encryptText(fileString, symmetricKey.getKey());  // Text 를 CipherText로 변환
             }catch(Exception e){
@@ -47,7 +47,7 @@ public class AESFileTranslator {
     public File AESCipherText2Image(byte[] aesCipherText){
         SymmetricKey symmetricKey = null;
         try {
-            symmetricKey = KeyWallet.getMainKey();
+            symmetricKey = KeyWallet.getMainKeyForSymmetricKey();
         }catch(NoKeyException e){
             e.printStackTrace();
         }
