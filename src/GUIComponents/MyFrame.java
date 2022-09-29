@@ -3,10 +3,10 @@ package GUIComponents;
 import ClientCustomException.NoKeyException;
 import ClientCustomException.NoServerException;
 import FileController.AESCipherMaker;
-import FileController.AESFileTranslator;
 import FileController.AESKeyMaker;
 import Key.AsymmetricKeyGenerator;
 import Server.Connection;
+import Wallet.ASymmetricKey;
 import Wallet.KeyWallet;
 import Wallet.SymmetricKey;
 
@@ -124,7 +124,9 @@ public class MyFrame extends JFrame implements ActionListener {
                 }
                 try {
                     HashMap<String, String> sendData = new HashMap<>();
-                    sendData.put("", cipherText);
+                    ASymmetricKey aSymmetricKey = KeyWallet.getMainKeyForASymmetricKey();
+                    sendData.put(aSymmetricKey.getPublicKey(), cipherText); // public Key가 식별자
+
                     Connection.httpRequestPost("http://localhost:8080/test1", sendData); // Server에 Post 요청
                 }catch(NoServerException error){
                     error.printStackTrace();
@@ -132,6 +134,7 @@ public class MyFrame extends JFrame implements ActionListener {
             }
         }else if(e.getSource() == button4){
             // 서버에서 CipherText 받아오기
+            HashMap<String, String> result = Connection.httpRequestGet("http://localhost:8080/test1", KeyWallet.getMainKeyForASymmetricKey().getPublicKey());
 
         }
     }
