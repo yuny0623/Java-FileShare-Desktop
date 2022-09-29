@@ -7,8 +7,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
 
 
 public class Connection {
@@ -104,6 +102,7 @@ public class Connection {
             http.setRequestMethod("POST"); // 전송 방식은 POST
 
             http.setRequestProperty("content-type", "applicaiton/json;utf-8");
+
 
             //--------------------------
             //   서버로 값 전송
