@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.json.simple.JSONObject;
 
 public class Connection {
 
@@ -117,7 +116,7 @@ public class Connection {
 
             OutputStreamWriter outStream = new OutputStreamWriter(http.getOutputStream(), "UTF-8");
             PrintWriter writer = new PrintWriter(outStream);
-            writer.write(encFileDto);
+            writer.write("d");
             writer.flush();
 
 

@@ -1,3 +1,5 @@
+package Server;
+
 class EncFileDto{
     private String ownerPublicKey;
     private String cipherText;
