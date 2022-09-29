@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.json.simple.JSONObject;
+
 public class Connection {
 
     /*
@@ -85,7 +87,7 @@ public class Connection {
         return new HashMap<>();
     }
 
-    public static String postRequest(String pURL, HashMap < String, String > pList) {
+    public static String postRequest(String pURL, HashMap <String, String> pList) {
 
         String myResult = "";
 
@@ -103,31 +105,19 @@ public class Connection {
             http.setRequestMethod("POST"); // 전송 방식은 POST
 
             http.setRequestProperty("content-type", "applicaiton/json;utf-8");
-            //--------------------------
-            // 헤더 세팅
-            //--------------------------
-            // 서버에게 웹에서 <Form>으로 값이 넘어온 것과 같은 방식으로 처리하라는 걸 알려준다
 
             //--------------------------
             //   서버로 값 전송
             //--------------------------
             StringBuffer buffer = new StringBuffer();
 
-            // HashMap으로 전달받은 파라미터가 null이 아닌경우 버퍼에 넣어준다
-            if (pList != null) {
-
-                Set key = pList.keySet();
-
-                for (Iterator iterator = key.iterator(); iterator.hasNext();) {
-                    String keyName = (String) iterator.next();
-                    String valueName = pList.get(keyName);
-                    buffer.append(keyName).append("=").append(valueName);
-                }
-            }
+            EncFileDto encFileDto = new EncFileDto();
+            encFileDto.setCipherText("01ibhbbh4bihbibh");
+            encFileDto.setOwnerPublicKey("b1brg103u4gh1io34gh13iobgh1ob4h91ibog");
 
             OutputStreamWriter outStream = new OutputStreamWriter(http.getOutputStream(), "UTF-8");
             PrintWriter writer = new PrintWriter(outStream);
-            writer.write(buffer.toString());
+            writer.write(encFileDto);
             writer.flush();
 
 
