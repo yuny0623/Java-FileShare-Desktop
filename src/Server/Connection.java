@@ -8,6 +8,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 
+
+
+
+
 public class Connection {
 
     /*
@@ -54,18 +58,30 @@ public class Connection {
      */
     public static HashMap<String, String> httpRequestGet(String urlPath, String pathVariable){
         if(Connection.checkServerLive()){
-            throw new NoServerException("Server is dead.");
+            throw new NoServerException("Server is not running.");
         }
 
         return new HashMap<>();
     }
 
     /*
+        body 로 데이터 전달
         Server Post Request
      */
-    public static HashMap<String, String> httpRequestPost(String urlPath, HashMap<String, String> data){
+    public static boolean httpRequestPost(String urlPath, HashMap<String, String> data){
         if(Connection.checkServerLive()){
-            throw new NoServerException("Server is dead.");
+            throw new NoServerException("Server is not running.");
+        }
+
+        return true;
+    }
+
+    /*
+        path variable 로 데이터 전달 
+     */
+    public static HashMap<String, String> httpRequestPostWithPathVariable(String urlPath, String pathVariable){
+        if(Connection.checkServerLive()){
+            throw new NoServerException("Server is not running.");
         }
 
         return new HashMap<>();
