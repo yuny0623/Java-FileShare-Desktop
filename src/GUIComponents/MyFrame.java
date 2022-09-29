@@ -19,6 +19,19 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MyFrame extends JFrame implements ActionListener {
+
+        /*
+            <필요한 기능>
+            1. create symmetric key
+            2. create asymmetric key
+            3. send to server
+                -> choose image (filepath 입력)
+                (send 버튼)
+            4. receive from server
+                -> choose public key (지갑에서 원하는 public key 선택)
+                (receive 버튼)
+         */
+
     JButton button1 = null;
     JButton button2 = null;
     JButton button3 = null;
@@ -39,18 +52,6 @@ public class MyFrame extends JFrame implements ActionListener {
         setSize(800, 300);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.getContentPane().setBackground(Color.DARK_GRAY);
-
-        /*
-            <필요한 기능>
-            1. create symmetric key
-            2. create asymmetric key
-            3. send to server
-                -> choose image (filepath 입력)
-                (send 버튼)
-            4. receive from server
-                -> choose public key (지갑에서 원하는 public key 선택)
-                (receive 버튼)
-         */
         panel1 = new JPanel();
         panel2 = new JPanel();
 
@@ -102,31 +103,28 @@ public class MyFrame extends JFrame implements ActionListener {
                 error.printStackTrace();
                 KeyWallet.saveKeyAsMainKeyForSymmetricKey(symmetricKey); // 메인 키로 저장
             }
-            System.out.println(secretKey.getEncoded());
+            textArea2.setText(new String(secretKey.getEncoded())); // 화면에 출력
         }else if(e.getSource() == button2){
             // asymmetric key pair 생성
             AsymmetricKeyGenerator asymmetricKeyGenerator = new AsymmetricKeyGenerator();
-            List<String> keyList = asymmetricKeyGenerator.generateKeyPair();
-
-            System.out.println(keyList.toString());
-
+            List<String> keyList = asymmetricKeyGenerator.generateKeyPair(); // 비대칭키 생성
+            textArea2.setText(keyList.get(0) + keyList.get(1)); // 화면에 출력
         }else if(e.getSource() == button3){
             // 서버로 CipherText 전송
-            String filePath = textArea1.getText();
+            String filePath = textArea1.getText(); // 파일 경로를 읽어들임.
             String cipherText = null;
             if(filePath.equals("file path.")){
                 // 에러 발생.
             }else{
                 try {
-                    cipherText = AESCipherMaker.encryptText(filePath, KeyWallet.getMainKeyForSymmetricKey().getKey());
+                    cipherText = AESCipherMaker.encryptText(filePath, KeyWallet.getMainKeyForSymmetricKey().getKey()); // 선택된 파일 암호화
                 }catch(Exception error){
                     error.printStackTrace();
                 }
                 try {
                     HashMap<String, String> sendData = new HashMap<>();
-                    ASymmetricKey aSymmetricKey = KeyWallet.getMainKeyForASymmetricKey();
-                    sendData.put(aSymmetricKey.getPublicKey(), cipherText); // public Key가 식별자
-
+                    ASymmetricKey aSymmetricKey = KeyWallet.getMainKeyForASymmetricKey(); // 식별자로 사용할 Main 비대칭키 불러오기
+                    sendData.put(aSymmetricKey.getPublicKey(), cipherText); // Main 비대칭키의 public Key가 서버의 사용자 식별자
                     Connection.httpRequestPost("http://localhost:8080/test1", sendData); // Server에 Post 요청
                 }catch(NoServerException error){
                     error.printStackTrace();
@@ -135,6 +133,8 @@ public class MyFrame extends JFrame implements ActionListener {
         }else if(e.getSource() == button4){
             // 서버에서 CipherText 받아오기
             HashMap<String, String> result = Connection.httpRequestGet("http://localhost:8080/test1", KeyWallet.getMainKeyForASymmetricKey().getPublicKey());
+
+            // textArea2 에 결과 출력
 
         }
     }
