@@ -103,7 +103,7 @@ public class MyFrame extends JFrame implements ActionListener {
                 error.printStackTrace();
                 KeyWallet.saveKeyAsMainKeyForSymmetricKey(symmetricKey); // 메인 키로 저장
             }
-            textArea2.setText(new String(secretKey.getEncoded())); // 화면에 출력
+            textArea2.setText(secretKey.getEncoded().toString()); // 화면에 출력
         }else if(e.getSource() == button2){
             // asymmetric key pair 생성
             AsymmetricKeyGenerator asymmetricKeyGenerator = new AsymmetricKeyGenerator();
@@ -126,6 +126,7 @@ public class MyFrame extends JFrame implements ActionListener {
                     ASymmetricKey aSymmetricKey = KeyWallet.getMainKeyForASymmetricKey(); // 식별자로 사용할 Main 비대칭키 불러오기
                     sendData.put(aSymmetricKey.getPublicKey(), cipherText); // Main 비대칭키의 public Key가 서버의 사용자 식별자
                     Connection.httpRequestPost("http://localhost:8080/test1", sendData); // Server에 Post 요청
+
                 }catch(NoServerException error){
                     error.printStackTrace();
                 }

@@ -24,7 +24,7 @@ public class AESFileTranslator {
                 symmetricKey = KeyWallet.getMainKeyForSymmetricKey();    // 저장된 Main 키를 불러오기
                 String fileString = FileTranslator.transferFile2Text(new File(imagePath)); // 이미지를 Text로 변환
                 cipherText = AESCipherMaker.encryptText(fileString, symmetricKey.getKey());  // Text 를 CipherText로 변환
-            }catch(Exception e){
+            } catch(Exception e){
                 e.printStackTrace();
             }
             return cipherText;
@@ -60,7 +60,6 @@ public class AESFileTranslator {
         }
         String uuid = UUID.randomUUID().toString(); // 고유한 문자열 생성
         File file = FileTranslator.transferText2File(textOfImage, "../Image", uuid + ".jpg");
-
         return file;
     }
 }
