@@ -1,4 +1,4 @@
-package Key;
+package org.imageghost.Key;
 
 import ClientCustomException.NoKeyException;
 

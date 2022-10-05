@@ -1,4 +1,4 @@
-package Server;
+package org.imageghost.Server;
 
 class EncFileDto{
     private String ownerPublicKey;

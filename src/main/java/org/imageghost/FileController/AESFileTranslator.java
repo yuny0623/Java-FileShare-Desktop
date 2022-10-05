@@ -1,8 +1,8 @@
-package FileController;
+package org.imageghost.FileController;
 
-import ClientCustomException.NoKeyException;
-import Wallet.KeyWallet;
-import Wallet.SymmetricKey;
+import org.imageghost.ClientCustomException.NoKeyException;
+import org.imageghost.Wallet.KeyWallet;
+import org.imageghost.Wallet.SymmetricKey;
 
 import javax.crypto.SecretKey;
 import java.io.File;

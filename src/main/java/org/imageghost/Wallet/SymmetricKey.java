@@ -1,4 +1,4 @@
-package Wallet;
+package org.imageghost.Wallet;
 
 import javax.crypto.SecretKey;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package FileController;
+package org.imageghost.FileController;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;

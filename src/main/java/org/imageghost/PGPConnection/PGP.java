@@ -1,4 +1,4 @@
-package PGPConnection;
+package org.imageghost.PGPConnection;
 
 public class PGP {
     /*

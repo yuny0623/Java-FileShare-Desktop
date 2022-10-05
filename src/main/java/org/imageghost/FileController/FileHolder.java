@@ -1,4 +1,4 @@
-package FileController;
+package org.imageghost.FileController;
 
 import java.util.ArrayList;
 import java.util.List;

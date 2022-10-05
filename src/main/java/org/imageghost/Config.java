@@ -1,3 +1,4 @@
+package org.imageghost;
 /*
     java 설정 파일
  */

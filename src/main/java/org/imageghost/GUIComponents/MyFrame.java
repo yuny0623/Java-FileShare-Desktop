@@ -1,14 +1,14 @@
-package GUIComponents;
+package org.imageghost.GUIComponents;
 
-import ClientCustomException.NoKeyException;
-import ClientCustomException.NoServerException;
-import FileController.AESCipherMaker;
-import FileController.AESKeyMaker;
-import Key.AsymmetricKeyGenerator;
-import Server.Connection;
-import Wallet.ASymmetricKey;
-import Wallet.KeyWallet;
-import Wallet.SymmetricKey;
+import org.imageghost.ClientCustomException.NoKeyException;
+import org.imageghost.ClientCustomException.NoServerException;
+import org.imageghost.FileController.AESCipherMaker;
+import org.imageghost.FileController.AESKeyMaker;
+import org.imageghost.Key.AsymmetricKeyGenerator;
+import org.imageghost.Server.Connection;
+import org.imageghost.Wallet.ASymmetricKey;
+import org.imageghost.Wallet.KeyWallet;
+import org.imageghost.Wallet.SymmetricKey;
 
 import javax.crypto.SecretKey;
 import javax.swing.*;
