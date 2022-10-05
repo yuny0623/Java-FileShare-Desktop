@@ -1,6 +1,6 @@
-package Wallet;
+package org.imageghost.Wallet;
 
-import ClientCustomException.NoKeyException;
+import org.imageghost.ClientCustomException.NoKeyException;
 
 import java.util.HashMap;
 

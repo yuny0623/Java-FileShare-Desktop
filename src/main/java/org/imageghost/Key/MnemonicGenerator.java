@@ -1,4 +1,4 @@
-package Key;
+package org.imageghost.Key;
 
 public class MnemonicGenerator {
     /*

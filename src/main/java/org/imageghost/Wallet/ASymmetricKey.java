@@ -1,4 +1,4 @@
-package Wallet;
+package org.imageghost.Wallet;
 
 import java.util.ArrayList;
 import java.util.List;

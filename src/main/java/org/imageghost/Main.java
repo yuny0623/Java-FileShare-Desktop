@@ -1,10 +1,7 @@
-package src;
+package org.imageghost;
 
-import FileController.AESCipherMaker;
-import FileController.FileTranslator;
-import GUIComponents.MyFrame;
-import Key.AsymmetricKeyGenerator;
-import Server.Connection;
+import org.imageghost.GUIComponents.MyFrame;
+import org.imageghost.Server.Connection;
 
 import javax.crypto.SecretKey;
 import java.io.File;

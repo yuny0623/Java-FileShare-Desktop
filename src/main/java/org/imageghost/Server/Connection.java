@@ -1,6 +1,6 @@
-package Server;
+package org.imageghost.Server;
 
-import ClientCustomException.NoServerException;
+import org.imageghost.ClientCustomException.NoServerException;
 
 import java.io.*;
 import java.net.HttpURLConnection;

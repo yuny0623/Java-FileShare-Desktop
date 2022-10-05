@@ -1,4 +1,4 @@
-package FileController;
+package org.imageghost.FileController;
 
 import java.io.*;
 import java.util.Base64;
