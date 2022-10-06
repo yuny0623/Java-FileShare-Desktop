@@ -20,5 +20,23 @@ public class PGP {
             reverse it.
      */
 
+    private String plainText; // 평문
 
+    /*
+        데이터 보내기
+     */
+    public void send(){
+
+    }
+
+    /*
+        데이터 받기
+     */
+    public void receive(){
+
+    }
+
+    public PGP(String plainText){
+        this.plainText = plainText;
+    }
 }
