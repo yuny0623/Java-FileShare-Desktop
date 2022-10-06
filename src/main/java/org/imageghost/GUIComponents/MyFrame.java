@@ -51,7 +51,7 @@ public class MyFrame extends JFrame implements ActionListener {
 
     public MyFrame(){
         setTitle("ImageGhostClient");
-        setSize(800, 300);
+        setSize(1000, 500);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.getContentPane().setBackground(Color.DARK_GRAY);
 
@@ -85,7 +85,7 @@ public class MyFrame extends JFrame implements ActionListener {
 
         textField1 = new JTextField();
         textArea1 = new JTextArea("Type file path here.", 10, 20);
-        textArea2 = new JTextArea("Result status,", 10, 20);
+        textArea2 = new JTextArea("Result status,", 10, 40);
 
         panel0.add(button0);
         panel0.setBackground(Color.DARK_GRAY) ;
@@ -96,32 +96,31 @@ public class MyFrame extends JFrame implements ActionListener {
         panel1.add(button4);
         panel1.setBackground(Color.DARK_GRAY);
 
-        panel2.add(textArea1);
-        panel2.add(textArea2);
-        panel2.setBackground(Color.DARK_GRAY);
+        JPanel jpanelParent = new JPanel();
+        JPanel jpanelLeft = new JPanel();
+        JPanel jpanelRight = new JPanel();
 
-        this.add(panel0, BorderLayout.NORTH);
-        this.add(panel1, BorderLayout.CENTER);
-        this.add(panel2, BorderLayout.SOUTH);
+        JTextField jTextField1 = new JTextField();
+        jTextField1.setText("Type File Path here.");
+        jpanelLeft.add(jTextField1, BorderLayout.NORTH);
+        jpanelLeft.add(textArea1, BorderLayout.CENTER);
+
+        JTextField jTextField2 = new JTextField();
+        jTextField2.setText("Result");
+        jpanelRight.add(jTextField2, BorderLayout.NORTH);
+        jpanelRight.add(textArea2, BorderLayout.CENTER);
+
+        jpanelParent.add(jpanelLeft);
+        jpanelParent.add(jpanelRight);
+
+        jpanelParent.setBackground(Color.DARK_GRAY);
+
+        this.add(panel0, BorderLayout.NORTH);   // server status 표시창
+        this.add(panel1, BorderLayout.CENTER);  // 버튼 패널 표시창
+        this.add(jpanelParent, BorderLayout.SOUTH);   // 결과 TextArea 표시창
 
         setVisible(true);
         setLocationRelativeTo(null); // 실행시 window 가운데에 위치
-    }
-
-    public void checkServerConnection(){
-        if(Connection.checkServerLive()){ // 서버가 운영 중인 경우
-            button1.setEnabled(true);
-            button2.setEnabled(true);
-            button3.setEnabled(true);
-            button4.setEnabled(true);
-        }else{                            // 서버가 운영 중이지 않을 경우
-            button1.setEnabled(false);
-            button2.setEnabled(false);
-            button3.setEnabled(false);
-            button4.setEnabled(false);
-            JOptionPane alert = new JOptionPane();
-            alert.showMessageDialog(null, "Server is not running"); // 알림창
-        }
     }
 
     @Override
@@ -165,7 +164,6 @@ public class MyFrame extends JFrame implements ActionListener {
                     ASymmetricKey aSymmetricKey = KeyWallet.getMainKeyForASymmetricKey(); // 식별자로 사용할 Main 비대칭키 불러오기
                     sendData.put(aSymmetricKey.getPublicKey(), cipherText); // Main 비대칭키의 public Key가 서버의 사용자 식별자
                     Connection.httpPostRequest("http://localhost:8080/test1", sendData); // Server에 Post 요청
-
                 }catch(NoServerException error){
                     error.printStackTrace();
                 }
@@ -175,6 +173,25 @@ public class MyFrame extends JFrame implements ActionListener {
             // 서버에서 CipherText 받아오기
             String result = Connection.httpGetRequest("http://localhost:8080/test-get/", KeyWallet.getMainKeyForASymmetricKey().getPublicKey());
             // textArea2 에 결과 출력
+        }
+    }
+
+    /*
+        버튼 누름시 서버 상태 체크
+     */
+    public void checkServerConnection(){
+        if(Connection.checkServerLive()){ // 서버가 운영 중인 경우
+            button1.setEnabled(true);
+            button2.setEnabled(true);
+            button3.setEnabled(true);
+            button4.setEnabled(true);
+        }else{                            // 서버가 운영 중이지 않을 경우
+            button1.setEnabled(false);
+            button2.setEnabled(false);
+            button3.setEnabled(false);
+            button4.setEnabled(false);
+            JOptionPane alert = new JOptionPane();
+            alert.showMessageDialog(null, "Server is not running"); // 알림창
         }
     }
 }
