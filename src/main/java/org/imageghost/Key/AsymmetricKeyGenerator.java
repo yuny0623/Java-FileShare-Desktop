@@ -1,11 +1,10 @@
 package org.imageghost.Key;
 
-import ClientCustomException.NoKeyException;
+import org.imageghost.ClientCustomException.NoKeyException;
 
 import java.security.*;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.List;
 
 public class AsymmetricKeyGenerator {

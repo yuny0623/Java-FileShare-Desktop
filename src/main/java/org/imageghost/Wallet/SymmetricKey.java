@@ -1,7 +1,6 @@
 package org.imageghost.Wallet;
 
 import javax.crypto.SecretKey;
-import java.util.HashMap;
 
 public class SymmetricKey{
     private SecretKey AESKey;

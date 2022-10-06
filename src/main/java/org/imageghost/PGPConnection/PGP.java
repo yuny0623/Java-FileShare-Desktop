@@ -2,7 +2,7 @@ package org.imageghost.PGPConnection;
 
 public class PGP {
     /*
-        PGP Communication Structure Implementation - yuny0623
+        PGP Communication Structure Implementation - by yuny0623
      */
 
     /*
@@ -19,4 +19,6 @@ public class PGP {
         Bob:
             reverse it.
      */
+
+
 }

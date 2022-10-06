@@ -125,7 +125,7 @@ public class MyFrame extends JFrame implements ActionListener {
                     HashMap<String, String> sendData = new HashMap<>();
                     ASymmetricKey aSymmetricKey = KeyWallet.getMainKeyForASymmetricKey(); // 식별자로 사용할 Main 비대칭키 불러오기
                     sendData.put(aSymmetricKey.getPublicKey(), cipherText); // Main 비대칭키의 public Key가 서버의 사용자 식별자
-                    Connection.httpRequestPost("http://localhost:8080/test1", sendData); // Server에 Post 요청
+                    Connection.httpPostRequest("http://localhost:8080/test1", sendData); // Server에 Post 요청
 
                 }catch(NoServerException error){
                     error.printStackTrace();
@@ -133,10 +133,8 @@ public class MyFrame extends JFrame implements ActionListener {
             }
         }else if(e.getSource() == button4){
             // 서버에서 CipherText 받아오기
-            HashMap<String, String> result = Connection.httpRequestGet("http://localhost:8080/test1", KeyWallet.getMainKeyForASymmetricKey().getPublicKey());
-
+            String result = Connection.httpGetRequest("http://localhost:8080/test-get/", KeyWallet.getMainKeyForASymmetricKey().getPublicKey());
             // textArea2 에 결과 출력
-
         }
     }
 }
