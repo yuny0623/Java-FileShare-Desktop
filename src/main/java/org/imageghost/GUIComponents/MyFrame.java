@@ -32,6 +32,7 @@ public class MyFrame extends JFrame implements ActionListener {
                 (receive 버튼)
          */
 
+    JButton button0 = null; 
     JButton button1 = null;
     JButton button2 = null;
     JButton button3 = null;
@@ -44,6 +45,7 @@ public class MyFrame extends JFrame implements ActionListener {
 
     JTextArea textArea1 = null;
     JTextArea textArea2 = null;
+    JPanel panel0 = null;
     JPanel panel1 = null;
     JPanel panel2 = null;
 
@@ -52,19 +54,30 @@ public class MyFrame extends JFrame implements ActionListener {
         setSize(800, 300);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.getContentPane().setBackground(Color.DARK_GRAY);
+
+        panel0 = new JPanel();
         panel1 = new JPanel();
         panel2 = new JPanel();
 
+        button0 = new JButton("Check Server Status");
         button1 = new JButton("Create Symmetric key");
         button2 = new JButton("Create ASymmetric key");
         button3 = new JButton("Send to server");
         button4 = new JButton("Receive from server");
 
+        // Server Check 전까지는 버튼 사용 불가
+        button1.setEnabled(false);
+        button2.setEnabled(false);
+        button3.setEnabled(false);
+        button4.setEnabled(false);
+
+        button0.setBackground(Color.GRAY);
         button1.setBackground(Color.GRAY);
         button2.setBackground(Color.GRAY);
         button3.setBackground(Color.GRAY);
         button4.setBackground(Color.GRAY);
 
+        button0.addActionListener(this);
         button1.addActionListener(this);
         button2.addActionListener(this);
         button3.addActionListener(this);
@@ -73,6 +86,9 @@ public class MyFrame extends JFrame implements ActionListener {
         textField1 = new JTextField();
         textArea1 = new JTextArea("Type file path here.", 10, 20);
         textArea2 = new JTextArea("Result status,", 10, 20);
+
+        panel0.add(button0);
+        panel0.setBackground(Color.DARK_GRAY) ;
 
         panel1.add(button1);
         panel1.add(button2);
@@ -84,16 +100,37 @@ public class MyFrame extends JFrame implements ActionListener {
         panel2.add(textArea2);
         panel2.setBackground(Color.DARK_GRAY);
 
-        this.add(panel1, BorderLayout.NORTH);
-        this.add(panel2, BorderLayout.CENTER);
+        this.add(panel0, BorderLayout.NORTH);
+        this.add(panel1, BorderLayout.CENTER);
+        this.add(panel2, BorderLayout.SOUTH);
 
         setVisible(true);
         setLocationRelativeTo(null); // 실행시 window 가운데에 위치
     }
 
+    public void checkServerConnection(){
+        if(Connection.checkServerLive()){ // 서버가 운영 중인 경우
+            button1.setEnabled(true);
+            button2.setEnabled(true);
+            button3.setEnabled(true);
+            button4.setEnabled(true);
+        }else{                            // 서버가 운영 중이지 않을 경우
+            button1.setEnabled(false);
+            button2.setEnabled(false);
+            button3.setEnabled(false);
+            button4.setEnabled(false);
+            JOptionPane alert = new JOptionPane();
+            alert.showMessageDialog(null, "Server is not running"); // 알림창
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
+        if(e.getSource() == button0){
+            checkServerConnection();
+        }
         if(e.getSource() == button1){
+            checkServerConnection();
             SecretKey secretKey = AESKeyMaker.generateAESKey(); // symmetric key 생성
             SymmetricKey symmetricKey = new SymmetricKey(secretKey, "new AES key");
             try{
@@ -105,11 +142,13 @@ public class MyFrame extends JFrame implements ActionListener {
             }
             textArea2.setText(secretKey.getEncoded().toString()); // 화면에 출력
         }else if(e.getSource() == button2){
+            checkServerConnection();
             // asymmetric key pair 생성
             AsymmetricKeyGenerator asymmetricKeyGenerator = new AsymmetricKeyGenerator();
             List<String> keyList = asymmetricKeyGenerator.generateKeyPair(); // 비대칭키 생성
             textArea2.setText(keyList.get(0) + keyList.get(1)); // 화면에 출력
         }else if(e.getSource() == button3){
+            checkServerConnection();
             // 서버로 CipherText 전송
             String filePath = textArea1.getText(); // 파일 경로를 읽어들임.
             String cipherText = null;
@@ -132,6 +171,7 @@ public class MyFrame extends JFrame implements ActionListener {
                 }
             }
         }else if(e.getSource() == button4){
+            checkServerConnection();
             // 서버에서 CipherText 받아오기
             String result = Connection.httpGetRequest("http://localhost:8080/test-get/", KeyWallet.getMainKeyForASymmetricKey().getPublicKey());
             // textArea2 에 결과 출력

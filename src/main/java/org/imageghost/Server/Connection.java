@@ -40,7 +40,10 @@ public class Connection {
         }catch(Exception e){
             e.printStackTrace();
         }
-
+        if(response == null){
+            System.out.println("is dead: " + response);
+            return false;
+        }
         if(response.equals("health-check")){
             System.out.println("is live: " + response);
             return true;
