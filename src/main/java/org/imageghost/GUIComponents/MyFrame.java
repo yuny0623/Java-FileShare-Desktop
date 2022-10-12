@@ -63,7 +63,7 @@ public class MyFrame extends JFrame implements ActionListener {
         button1 = new JButton("Create Symmetric key");
         button2 = new JButton("Create ASymmetric key");
         button3 = new JButton("Send to server");
-        button4 = new JButton("Receive from server");
+        button4 = new JButton("Get File From Server");
 
         // Server Check 전까지는 버튼 사용 불가
         button1.setEnabled(false);
@@ -133,6 +133,7 @@ public class MyFrame extends JFrame implements ActionListener {
             SecretKey secretKey = AESKeyMaker.generateAESKey(); // symmetric key 생성
             SymmetricKey symmetricKey = new SymmetricKey(secretKey, "new AES key");
             try{
+
                 SymmetricKey existingSymmetricKey = KeyWallet.getMainKeyForSymmetricKey(); // 메인 키를 불러옴.
                 KeyWallet.saveKeyForSymmetricKey(existingSymmetricKey); // 일반 키로 저장
             }catch(NoKeyException error){ // Main AES Key가 없을 경우 NoKeyException 발생
@@ -166,16 +167,12 @@ public class MyFrame extends JFrame implements ActionListener {
             if(filePath.equals("file path.")){
                 MyFrame.showAlert("File path is required!");
             }else{
-                try {
-                    cipherText = AESFileTranslator.Image2AESCipherText(filePath);
-                }catch(Exception error){
-                    error.printStackTrace();
-                    MyFrame.showAlert("File Path Error!");
-                }
+                cipherText = AESFileTranslator.Image2AESCipherText(filePath);
+
                 try {
                     HashMap<String, String> sendData = new HashMap<>();
-                    ASymmetricKey aSymmetricKey = KeyWallet.getMainKeyForASymmetricKey(); // 식별자로 사용할 Main 비대칭키 불러오기
-                    sendData.put(aSymmetricKey.getPublicKey(), cipherText); // Main 비대칭키의 public Key가 서버의 사용자 식별자
+                    ASymmetricKey aSymmetricKey = KeyWallet.getMainKeyForASymmetricKey();   // 식별자로 사용할 Main 비대칭키 불러오기
+                    sendData.put(aSymmetricKey.getPublicKey(), cipherText);                 // Main 비대칭키의 public Key가 서버의 사용자 식별자
                     Connection.httpPostRequest(Config.ORIGINAL_SERVER_URL + "/test1", sendData); // Server에 Post 요청
                 }catch(NoServerException error){
                     error.printStackTrace();

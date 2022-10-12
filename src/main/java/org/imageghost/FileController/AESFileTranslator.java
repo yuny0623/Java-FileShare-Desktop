@@ -49,16 +49,16 @@ public class AESFileTranslator {
 
     /*
         AES 암호화된 텍스트 -> 이미지 변환
+        (decrypt 시에 main key가 없을 경우 decrypt 불가능.)
      */
-    public static Object AESCispherText2Image(byte[] aesCipherText){
+    public static Object AESCispherText2Image(byte[] aesCipherText){ // return type chaned from File to Object
         SymmetricKey symmetricKey = null;
         try {
             symmetricKey = KeyWallet.getMainKeyForSymmetricKey();
         }catch(NoKeyException e){
             e.printStackTrace();
-            // decrypt 시에 main key가 없을 경우 decrypt 불가능.
             MyFrame.showAlert("No Main Key Existing!");
-            return null;
+            return null;            // decrypt 시에 main key가 없을 경우 decrypt 불가능.
         }
 
         // 정상 진행
