@@ -3,6 +3,7 @@ package org.imageghost.GUIComponents;
 import org.imageghost.ClientCustomException.NoKeyException;
 import org.imageghost.ClientCustomException.NoServerException;
 import org.imageghost.FileController.AESCipherMaker;
+import org.imageghost.FileController.AESFileTranslator;
 import org.imageghost.FileController.AESKeyMaker;
 import org.imageghost.Key.AsymmetricKeyGenerator;
 import org.imageghost.Server.Connection;
@@ -166,9 +167,8 @@ public class MyFrame extends JFrame implements ActionListener {
                 alert.showMessageDialog(null, "File path is required!"); // 알림창
             }else{
                 try {
-                    // refactoring needed here.
-                    cipherText = AESCipherMaker.encryptText(filePath, KeyWallet.getMainKeyForSymmetricKey().getKey()); // 선택된 파일 암호화
-                    // encryptText -> 여기서 filePath 경로 찾아서 이미지 binary 로 만들어야함.
+                    // cipherText = AESCipherMaker.encryptText(filePath, KeyWallet.getMainKeyForSymmetricKey().getKey()); // 선택된 파일 암호화
+                    cipherText = AESFileTranslator.Image2AESCipherText(filePath);
                 }catch(Exception error){
                     error.printStackTrace();
                     JOptionPane alert = new JOptionPane();
@@ -212,7 +212,6 @@ public class MyFrame extends JFrame implements ActionListener {
             return false;
         }
     }
-
     /*
         알림창 띄우기
      */
