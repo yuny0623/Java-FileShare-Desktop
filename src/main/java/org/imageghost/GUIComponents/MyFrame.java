@@ -167,7 +167,6 @@ public class MyFrame extends JFrame implements ActionListener {
                 MyFrame.showAlert("File path is required!");
             }else{
                 try {
-                    // cipherText = AESCipherMaker.encryptText(filePath, KeyWallet.getMainKeyForSymmetricKey().getKey()); // 선택된 파일 암호화
                     cipherText = AESFileTranslator.Image2AESCipherText(filePath);
                 }catch(Exception error){
                     error.printStackTrace();
@@ -186,7 +185,9 @@ public class MyFrame extends JFrame implements ActionListener {
         }else if(e.getSource() == button4){
             checkServerConnection();
             // 서버에서 CipherText 받아오기
-            String result = Connection.httpGetRequest(Config.ORIGINAL_SERVER_URL + "/test-get/", KeyWallet.getMainKeyForASymmetricKey().getPublicKey());
+            String result = Connection.httpGetRequest(
+                    Config.ORIGINAL_SERVER_URL + "/test-get/", KeyWallet.getMainKeyForASymmetricKey().getPublicKey());
+
             // textArea2 에 결과 출력
             textArea2.setText(result);
         }
