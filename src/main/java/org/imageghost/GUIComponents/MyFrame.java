@@ -193,13 +193,13 @@ public class MyFrame extends JFrame implements ActionListener {
         버튼 누름시 서버 상태 체크
      */
     public boolean checkServerConnection(){
-        if(Connection.checkServerLive()){ // 서버가 운영 중인 경우
+        if(Connection.checkServerLive()){ // if server is running.
             button1.setEnabled(true);
             button2.setEnabled(true);
             button3.setEnabled(true);
             button4.setEnabled(true);
             return true;
-        }else{                            // 서버가 운영 중이지 않을 경우
+        }else{ // if server is not running.
             button1.setEnabled(false);
             button2.setEnabled(false);
             button3.setEnabled(false);
