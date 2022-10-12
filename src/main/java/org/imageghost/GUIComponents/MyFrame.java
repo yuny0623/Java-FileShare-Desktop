@@ -128,36 +128,51 @@ public class MyFrame extends JFrame implements ActionListener {
         if(e.getSource() == button0){
             checkServerConnection();
         }
-        if(e.getSource() == button1){
+        if(e.getSource() == button1){ // create symmetric key
             checkServerConnection();
             SecretKey secretKey = AESKeyMaker.generateAESKey(); // symmetric key 생성
             SymmetricKey symmetricKey = new SymmetricKey(secretKey, "new AES key");
             try{
-                SymmetricKey symmetricKey1 = KeyWallet.getMainKeyForSymmetricKey(); // 메인 키를 불러옴.
-                KeyWallet.saveKeyForSymmetricKey(symmetricKey); // 일반 키로 저장
+                SymmetricKey existingSymmetricKey = KeyWallet.getMainKeyForSymmetricKey(); // 메인 키를 불러옴.
+                KeyWallet.saveKeyForSymmetricKey(existingSymmetricKey); // 일반 키로 저장
             }catch(NoKeyException error){ // Main AES Key가 없을 경우 NoKeyException 발생
                 error.printStackTrace();
                 KeyWallet.saveKeyAsMainKeyForSymmetricKey(symmetricKey); // 메인 키로 저장
             }
-            textArea2.setText(secretKey.getEncoded().toString()); // 화면에 출력
-        }else if(e.getSource() == button2){
+            textArea2.setText(secretKey.getEncoded().toString()); // 출력
+        }else if(e.getSource() == button2){ // create asymmetric key
             checkServerConnection();
             // asymmetric key pair 생성
             AsymmetricKeyGenerator asymmetricKeyGenerator = new AsymmetricKeyGenerator();
-            List<String> keyList = asymmetricKeyGenerator.generateKeyPair(); // 비대칭키 생성
-            textArea2.setText(keyList.get(0) + keyList.get(1)); // 화면에 출력
-        }else if(e.getSource() == button3){
+            HashMap<String, String> keyPairHashMap = asymmetricKeyGenerator.generateKeyPair(); // 비대칭키 생성
+
+            StringBuffer stringBufferOfPublicKey = new StringBuffer();  // public key string
+            stringBufferOfPublicKey.append("-----BEGIN PUBLIC KEY-----\n");
+            stringBufferOfPublicKey.append(keyPairHashMap.get("publicKey"));
+            stringBufferOfPublicKey.append("-----END PUBLIC KEY-----\n");
+
+            StringBuffer stringBufferOfPrivateKey = new StringBuffer(); // private key string
+            stringBufferOfPrivateKey.append("-----BEGIN PRIVATE KEY-----\n");
+            stringBufferOfPrivateKey.append(keyPairHashMap.get("privateKey"));
+            stringBufferOfPrivateKey.append("-----END PRIVATE KEY-----\n");
+            textArea2.setText(stringBufferOfPublicKey.append(stringBufferOfPrivateKey.toString()).toString()); // 출력
+        }else if(e.getSource() == button3){ // send to server
             checkServerConnection();
             // 서버로 CipherText 전송
             String filePath = textArea1.getText(); // 파일 경로를 읽어들임.
             String cipherText = null;
             if(filePath.equals("file path.")){
-                // 에러 발생.
+                JOptionPane alert = new JOptionPane();
+                alert.showMessageDialog(null, "File path is required!"); // 알림창
             }else{
                 try {
+                    // refactoring needed here.
                     cipherText = AESCipherMaker.encryptText(filePath, KeyWallet.getMainKeyForSymmetricKey().getKey()); // 선택된 파일 암호화
+                    // encryptText -> 여기서 filePath 경로 찾아서 이미지 binary 로 만들어야함.
                 }catch(Exception error){
                     error.printStackTrace();
+                    JOptionPane alert = new JOptionPane();
+                    alert.showMessageDialog(null, "File Path Error!"); // 알림창
                 }
                 try {
                     HashMap<String, String> sendData = new HashMap<>();
@@ -166,6 +181,7 @@ public class MyFrame extends JFrame implements ActionListener {
                     Connection.httpPostRequest("http://localhost:8080/test1", sendData); // Server에 Post 요청
                 }catch(NoServerException error){
                     error.printStackTrace();
+                    showAlert("Server is not running!");
                 }
             }
         }else if(e.getSource() == button4){
@@ -173,25 +189,35 @@ public class MyFrame extends JFrame implements ActionListener {
             // 서버에서 CipherText 받아오기
             String result = Connection.httpGetRequest("http://localhost:8080/test-get/", KeyWallet.getMainKeyForASymmetricKey().getPublicKey());
             // textArea2 에 결과 출력
+            textArea2.setText(result);
         }
     }
 
     /*
         버튼 누름시 서버 상태 체크
      */
-    public void checkServerConnection(){
+    public boolean checkServerConnection(){
         if(Connection.checkServerLive()){ // 서버가 운영 중인 경우
             button1.setEnabled(true);
             button2.setEnabled(true);
             button3.setEnabled(true);
             button4.setEnabled(true);
+            return true;
         }else{                            // 서버가 운영 중이지 않을 경우
             button1.setEnabled(false);
             button2.setEnabled(false);
             button3.setEnabled(false);
             button4.setEnabled(false);
-            JOptionPane alert = new JOptionPane();
-            alert.showMessageDialog(null, "Server is not running"); // 알림창
+            showAlert("Server is not running!"); // show alert
+            return false;
         }
+    }
+
+    /*
+        알림창 띄우기
+     */
+    public static void showAlert(String message){
+        JOptionPane alert = new JOptionPane();
+        alert.showMessageDialog(null, message); // alert
     }
 }

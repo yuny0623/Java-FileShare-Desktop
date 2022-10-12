@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class AESKeyMaker {
     /*
-        AES 키 생성기
+        AES SecretKey 생성기
      */
     public static SecretKey generateAESKey(){
         KeyGenerator generator = null;

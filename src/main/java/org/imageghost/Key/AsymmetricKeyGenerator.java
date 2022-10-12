@@ -5,6 +5,7 @@ import org.imageghost.ClientCustomException.NoKeyException;
 import java.security.*;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 
 public class AsymmetricKeyGenerator {
@@ -12,8 +13,8 @@ public class AsymmetricKeyGenerator {
     private static String privateKey;
     private static String publicKey;
 
-    public static List<String> generateKeyPair(){
-        List<String> keyList = new ArrayList<>();
+    public static HashMap<String, String> generateKeyPair(){
+        HashMap<String, String> keyPairHashMap = new HashMap<>();
         try {
             SecureRandom secureRandom = new SecureRandom();
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
@@ -29,14 +30,13 @@ public class AsymmetricKeyGenerator {
             AsymmetricKeyGenerator.publicKey = stringPublicKey;
             AsymmetricKeyGenerator.privateKey = stringPrivateKey;
 
-            keyList.add(stringPublicKey);
-            keyList.add(stringPrivateKey);
-
+            keyPairHashMap.put("publicKey", stringPublicKey);
+            keyPairHashMap.put("privateKey", stringPrivateKey);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return keyList;
+        return keyPairHashMap;
     }
 
     public static String getPublicKey(){
