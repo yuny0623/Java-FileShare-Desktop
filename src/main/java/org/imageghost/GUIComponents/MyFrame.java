@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MyFrame extends JFrame implements ActionListener {
-
         /*
             <필요한 기능>
             1. create symmetric key
@@ -33,7 +32,6 @@ public class MyFrame extends JFrame implements ActionListener {
                 -> choose public key (지갑에서 원하는 public key 선택)
                 (receive 버튼)
          */
-
     JButton button0 = null; 
     JButton button1 = null;
     JButton button2 = null;
@@ -157,39 +155,38 @@ public class MyFrame extends JFrame implements ActionListener {
             stringBufferOfPrivateKey.append("-----BEGIN PRIVATE KEY-----\n");
             stringBufferOfPrivateKey.append(keyPairHashMap.get("privateKey"));
             stringBufferOfPrivateKey.append("-----END PRIVATE KEY-----\n");
-            
+
             textArea2.setText(stringBufferOfPublicKey.append(stringBufferOfPrivateKey.toString()).toString()); // 출력
         }else if(e.getSource() == button3){ // send to server
             checkServerConnection();
+
             // 서버로 CipherText 전송
             String filePath = textArea1.getText(); // 파일 경로를 읽어들임.
             String cipherText = null;
             if(filePath.equals("file path.")){
-                JOptionPane alert = new JOptionPane();
-                alert.showMessageDialog(null, "File path is required!"); // 알림창
+                MyFrame.showAlert("File path is required!");
             }else{
                 try {
                     // cipherText = AESCipherMaker.encryptText(filePath, KeyWallet.getMainKeyForSymmetricKey().getKey()); // 선택된 파일 암호화
                     cipherText = AESFileTranslator.Image2AESCipherText(filePath);
                 }catch(Exception error){
                     error.printStackTrace();
-                    JOptionPane alert = new JOptionPane();
-                    alert.showMessageDialog(null, "File Path Error!"); // 알림창
+                    MyFrame.showAlert("File Path Error!");
                 }
                 try {
                     HashMap<String, String> sendData = new HashMap<>();
                     ASymmetricKey aSymmetricKey = KeyWallet.getMainKeyForASymmetricKey(); // 식별자로 사용할 Main 비대칭키 불러오기
                     sendData.put(aSymmetricKey.getPublicKey(), cipherText); // Main 비대칭키의 public Key가 서버의 사용자 식별자
-                    Connection.httpPostRequest(Config.originServerURL + "/test1", sendData); // Server에 Post 요청
+                    Connection.httpPostRequest(Config.ORIGINAL_SERVER_URL + "/test1", sendData); // Server에 Post 요청
                 }catch(NoServerException error){
                     error.printStackTrace();
-                    showAlert("Server is not running!");
+                    MyFrame.showAlert("Server is not running!");
                 }
             }
         }else if(e.getSource() == button4){
             checkServerConnection();
             // 서버에서 CipherText 받아오기
-            String result = Connection.httpGetRequest(Config.originServerURL + "/test-get/", KeyWallet.getMainKeyForASymmetricKey().getPublicKey());
+            String result = Connection.httpGetRequest(Config.ORIGINAL_SERVER_URL + "/test-get/", KeyWallet.getMainKeyForASymmetricKey().getPublicKey());
             // textArea2 에 결과 출력
             textArea2.setText(result);
         }
@@ -209,7 +206,7 @@ public class MyFrame extends JFrame implements ActionListener {
             button2.setEnabled(false);
             button3.setEnabled(false);
             button4.setEnabled(false);
-            showAlert("Server is not running!"); // show alert
+            MyFrame.showAlert("Server is not running!"); // show alert
             return false;
         }
     }

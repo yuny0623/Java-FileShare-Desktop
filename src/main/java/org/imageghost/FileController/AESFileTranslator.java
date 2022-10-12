@@ -1,6 +1,7 @@
 package org.imageghost.FileController;
 
 import org.imageghost.ClientCustomException.NoKeyException;
+import org.imageghost.Config;
 import org.imageghost.GUIComponents.MyFrame;
 import org.imageghost.Wallet.KeyWallet;
 import org.imageghost.Wallet.SymmetricKey;
@@ -64,7 +65,7 @@ public class AESFileTranslator {
         }
 
         String uuid = UUID.randomUUID().toString(); // 고유한 문자열 생성
-        File file = FileTranslator.transferText2File(textOfImage, "../Image", uuid + ".jpg"); // 랜덤 이미지명으로 생성
+        File file = FileTranslator.transferText2File(textOfImage, Config.FILE_SAVE_PATH, uuid + ".jpg"); // 랜덤 이미지명으로 생성
         return file;
     }
 }

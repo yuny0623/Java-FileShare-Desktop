@@ -17,7 +17,7 @@ public class Connection {
      */
     public static boolean checkServerLive(){
         String response = null;
-        String URL = Config.healthCheckURL;
+        String URL = Config.HEALTH_CHECK_URL;
         String GET = "GET";
         try {
             java.net.URL url = new URL(URL);
@@ -113,13 +113,12 @@ public class Connection {
         String myResult = "";
 
         try {
-            //   URL 설정하고 접속하기
-            URL url = new URL(pURL); // URL 설정
+            // URL 설정
+            URL url = new URL(pURL);
+            // 접속
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
 
-            HttpURLConnection http = (HttpURLConnection) url.openConnection(); // 접속
-            //--------------------------
-            //   전송 모드 설정 - 기본적인 설정
-            //--------------------------
+            // 전송 모드 설정 - 기본적인 설정
             http.setDefaultUseCaches(false);
             http.setDoInput(true); // 서버에서 읽기 모드 지정
             http.setDoOutput(true); // 서버로 쓰기 모드 지정
@@ -127,9 +126,7 @@ public class Connection {
 
             http.setRequestProperty("content-type", "application/json;utf-8"); // set property to application/json
 
-            //--------------------------
-            //   send to server
-            //--------------------------
+            // send to server
             StringBuffer buffer = new StringBuffer();
 
             JSONObject sendJSONData = new JSONObject();
@@ -141,15 +138,11 @@ public class Connection {
             writer.write(sendJSONData.toJSONString());
             writer.flush();
 
-            //--------------------------
-            //   Response Code
-            //--------------------------
+            // Response Code
             int responseCode = http.getResponseCode();
             System.out.println("response code in POST request:" + responseCode);
 
-            //--------------------------
-            //   receive from server
-            //--------------------------
+            // receive from server
             InputStreamReader tmp = new InputStreamReader(http.getInputStream(), "UTF-8");
             BufferedReader reader = new BufferedReader(tmp);
             StringBuilder builder = new StringBuilder();
