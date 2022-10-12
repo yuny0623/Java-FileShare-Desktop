@@ -1,6 +1,7 @@
 package org.imageghost.Server;
 
 import org.imageghost.ClientCustomException.NoServerException;
+import org.imageghost.Config;
 import org.json.simple.JSONObject;
 
 import java.io.*;
@@ -16,7 +17,7 @@ public class Connection {
      */
     public static boolean checkServerLive(){
         String response = null;
-        String URL = "http://localhost:8080/health-check";
+        String URL = Config.healthCheckURL;
         String GET = "GET";
         try {
             java.net.URL url = new URL(URL);
