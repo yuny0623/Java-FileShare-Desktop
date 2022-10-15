@@ -19,7 +19,7 @@ public class Main {
         String publicKey = keyPair.get("publicKey");
         String privateKey = keyPair.get("privateKey");
 
-        PGP pgp = new PGP("","","");
+        PGP pgp = new PGP("", "","","");
 
         String originalPlainText = "테스트입니다.";
         String cipherText = pgp.encryptWithPrivateKey(originalPlainText, privateKey);

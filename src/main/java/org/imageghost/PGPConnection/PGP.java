@@ -5,6 +5,7 @@ import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import java.util.HashMap;
 
 public class PGP {
     /*
@@ -15,6 +16,10 @@ public class PGP {
     private String senderPrivateKey;
     private String receiverPublicKey;
 
+    public PGP(){
+
+    }
+
     public PGP(String plainText, String senderPublicKey, String senderPrivateKey, String receiverPublicKey){
         this.plainText = plainText;
         this.senderPublicKey = senderPublicKey;
@@ -23,42 +28,42 @@ public class PGP {
     }
 
     public void setPlainText(String plainText){
-
+        this.plainText = plainText;
     }
     public void setSenderPublicKey(String senderPublicKey){
-
+        this.senderPublicKey = senderPublicKey;
     }
 
     public void setSenderPrivateKey(String senderPrivateKey){
-
+        this.senderPrivateKey = senderPrivateKey;
     }
 
     public void setReceiverPublicKey(String receiverPublicKey){
-
+        this.receiverPublicKey = receiverPublicKey;
     }
 
     /*
+        How to use?
+
         Alice:
-           1. generate MAC
-           2. encrypt MAC with Alice's private key
-           3. add original message to result of 2
+           1. generate MAC.
+           2. encrypt MAC with Alice's private key.
+           3. add original message to result of 2 step.
            4. generate new symmetric key
-           5. encrypt 3 with the result of 4. the symmetric key
-           6. put symmetric key in E.E (encrypt E.E with Bob's public key)
-           7. add all result and send to Bob
+           5. encrypt result of 3 step with the result of 4 step. the symmetric key.
+           6. put symmetric key in E.E (encrypt E.E with Bob's public key).
+           7. add all result and send to Bob.
 
         Bob:
-           1.
-           2.
-           3.
-           4.
-           5.
-           6.
-           7.
+           1. open EE with Bob's private key to get symmetric key from EE. (receiver authentication)
+           2. encrypt message body with symmetric key from 1 step.
+           3. encrypt digital signature via Alice's public key (sender authentication)
+           4. hash the original plainText to create mac
+           5. compare the 3 step's mac and received mac (message integrity)
      */
 
     /*
-        1: MAC 생성
+        Alice 1: MAC 생성
      */
     public String generateMAC(String plainText) {
         MessageDigest md = null;
@@ -80,7 +85,7 @@ public class PGP {
     }
 
     /*
-        2. MAC 암호화
+        Alice 2. MAC 암호화
      */
     public String encryptMAC(String MAC){
         return encryptWithPrivateKey(MAC, this.senderPrivateKey);
@@ -135,7 +140,7 @@ public class PGP {
     }
 
     /*
-        3. 전자서명과 메시지 원본 합치기
+        Alice 3. 전자서명과 메시지 원본 합치기
      */
     public String concatResult(String plainText, String digitalSignature){
         StringBuffer sb = new StringBuffer();
@@ -149,7 +154,7 @@ public class PGP {
     }
 
     /*
-        4. 대칭키 생성
+        Alice 4. 대칭키 생성
      */
     public SecretKey generateSymmetricKey(){
         KeyGenerator generator = null;
@@ -164,7 +169,7 @@ public class PGP {
     }
 
     /*
-        5. 내용물을 대칭키로 암호화
+        Alice 5. 내용물을 대칭키로 암호화
      */
     public String encryptBody(String body, SecretKey secretKey){
         String encryptedData = "";
@@ -180,7 +185,7 @@ public class PGP {
     }
 
     /*
-        6. 전자봉투 생성
+        Alice 6. 전자봉투 생성
      */
     public String createEE(SecretKey secretKey, String receiverPublicKey){
         return encryptWithPublicKey(secretKey.getEncoded().toString(), receiverPublicKey);
@@ -238,7 +243,7 @@ public class PGP {
     }
 
     /*
-        8. 결과물과 전자봉투 합치기
+        Alice 8. 결과물과 전자봉투 합치기
      */
     public String generateFinalResult(String body, String EE){
         StringBuffer sb = new StringBuffer();
@@ -269,7 +274,93 @@ public class PGP {
         데이터 받기 - PGP 역방향 프로세스
      */
     public String receiveData(String cipherText){
-
-
+        return new String("");
     }
+
+    /*
+        1. open EE with Bob's private key to get symmetric key from EE. (receiver authentication)
+           2. encrypt message body with symmetric key from 1 step.
+           3. encrypt digital signature via Alice's public key (sender authentication)
+           4. hash the original plainText to create mac
+           5. compare the 3 step's mac and received mac (message integrity)
+     */
+
+    /*
+        Bob 1:
+     */
+    public HashMap<String, String> messageSplitter(String message){
+        String[] lines = message.split(System.getProperty("line.separator"));
+        HashMap<String, String> splitedData = new HashMap<>();
+        boolean beginBody = false;
+        boolean endBody = false;
+        boolean beginEE = false;
+        boolean endEE = false;
+        StringBuffer bodyBuffer = new StringBuffer();
+        StringBuffer eeBuffer = new StringBuffer();
+        for(int i = 0; i < lines.length; i++){
+            if(lines[i].contains("BEGIN BODY")){
+                beginBody = true;
+                continue;
+            }
+            if(lines[i].contains("END BODY")){
+                beginBody = false;
+                endBody = true;
+                continue;
+            }
+            if(lines[i].contains("BEGIN EE")){
+                endBody = false;
+                beginEE = true;
+                continue;
+            }
+            if(lines[i].contains("END EE")){
+                endBody = false;
+                endEE = true;
+                continue;
+            }
+            if(beginBody){
+                bodyBuffer.append(lines[i]);
+            }
+            if(beginEE){
+                eeBuffer.append(lines[i]);
+            }
+            if(endEE){
+                break;
+            }
+        }
+        splitedData.put("messageBody", bodyBuffer.toString());
+        splitedData.put("EE", eeBuffer.toString());
+        return splitedData;
+    }
+
+
+
+
+    public String openEE(String receiverPrivateKey){
+        return new String("");
+    }
+    /*
+        Bob 2:
+     */
+    public String encryptMessageBody(String body){
+        return new String("");
+    }
+
+    public String encryptDigitalSignature(String digitalSignature, String senderPublicKey){
+        return new String("");
+    }
+
+    /*
+        SHA-256 사용해서 MAC 생성
+     */
+    public String hashPlainText(String plainText){
+        return new String("");
+    }
+
+    /*
+        mac 값 비교
+     */
+    public boolean compareMAC(String receivedMAC, String generatedMAC){
+        return receivedMAC.equals(generatedMAC);
+    }
+
 }

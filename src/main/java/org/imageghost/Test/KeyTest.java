@@ -12,7 +12,7 @@ public class KeyTest {
     public void 대칭키생성테스트(){
 
         // given
-        PGP pgp = new PGP("", "", "");
+        PGP pgp = new PGP("", "", "", "");
 
         // when
         SecretKey secretKey = pgp.generateSymmetricKey();
