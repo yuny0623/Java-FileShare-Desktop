@@ -28,12 +28,19 @@ public class PGPTest {
 
         // when
         String fromData = pgp.sendData("테스트입니다.");
+        System.out.println("-------------------");
+        System.out.println("fromData: " + fromData);
+        System.out.println("-------------------");
+
         String toData = "";
         try {
             toData = pgp.receiveData(fromData);
         }catch(InvalidMessageIntegrityException e){
             e.printStackTrace();
         }
+        System.out.println("-------------------");
+        System.out.println("toData: " + toData);
+        System.out.println("-------------------");
 
         // then
         Assert.assertEquals(fromData, toData);

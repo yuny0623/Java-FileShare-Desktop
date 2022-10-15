@@ -171,10 +171,10 @@ public class PGP {
         StringBuffer sb = new StringBuffer();
         sb.append("-----BEGIN PLAIN TEXT-----\n");
         sb.append(plainText);
-        sb.append("-----END PLAIN TEXT-----\n");
+        sb.append("\n-----END PLAIN TEXT-----\n");
         sb.append("-----BEGIN DIGITAL SIGNATURE-----\n");
         sb.append(digitalSignature);
-        sb.append("-----END DIGITAL SIGNATURE-----\n");
+        sb.append("\n-----END DIGITAL SIGNATURE-----\n");
         return sb.toString();
     }
 
@@ -274,10 +274,10 @@ public class PGP {
         StringBuffer sb = new StringBuffer();
         sb.append("-----BEGIN BODY-----\n");
         sb.append(body);
-        sb.append("-----END BODY-----\n");
+        sb.append("\n-----END BODY-----\n");
         sb.append("-----BEGIN EE-----\n");
         sb.append(EE);
-        sb.append("-----END EE-----\n");
+        sb.append("\n-----END EE-----\n");
         return sb.toString();
     }
 
@@ -301,7 +301,9 @@ public class PGP {
         boolean endEE = false;
         StringBuffer bodyBuffer = new StringBuffer();
         StringBuffer eeBuffer = new StringBuffer();
+        System.out.println("This is dataSplitter output.");
         for(int i = 0; i < lines.length; i++){
+            System.out.println(lines[i]);
             if(lines[i].contains("BEGIN BODY")){
                 beginBody = true;
                 continue;
@@ -347,7 +349,9 @@ public class PGP {
         boolean endDigitalSignature = false;
         StringBuffer plainTextBuffer = new StringBuffer();
         StringBuffer digitalSignatureBuffer = new StringBuffer();
+        System.out.println("This is bodySplitter output.");
         for(int i = 0; i < lines.length; i++){
+            System.out.println(lines[i]);
             if(lines[i].contains("BEGIN PLAIN TEXT")){
                 beginPlainText = true;
                 continue;
@@ -378,7 +382,9 @@ public class PGP {
             }
         }
         this.receivedPlainText = plainTextBuffer.toString();
+        System.out.println("receivedPlainText: " + this.receivedPlainText);
         this.digitalSignature = digitalSignatureBuffer.toString();
+        System.out.println("digitalSignature: " + this.digitalSignature);
         return this;
     }
 
@@ -386,6 +392,8 @@ public class PGP {
         Bob의 private key를 사용해서 전자봉투 열어서 AES 키 꺼내기
      */
     private String openEE(String receiverPrivateKey){
+        System.out.println("this.ee: " + this.ee);
+        System.out.println("receiverPrivateKey: "+ receiverPrivateKey);
         return decryptWithPrivateKey(this.ee, receiverPrivateKey);
     }
 
@@ -431,7 +439,8 @@ public class PGP {
     public String receiveData(String cipherText) throws InvalidMessageIntegrityException{
         this.dataSplitter(cipherText).bodySplitter();
         String aesKey = openEE(this.receiverPrivateKey);
-        String body = decryptBodyWithAESKey(this.body, aesKey);
+        System.out.println("aesKey: " + aesKey);
+        decryptBodyWithAESKey(this.body, aesKey);
         String receivedMAC = decryptDigitalSignature(this.digitalSignature, this.senderPublicKey);
         String generatedMAC = hashPlainText(this.plainText);
         if(!compareMAC(receivedMAC, generatedMAC)){
@@ -440,21 +449,18 @@ public class PGP {
         return this.result;
     }
 
-    private String decryptBodyWithAESKey(String body, String aesKey) {
+    private void decryptBodyWithAESKey(String body, String aesKey) {
         // String 에서 aes key 복원하는 과정 진행...
         SecretKey secretKey = new SecretKeySpec(aesKey.getBytes(),"AES");
-
         String encryptedData = "";
         try {
             Cipher aesCipher = Cipher.getInstance("AES");
-            aesCipher.init(Cipher.ENCRYPT_MODE, secretKey);
-            byte[] byteCipherText = aesCipher.doFinal(body.getBytes());    // 암호문 생성
-            encryptedData = new String(byteCipherText);
+            aesCipher.init(Cipher.DECRYPT_MODE, secretKey);    // 복호화 모드 초기화
+            byte[] bytePlainText = aesCipher.doFinal(body.getBytes());   // 암호문 -> 평문으로 복호화
+            encryptedData = bytePlainText.toString();
         }catch(Exception e){
             e.printStackTrace();
         }
-        return encryptedData;
-
-        // return this.decryptedMAC;
+        bodySplitter();
     }
 }
