@@ -340,8 +340,8 @@ public class PGP {
         int digitalSignatureBeginIndex = body.indexOf("-----BEGIN DIGITAL SIGNATURE-----\n");
         int digitalSignatureEndIndex = body.indexOf("\n-----END DIGITAL SIGNATURE-----\n");
 
-        String receivedPlainText = body.substring(plainTextBeginIndex + plainTextString.length(), plainTextEndIndex);
-        String digitalSignature = body.substring(digitalSignatureBeginIndex + digitalSignatureString.length(), digitalSignatureEndIndex);
+        String receivedPlainText = body.substring(plainTextBeginIndex + plainTextString.length(), plainTextEndIndex + 1);
+        String digitalSignature = body.substring(digitalSignatureBeginIndex + digitalSignatureString.length(), digitalSignatureEndIndex + 1);
         this.receivedPlainText = receivedPlainText;
         this.digitalSignature = digitalSignature;
 
@@ -415,7 +415,7 @@ public class PGP {
         return this.result;
     }
 
-    private void decryptBodyWithAESKey(String body, SecretKey secretKey) {
+    private String decryptBodyWithAESKey(String body, SecretKey secretKey) {
         // String 에서 aes key 복원하는 과정 진행...
         String encryptedData = "";
         try {
@@ -427,5 +427,6 @@ public class PGP {
         }catch(Exception e){
             e.printStackTrace();
         }
+        return encryptedData;
     }
 }

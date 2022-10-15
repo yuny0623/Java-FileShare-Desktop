@@ -51,6 +51,11 @@ public class PGPTest {
     @Test
     public void splitter테스트(){
 
+        // given
+
+        // when
+
+        // then
     }
 
     /*
@@ -65,7 +70,6 @@ public class PGPTest {
     public void 전자봉투테스트(){
         // given
         PGP pgp = new PGP();
-
         HashMap<String, String> receivedKeyPair = AsymmetricKeyGenerator.generateKeyPair();
         String receiverPublicKey = receivedKeyPair.get("publicKey");
         String receiverPrivateKey = receivedKeyPair.get("privateKey");
@@ -76,11 +80,11 @@ public class PGPTest {
         String ee = pgp.createEE(secretKey, receiverPublicKey);
         SecretKey secretKey1 = pgp.openEE(ee, receiverPrivateKey);
 
-        System.out.printf("ee: %s\n", ee);
-        System.out.printf("aesKey: %s\n", aesKey);
-        System.out.printf("receivedAesKey: %s\n", secretKey1.getEncoded());
+        // then
+//        System.out.printf("ee: %s\n", ee);
+//        System.out.printf("aesKey: %s\n", aesKey);
+//        System.out.printf("receivedAesKey: %s\n", secretKey1.getEncoded());
 
         Assert.assertEquals(aesKey, secretKey1.getEncoded());
-        // then
     }
 }
