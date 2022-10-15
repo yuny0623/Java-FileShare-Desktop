@@ -8,6 +8,9 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.spec.KeySpec;
+import java.sql.SQLOutput;
 import java.util.HashMap;
 
 public class PGPTest {
@@ -50,7 +53,15 @@ public class PGPTest {
 
     @Test
     public void splitter테스트(){
-
+        String data = "-----BEGIN BODY-----\n" +
+                "� �\u0003�\u0014 7�Ya�\n" +
+                "iF�M�J��������-/��N�s���\u0019�\n" +
+                "\u0004.\u0005Q�\u007F��\n" +
+                "\n" +
+                "-----END BODY-----\n" +
+                "-----BEGIN EE-----\n" +
+                "KS+oTdF04fcCU5G8T0D+HP6hHIFkFQKERcdzZUmDC+AnrDSRKn3B+BR1QkA5bUap3cE2IH64mdls/qJvHGrYyE744+Xym2PtPxnF6jKKPq0ecxOCZWqeH0MmqZhp3/vSp3Q2lNB53oo7F7pGthzJIJHyHEgC5Qn2H4rkyFycfMyznROXP7aT3pEmEae0fzVgaCk057oizzvwJ20LIl8yRONmO0hmaCa6EXmijvcUiNcnC4UX87MAkQOxLIYgUlGRvLCPh1k9Z2aCHB3OpTJ9jzk8FG9Dpqw8Xyo1RfRY66Yv2L5s+Iatey8bgDllpPwl22y9GK6x9Xk3pA/Q4nMaAA==\n" +
+                "-----END EE-----";
         // given
 
         // when
@@ -81,10 +92,17 @@ public class PGPTest {
         SecretKey secretKey1 = pgp.openEE(ee, receiverPrivateKey);
 
         // then
-//        System.out.printf("ee: %s\n", ee);
-//        System.out.printf("aesKey: %s\n", aesKey);
-//        System.out.printf("receivedAesKey: %s\n", secretKey1.getEncoded());
+        System.out.printf("ee: %s\n", ee);
+        System.out.printf("aesKey: %s\n", aesKey);
+        System.out.printf("receivedAesKey: %s\n", new String(secretKey1.getEncoded()));
+        String secretKeyString = new String(secretKey1.getEncoded());
 
-        Assert.assertEquals(aesKey, secretKey1.getEncoded());
+        SecretKey secretKeyA = new SecretKeySpec(aesKey.getBytes(),"AES");
+        SecretKey secretKeyB = new SecretKeySpec(secretKeyString.getBytes(), "AES");
+        Assert.assertEquals(aesKey, new String(secretKey1.getEncoded()));
+
+        System.out.printf("A: %s\n", secretKeyA.getEncoded());
+        System.out.printf("B: %s\n", secretKeyB.getEncoded());
+        Assert.assertEquals(new String(secretKeyA.getEncoded()), new String(secretKeyB.getEncoded()));
     }
 }

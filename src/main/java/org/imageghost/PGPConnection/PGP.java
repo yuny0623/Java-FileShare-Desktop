@@ -217,15 +217,14 @@ public class PGP {
         Alice 6. 전자봉투 생성
      */
     public String createEE(SecretKey secretKey, String receiverPublicKey){
-        String data = new String(secretKey.getEncoded());
-        System.out.printf("sendData - 2: %s\n", data);
-        return encryptWithPublicKey(data, receiverPublicKey);
+        System.out.printf("sendData - 2: %s\n", secretKey.getEncoded());
+        return encryptWithPublicKey(secretKey, receiverPublicKey);
     }
 
     /*
         public key로 암호화
      */
-    private String encryptWithPublicKey(String data, String receiverPublicKey) {
+    private String encryptWithPublicKey(SecretKey secretKey, String receiverPublicKey) {
         String encryptedData = null;
         byte[] byteEncryptedData = null;
         try{
@@ -239,16 +238,18 @@ public class PGP {
             Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(cipher.ENCRYPT_MODE, publicKey);
 
-            System.out.printf("sendData - 3 (최종 input): %s\n", data.getBytes());
+            System.out.printf("sendData - 3 (최종 input): %s\n", secretKey.getEncoded());
             // plainText 암호화
-            byteEncryptedData = cipher.doFinal(data.getBytes());
+            byteEncryptedData = cipher.doFinal(secretKey.getEncoded());
             System.out.printf("sendData - 4 (암호화된 cipher): %s\n", byteEncryptedData);
             encryptedData = Base64.getEncoder().encodeToString(byteEncryptedData);
+            // encryptedData = Base64.getEncoder().encodeToString(byteEncryptedData);
+
             System.out.printf("sendData - 5 (base64 인코딩): %s\n", encryptedData);
         }catch(Exception e){
             e.printStackTrace();
         }
-        //return new String(byteEncryptedData);
+        // return new String(byteEncryptedData);
         return encryptedData;
         // return encryptedData;
     }
@@ -259,6 +260,7 @@ public class PGP {
     private String decryptWithPrivateKey(String cipherText, String receiverPrivateKey){
         String decryptedData = null;
         try {
+            System.out.println("1");
             // Private Key 객체 생성
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             byte[] bytePrivateKey = Base64.getDecoder().decode(receiverPrivateKey.getBytes());
@@ -270,7 +272,7 @@ public class PGP {
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
 
             // 암호문 복호화
-            byte[] byteEncryptedData = Base64.getDecoder().decode(cipherText.getBytes());
+            byte[] byteEncryptedData = Base64.getDecoder().decode(cipherText);
             System.out.printf("receiveData - 1 (base64인코딩):%s\n", byteEncryptedData);
             byte[] byteDecryptedData = cipher.doFinal(byteEncryptedData);
             System.out.printf("receiveData - 2 (첫 output): %s\n", byteDecryptedData);
@@ -332,6 +334,9 @@ public class PGP {
         전달받은 body를 plainText와 DigitalSignature로 분할
      */
     private HashMap<String, String> bodySplitter(String body){
+        System.out.println("body splitter");
+        System.out.println(body);
+        System.out.println(body.length());
         String plainTextString = "-----BEGIN PLAIN TEXT-----\n";
         String digitalSignatureString = "-----BEGIN DIGITAL SIGNATURE-----\n";
 
@@ -356,6 +361,7 @@ public class PGP {
      */
     public SecretKey openEE(String ee, String receiverPrivateKey){
         String decryptedData = decryptWithPrivateKey(ee, receiverPrivateKey);
+        System.out.printf("here? : %s\n", decryptedData);
         SecretKey secretKey = new SecretKeySpec(decryptedData.getBytes(),"AES");
         System.out.printf("receiveData - 4 %s\n", new String(secretKey.getEncoded()));
         return secretKey;
@@ -405,8 +411,8 @@ public class PGP {
         HashMap<String, String> dataMap = dataSplitter(cipherText);
         SecretKey secretKey = openEE(dataMap.get("ee"), this.receiverPrivateKey);
         System.out.printf("receiveData - 5: %s\n", new String(secretKey.getEncoded()));
-        decryptBodyWithAESKey(dataMap.get("body"), secretKey);
-        HashMap<String, String> bodyMap = bodySplitter(dataMap.get("body"));
+        String body = decryptBodyWithAESKey(dataMap.get("body"), secretKey);
+        HashMap<String, String> bodyMap = bodySplitter(body);
         String receivedMAC = decryptDigitalSignature(this.digitalSignature, this.senderPublicKey);
         String generatedMAC = hashPlainText(this.plainText);
         if(!compareMAC(receivedMAC, generatedMAC)){
