@@ -23,9 +23,9 @@ public class PGP {
     /*
         Bob
      */
+    private String receivedPlainText;
     private String mac;
-    private String message;
-    private String body;
+    private String messageBody;
     private String ee;
 
     public PGP(){
@@ -300,7 +300,7 @@ public class PGP {
     /*
         Bob 1:
      */
-    public HashMap<String, String> dataSplitter(String message){
+    public PGP dataSplitter(String message){
         String[] lines = message.split(System.getProperty("line.separator"));
         HashMap<String, String> splitedData = new HashMap<>();
         boolean beginBody = false;
@@ -339,9 +339,9 @@ public class PGP {
                 break;
             }
         }
-        splitedData.put("messageBody", bodyBuffer.toString());
-        splitedData.put("EE", eeBuffer.toString());
-        return splitedData;
+        this.ee = eeBuffer.toString();
+        this.messageBody = bodyBuffer.toString();
+        return this;
     }
 
     public String openEE(String receiverPrivateKey){
@@ -371,5 +371,4 @@ public class PGP {
     public boolean compareMAC(String receivedMAC, String generatedMAC){
         return receivedMAC.equals(generatedMAC);
     }
-
 }
