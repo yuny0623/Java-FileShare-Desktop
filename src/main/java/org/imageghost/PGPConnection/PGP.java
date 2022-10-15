@@ -91,7 +91,7 @@ public class PGP {
     /*
         Alice 1: MAC 생성
      */
-    private String generateMAC(String plainText) {
+    private byte[] generateMAC(String plainText) {
         MessageDigest md = null;
         try {
             md = MessageDigest.getInstance("SHA-256");
@@ -99,16 +99,16 @@ public class PGP {
         }catch(NoSuchAlgorithmException e){
             e.printStackTrace();
         }
-        return bytesToHex(md.digest());
+        return md.digest();
     }
 
-    private String bytesToHex(byte[] bytes) {
-        StringBuilder builder = new StringBuilder();
-        for (byte b : bytes) {
-            builder.append(String.format("%02x", b));
-        }
-        return builder.toString();
-    }
+//    public String bytesToHex(byte[] bytes) {
+//        StringBuilder builder = new StringBuilder();
+//        for (byte b : bytes) {
+//            builder.append(String.format("%02x", b));
+//        }
+//        return builder.toString();
+//    }
 
     /*
         Alice 2. MAC 암호화
@@ -213,7 +213,7 @@ public class PGP {
     /*
         Alice 6. 전자봉투 생성
      */
-    private String createEE(SecretKey secretKey, String receiverPublicKey){
+    public String createEE(SecretKey secretKey, String receiverPublicKey){
         return encryptWithPublicKey(secretKey.getEncoded().toString(), receiverPublicKey);
     }
 
@@ -340,8 +340,8 @@ public class PGP {
     /*
         Bob의 private key를 사용해서 전자봉투 열어서 AES 키 꺼내기
      */
-    private String openEE(String receiverPrivateKey){
-        return decryptWithPrivateKey(this.ee, receiverPrivateKey);
+    public String openEE(String ee, String receiverPrivateKey){
+        return decryptWithPrivateKey(ee, receiverPrivateKey);
     }
 
     /*
@@ -386,7 +386,7 @@ public class PGP {
      */
     public String receiveData(String cipherText) throws InvalidMessageIntegrityException{
         HashMap<String, String> dataMap = dataSplitter(cipherText);
-        String aesKey = openEE(this.receiverPrivateKey);
+        String aesKey = openEE(this.ee, this.receiverPrivateKey);
         System.out.printf("receiveData:aesKey: %s\n", aesKey);
         decryptBodyWithAESKey(dataMap.get("body"), aesKey);
         HashMap<String, String> bodyMap = bodySplitter(dataMap.get("body"));

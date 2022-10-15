@@ -1,11 +1,13 @@
 package org.imageghost.Test;
 
+import org.imageghost.FileController.AESKeyMaker;
 import org.imageghost.Key.AsymmetricKeyGenerator;
 import org.imageghost.PGPConnection.CutomException.InvalidMessageIntegrityException;
 import org.imageghost.PGPConnection.PGP;
 import org.junit.Assert;
 import org.junit.Test;
 
+import javax.crypto.SecretKey;
 import java.util.HashMap;
 
 public class PGPTest {
@@ -53,6 +55,29 @@ public class PGPTest {
 
     @Test
     public void 전자봉투테스트(){
-        
+        /*
+            Alice
+            1. aes 키 생성
+            2. aes 키를 BOB의  public key로 잠구
+
+            Bob:
+            1. 전자봉투를 private key로 열어서 aes 키 얻어냄.
+         */
+
+        // given
+        PGP pgp = new PGP();
+
+        HashMap<String, String> receiverKeyPair = AsymmetricKeyGenerator.generateKeyPair();
+        String receiverPublicKey = receiverKeyPair.get("publicKey");
+        String receiverPrivateKey = receiverKeyPair.get("privateKey");
+
+        SecretKey secretKey = AESKeyMaker.generateAESKey();
+        byte[] aesKey = secretKey.getEncoded();
+        // when
+        String ee = pgp.createEE(secretKey, receiverPublicKey);
+        String receivedAesKey = pgp.openEE(ee, receiverPrivateKey);
+
+        Assert.assertEquals(secretKey.getEncoded().toString(), receivedAesKey);
+        // then
     }
 }
