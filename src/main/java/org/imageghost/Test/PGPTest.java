@@ -29,7 +29,7 @@ public class PGPTest {
         // when
         String fromData = pgp.sendData("테스트입니다.");
         System.out.println("-------------------");
-        System.out.println("fromData: " + fromData);
+        System.out.println(fromData);
         System.out.println("-------------------");
 
         String toData = "";
@@ -39,7 +39,7 @@ public class PGPTest {
             e.printStackTrace();
         }
         System.out.println("-------------------");
-        System.out.println("toData: " + toData);
+        System.out.println("toData: " + toData + "\n");
         System.out.println("-------------------");
 
         // then
@@ -49,5 +49,10 @@ public class PGPTest {
     @Test
     public void splitter테스트(){
 
+    }
+
+    @Test
+    public void 전자봉투테스트(){
+        
     }
 }

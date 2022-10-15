@@ -295,7 +295,6 @@ public class PGP {
         전달받은 데이터를 body와 ee로 분할
      */
     private HashMap<String, String> dataSplitter(String message){
-        System.out.println("This is dataSplitter output.");
         String bodyString = "-----BEGIN BODY-----\n";
         String eeString = "-----BEGIN EE-----\n";
 
@@ -304,18 +303,12 @@ public class PGP {
         int eeBeginIndex = message.indexOf("-----BEGIN EE-----\n");
         int eeEndIndex = message.indexOf("\n-----END EE-----\n");
 
-        System.out.println(bodyBeginIndex);
-        System.out.println(bodyEndIndex);
-        System.out.println(eeBeginIndex);
-        System.out.println(eeEndIndex);
-
         String body = message.substring(bodyBeginIndex + bodyString.length(), bodyEndIndex);
         String ee = message.substring(eeBeginIndex + eeString.length(), eeEndIndex);
 
-        System.out.println("dataSplitter result -> ee: "+ ee);
-        System.out.println("dataSplitter result -> body: "+ body);
-
         HashMap<String, String> dataMap = new HashMap<>();
+        this.ee = ee;
+        this.body = body;
         dataMap.put("ee", ee);
         dataMap.put("body", body);
         return dataMap;
@@ -325,8 +318,6 @@ public class PGP {
         전달받은 body를 plainText와 DigitalSignature로 분할
      */
     private HashMap<String, String> bodySplitter(String body){
-        System.out.println("This is bodySplitter output.");
-        System.out.println(body);
         String plainTextString = "-----BEGIN PLAIN TEXT-----\n";
         String digitalSignatureString = "-----BEGIN DIGITAL SIGNATURE-----\n";
 
@@ -335,20 +326,10 @@ public class PGP {
         int digitalSignatureBeginIndex = body.indexOf("-----BEGIN DIGITAL SIGNATURE-----\n");
         int digitalSignatureEndIndex = body.indexOf("\n-----END DIGITAL SIGNATURE-----\n");
 
-        System.out.println(plainTextBeginIndex);
-        System.out.println(plainTextEndIndex);
-        System.out.println(digitalSignatureBeginIndex);
-        System.out.println(digitalSignatureEndIndex);
-        System.out.println("bodySplitter debug console");
-        System.out.printf("body length: %d\n", body.length());
-        System.out.printf("plainTextString length: %d\n", plainTextString.length());
-
-
         String receivedPlainText = body.substring(plainTextBeginIndex + plainTextString.length(), plainTextEndIndex);
         String digitalSignature = body.substring(digitalSignatureBeginIndex + digitalSignatureString.length(), digitalSignatureEndIndex);
-
-        System.out.println("bodySplitter result -> receivedPlainText: " + receivedPlainText);
-        System.out.println("bodySplitter result -> digitalSignature: " + digitalSignature);
+        this.receivedPlainText = receivedPlainText;
+        this.digitalSignature = digitalSignature;
 
         HashMap<String, String> bodyMap = new HashMap<>();
         bodyMap.put("receivedPlainText", receivedPlainText);
@@ -360,8 +341,6 @@ public class PGP {
         Bob의 private key를 사용해서 전자봉투 열어서 AES 키 꺼내기
      */
     private String openEE(String receiverPrivateKey){
-        System.out.println("this.ee: " + this.ee);
-        System.out.println("receiverPrivateKey: "+ receiverPrivateKey);
         return decryptWithPrivateKey(this.ee, receiverPrivateKey);
     }
 
@@ -395,6 +374,7 @@ public class PGP {
         String digitalSignature = encryptMAC(mac);
         String body = appendSignatureToBody(plainText, digitalSignature);
         SecretKey secretKey = generateSymmetricKey();
+        System.out.printf("sendData:aesKey: %s\n", secretKey.getEncoded());
         String enctyptedBody = encryptBody(body, secretKey);
         String EE = createEE(secretKey, this.receiverPublicKey);
         String finalResult = appendEEWithBody(enctyptedBody, EE);
@@ -405,13 +385,11 @@ public class PGP {
         데이터 받기 - PGP 역방향 프로세스
      */
     public String receiveData(String cipherText) throws InvalidMessageIntegrityException{
-        System.out.println("*** receiveData method ***");
-        System.out.println("cipherText: " + cipherText);
-        // HashMap<String, String> bodyMap = bodySplitter(dataMap.get("body"));
-
         HashMap<String, String> dataMap = dataSplitter(cipherText);
         String aesKey = openEE(this.receiverPrivateKey);
+        System.out.printf("receiveData:aesKey: %s\n", aesKey);
         decryptBodyWithAESKey(dataMap.get("body"), aesKey);
+        HashMap<String, String> bodyMap = bodySplitter(dataMap.get("body"));
         String receivedMAC = decryptDigitalSignature(this.digitalSignature, this.senderPublicKey);
         String generatedMAC = hashPlainText(this.plainText);
         if(!compareMAC(receivedMAC, generatedMAC)){
@@ -429,6 +407,7 @@ public class PGP {
             aesCipher.init(Cipher.DECRYPT_MODE, secretKey);    // 복호화 모드 초기화
             byte[] bytePlainText = aesCipher.doFinal(body.getBytes());   // 암호문 -> 평문으로 복호화
             encryptedData = bytePlainText.toString();
+            this.body = encryptedData;
         }catch(Exception e){
             e.printStackTrace();
         }
