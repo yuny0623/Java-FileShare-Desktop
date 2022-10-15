@@ -7,6 +7,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.sql.SQLOutput;
 import java.util.Base64;
 import java.util.HashMap;
 
@@ -293,99 +294,45 @@ public class PGP {
     /*
         전달받은 데이터를 body와 ee로 분할
      */
-    private PGP dataSplitter(String message){
-        String[] lines = message.split(System.getProperty("line.separator"));
-        boolean beginBody = false;
-        boolean endBody = false;
-        boolean beginEE = false;
-        boolean endEE = false;
-        StringBuffer bodyBuffer = new StringBuffer();
-        StringBuffer eeBuffer = new StringBuffer();
+    private HashMap<String, String> dataSplitter(String message){
         System.out.println("This is dataSplitter output.");
-        for(int i = 0; i < lines.length; i++){
-            System.out.println(lines[i]);
-            if(lines[i].contains("BEGIN BODY")){
-                beginBody = true;
-                continue;
-            }
-            if(lines[i].contains("END BODY")){
-                beginBody = false;
-                endBody = true;
-                continue;
-            }
-            if(lines[i].contains("BEGIN EE")){
-                endBody = false;
-                beginEE = true;
-                continue;
-            }
-            if(lines[i].contains("END EE")){
-                endBody = false;
-                endEE = true;
-                continue;
-            }
-            if(beginBody){
-                bodyBuffer.append(lines[i]);
-            }
-            if(beginEE){
-                eeBuffer.append(lines[i]);
-            }
-            if(endEE){
-                break;
-            }
-        }
-        this.ee = eeBuffer.toString();
-        this.body = bodyBuffer.toString();
-        return this;
+        int bodyBeginIndex = message.indexOf("-----BEGIN BODY-----\n");
+        int bodyEndIndex = message.indexOf("\n-----END BODY-----\n");
+        int eeBeginIndex = message.indexOf("-----BEGIN EE-----\n");
+        int eeEndIndex = message.indexOf("\n-----END EE-----\n");
+
+        String body = message.substring(bodyBeginIndex + 21, bodyEndIndex);
+        String ee = message.substring(eeBeginIndex + 19, eeEndIndex);
+
+        System.out.println("dataSplitter result -> ee: "+ ee);
+        System.out.println("dataSplitter result -> body: "+ body);
+
+        HashMap<String, String> dataMap = new HashMap<>();
+        dataMap.put("ee", ee);
+        dataMap.put("body", body);
+        return dataMap;
     }
 
     /*
         전달받은 body를 plainText와 DigitalSignature로 분할
      */
-    private PGP bodySplitter(){
-        String[] lines = this.body.split(System.getProperty("line.separator"));
-        boolean beginPlainText = false;
-        boolean endPlainText = false;
-        boolean beginDigitalSignature = false;
-        boolean endDigitalSignature = false;
-        StringBuffer plainTextBuffer = new StringBuffer();
-        StringBuffer digitalSignatureBuffer = new StringBuffer();
-        System.out.println("This is bodySplitter output.");
-        for(int i = 0; i < lines.length; i++){
-            System.out.println(lines[i]);
-            if(lines[i].contains("BEGIN PLAIN TEXT")){
-                beginPlainText = true;
-                continue;
-            }
-            if(lines[i].contains("END PLAIN TEXT")){
-                beginPlainText = false;
-                endPlainText = true;
-                continue;
-            }
-            if(lines[i].contains("BEGIN DIGITAL SIGNATURE")){
-                endPlainText = false;
-                beginDigitalSignature = true;
-                continue;
-            }
-            if(lines[i].contains("END DIGITAL SIGNATURE")){
-                beginDigitalSignature = false;
-                endDigitalSignature = true;
-                continue;
-            }
-            if(beginPlainText){
-                plainTextBuffer.append(lines[i]);
-            }
-            if(beginDigitalSignature){
-                digitalSignatureBuffer.append(lines[i]);
-            }
-            if(endDigitalSignature){
-                break;
-            }
-        }
-        this.receivedPlainText = plainTextBuffer.toString();
-        System.out.println("receivedPlainText: " + this.receivedPlainText);
-        this.digitalSignature = digitalSignatureBuffer.toString();
-        System.out.println("digitalSignature: " + this.digitalSignature);
-        return this;
+    private HashMap<String, String> bodySplitter(String body){
+        System.out.println("This is dataSplitter output.");
+        int bodyBeginIndex = body.indexOf("-----BEGIN BODY-----\n");
+        int bodyEndIndex = body.indexOf("\n-----END BODY-----\n");
+        int eeBeginIndex = body.indexOf("-----BEGIN EE-----\n");
+        int eeEndIndex = body.indexOf("\n-----END EE-----\n");
+
+        String plainText = body.substring(bodyBeginIndex + 21, bodyEndIndex);
+        String ee = body.substring(eeBeginIndex + 19, eeEndIndex);
+
+        System.out.println("dataSplitter result -> ee: "+ ee);
+        System.out.println("dataSplitter result -> body: "+ body);
+
+        HashMap<String, String> dataMap = new HashMap<>();
+        dataMap.put("ee", ee);
+        dataMap.put("body", body);
+        return dataMap;
     }
 
     /*
@@ -437,7 +384,18 @@ public class PGP {
         데이터 받기 - PGP 역방향 프로세스
      */
     public String receiveData(String cipherText) throws InvalidMessageIntegrityException{
-        this.dataSplitter(cipherText).bodySplitter();
+        System.out.println("*** receiveData method ***");
+        System.out.println("cipherText: " + cipherText);
+        HashMap<String, String> dataMap = dataSplitter(cipherText);
+        HashMap<String, String> bodyMap = bodySplitter(dataMap.get("body"));
+
+        System.out.println("------------receiveData-------------");
+        System.out.println(dataMap.get("body"));
+        System.out.println(dataMap.get("ee"));
+        System.out.println(bodyMap.get("receivedPlainText"));
+        System.out.println(bodyMap.get("digitalSignature"));
+        System.out.println("------------receiveData-------------");
+
         String aesKey = openEE(this.receiverPrivateKey);
         System.out.println("aesKey: " + aesKey);
         decryptBodyWithAESKey(this.body, aesKey);
@@ -461,6 +419,5 @@ public class PGP {
         }catch(Exception e){
             e.printStackTrace();
         }
-        bodySplitter();
     }
 }
