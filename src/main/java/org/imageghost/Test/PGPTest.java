@@ -77,7 +77,11 @@ public class PGPTest {
         String ee = pgp.createEE(secretKey, receiverPublicKey);
         String receivedAesKey = pgp.openEE(ee, receiverPrivateKey);
 
-        Assert.assertEquals(new String(secretKey.getEncoded()), receivedAesKey);
+        System.out.printf("ee: %s\n", ee);
+        System.out.printf("aesKey: %s\n", aesKey);
+        System.out.printf("receivedAesKey: %s\n", receivedAesKey);
+
+        Assert.assertEquals(aesKey, receivedAesKey);
         // then
     }
 }

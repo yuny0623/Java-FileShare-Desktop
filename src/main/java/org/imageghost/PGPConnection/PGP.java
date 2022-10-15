@@ -91,7 +91,7 @@ public class PGP {
     /*
         Alice 1: MAC 생성
      */
-    private byte[] generateMAC(String plainText) {
+    private String generateMAC(String plainText) {
         MessageDigest md = null;
         try {
             md = MessageDigest.getInstance("SHA-256");
@@ -99,7 +99,7 @@ public class PGP {
         }catch(NoSuchAlgorithmException e){
             e.printStackTrace();
         }
-        return md.digest();
+        return new String(md.digest());
     }
 
 //    public String bytesToHex(byte[] bytes) {
@@ -358,7 +358,7 @@ public class PGP {
     /*
         SHA-256 사용해서 MAC 생성
      */
-    private byte[] hashPlainText(String receivedPlainText){
+    private String hashPlainText(String receivedPlainText){
         return generateMAC(receivedPlainText);
     }
     /*
@@ -374,13 +374,13 @@ public class PGP {
     */
     public String sendData(String plainText){
         this.plainText = plainText;
-        String mac = generateMAC(plainText).toString();
+        String mac = generateMAC(plainText);
         String digitalSignature = encryptMAC(mac);
         String body = appendSignatureToBody(plainText, digitalSignature);
         SecretKey secretKey = generateSymmetricKey();
         System.out.printf("sendData:aesKey: %s\n", secretKey.getEncoded());
         String enctyptedBody = encryptBody(body, secretKey);
-        String EE = createEE(secretKey, this.receiverPublicKey).toString();
+        String EE = createEE(secretKey, this.receiverPublicKey);
         String finalResult = appendEEWithBody(enctyptedBody, EE);
         return finalResult;
     }
@@ -390,12 +390,12 @@ public class PGP {
      */
     public String receiveData(String cipherText) throws InvalidMessageIntegrityException{
         HashMap<String, String> dataMap = dataSplitter(cipherText);
-        String aesKey = openEE(dataMap.get("ee"), this.receiverPrivateKey).toString();
+        String aesKey = openEE(dataMap.get("ee"), this.receiverPrivateKey);
         System.out.printf("receiveData:aesKey: %s\n", aesKey);
         decryptBodyWithAESKey(dataMap.get("body"), aesKey);
         HashMap<String, String> bodyMap = bodySplitter(dataMap.get("body"));
         String receivedMAC = decryptDigitalSignature(this.digitalSignature, this.senderPublicKey);
-        String generatedMAC = hashPlainText(this.plainText).toString();
+        String generatedMAC = hashPlainText(this.plainText);
         if(!compareMAC(receivedMAC, generatedMAC)){
             throw new InvalidMessageIntegrityException("Message Integrity is invalid. Message has changed or broken while communication");
         }
@@ -410,7 +410,7 @@ public class PGP {
             Cipher aesCipher = Cipher.getInstance("AES");
             aesCipher.init(Cipher.DECRYPT_MODE, secretKey);    // 복호화 모드 초기화
             byte[] bytePlainText = aesCipher.doFinal(body.getBytes());   // 암호문 -> 평문으로 복호화
-            encryptedData = bytePlainText.toString();
+            encryptedData = new String(bytePlainText);
             this.body = encryptedData;
         }catch(Exception e){
             e.printStackTrace();
