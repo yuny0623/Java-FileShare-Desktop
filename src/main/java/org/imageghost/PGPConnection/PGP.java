@@ -389,16 +389,16 @@ public class PGP {
         return this;
     }
 
+    /*
+        Bob의 private key를 사용해서 전자봉투 열어서 AES 키 꺼내기
+     */
     public String openEE(String receiverPrivateKey){
         return new String("");
     }
-    /*
-        Bob 2:
-     */
-    public String encryptMessageBody(String body){
-        return new String("");
-    }
 
+    /*
+        DigitalSignature 를 Alice의 public key로 열기
+     */
     public String encryptDigitalSignature(String digitalSignature, String senderPublicKey){
         return new String("");
     }
@@ -406,10 +406,9 @@ public class PGP {
     /*
         SHA-256 사용해서 MAC 생성
      */
-    public String hashPlainText(String plainText){
+    public String hashPlainText(String receivedPlainText){
         return new String("");
     }
-
     /*
         mac 값 비교
      */
