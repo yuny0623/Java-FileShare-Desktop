@@ -24,8 +24,8 @@ public class PGP {
         Bob
      */
     private String receivedPlainText;
-    private String mac;
-    private String messageBody;
+    private String digitalSignature;
+    private String body;
     private String ee;
 
     public PGP(){
@@ -298,11 +298,10 @@ public class PGP {
      */
 
     /*
-        Bob 1:
+        전달받은 데이터를 body와 ee로 분할
      */
     public PGP dataSplitter(String message){
         String[] lines = message.split(System.getProperty("line.separator"));
-        HashMap<String, String> splitedData = new HashMap<>();
         boolean beginBody = false;
         boolean endBody = false;
         boolean beginEE = false;
@@ -340,7 +339,53 @@ public class PGP {
             }
         }
         this.ee = eeBuffer.toString();
-        this.messageBody = bodyBuffer.toString();
+        this.body = bodyBuffer.toString();
+        return this;
+    }
+
+    /*
+        전달받은 body를 plainText와 전자서명으로 분할
+     */
+    public PGP bodySplitter(){
+        String[] lines = this.body.split(System.getProperty("line.separator"));
+        boolean beginPlainText = false;
+        boolean endPlainText = false;
+        boolean beginDigitalSignature = false;
+        boolean endDigitalSignature = false;
+        StringBuffer plainTextBuffer = new StringBuffer();
+        StringBuffer digitalSignatureBuffer = new StringBuffer();
+        for(int i = 0; i < lines.length; i++){
+            if(lines[i].contains("BEGIN PLAIN TEXT")){
+                beginPlainText = true;
+                continue;
+            }
+            if(lines[i].contains("END PLAIN TEXT")){
+                beginPlainText = false;
+                endPlainText = true;
+                continue;
+            }
+            if(lines[i].contains("BEGIN DIGITAL SIGNATURE")){
+                endPlainText = false;
+                beginDigitalSignature = true;
+                continue;
+            }
+            if(lines[i].contains("END DIGITAL SIGNATURE")){
+                beginDigitalSignature = false;
+                endDigitalSignature = true;
+                continue;
+            }
+            if(beginPlainText){
+                plainTextBuffer.append(lines[i]);
+            }
+            if(beginDigitalSignature){
+                digitalSignatureBuffer.append(lines[i]);
+            }
+            if(endDigitalSignature){
+                break;
+            }
+        }
+        this.receivedPlainText = plainTextBuffer.toString();
+        this.digitalSignature = digitalSignatureBuffer.toString();
         return this;
     }
 
