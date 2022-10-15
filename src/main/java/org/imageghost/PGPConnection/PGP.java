@@ -1,5 +1,7 @@
 package org.imageghost.PGPConnection;
 
+import org.imageghost.PGPConnection.CutomException.InvalidMessageIntegrityException;
+
 import javax.crypto.*;
 import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -414,13 +416,13 @@ public class PGP {
     /*
         데이터 받기 - PGP 역방향 프로세스
      */
-    public String receiveData(String cipherText){
+    public String receiveData(String cipherText) throws InvalidMessageIntegrityException{
         this.dataSplitter(cipherText).bodySplitter();
         String aesKey = openEE(this.receiverPrivateKey);
         String receivedMAC = encryptDigitalSignature(this.digitalSignature, this.senderPublicKey);
         String generatedMAC = hashPlainText(this.plainText);
         if(!compareMAC(receivedMAC, generatedMAC)){
-            return new String("");
+            throw new InvalidMessageIntegrityException("Message Integrity is invalid. Message has changed or broken while communication");
         }
         return this.plainText;
     }
