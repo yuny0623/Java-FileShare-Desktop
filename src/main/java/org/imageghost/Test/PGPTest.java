@@ -1,16 +1,17 @@
 package org.imageghost.Test;
 
 import org.imageghost.Key.AsymmetricKeyGenerator;
+import org.imageghost.PGPConnection.CutomException.InvalidMessageIntegrityException;
 import org.imageghost.PGPConnection.PGP;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.HashMap;
 
 public class PGPTest {
     @Test
-    void pgp구조테스트(){
-        PGP pgp = new PGP();
-
+    public void pgp구조테스트(){
+        // given
         HashMap<String, String> senderKeyPair = AsymmetricKeyGenerator.generateKeyPair();
         String senderPublicKey = senderKeyPair.get("publicKey");
         String senderPrivateKey = senderKeyPair.get("privateKey");
@@ -19,11 +20,27 @@ public class PGPTest {
         String receiverPublicKey = receiverKeyPair.get("publicKey");
         String receiverPrivateKey = receiverKeyPair.get("privateKey");
 
-        pgp.setPlainText(" 테스트입니다.");
+        PGP pgp = new PGP();
         pgp.setReceiverPublicKey(senderPublicKey);
         pgp.setSenderPrivateKey(senderPrivateKey);
-
         pgp.setReceiverPublicKey(receiverPublicKey);
         pgp.setReceiverPrivateKey(receiverPrivateKey);
+
+        // when
+        String fromData = pgp.sendData("테스트입니다.");
+        String toData = "";
+        try {
+            toData = pgp.receiveData(fromData);
+        }catch(InvalidMessageIntegrityException e){
+            e.printStackTrace();
+        }
+
+        // then
+        Assert.assertEquals(fromData, toData);
+    }
+
+    @Test
+    public void splitter테스트(){
+
     }
 }

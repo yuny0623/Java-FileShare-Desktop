@@ -3,6 +3,7 @@ package org.imageghost.PGPConnection;
 import org.imageghost.PGPConnection.CutomException.InvalidMessageIntegrityException;
 
 import javax.crypto.*;
+import javax.crypto.spec.SecretKeySpec;
 import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -27,19 +28,23 @@ public class PGP {
         Bob
      */
     private String receivedPlainText;
+    private String decryptedMAC;
+    private String result;
     private String digitalSignature;
     private String body;
     private String ee;
+    private String aesKey;
 
     public PGP(){
 
     }
 
-    public PGP(String plainText, String senderPublicKey, String senderPrivateKey, String receiverPublicKey){
+    public PGP(String plainText, String senderPublicKey, String senderPrivateKey, String receiverPublicKey, String receiverPrivateKey){
         this.plainText = plainText;
         this.senderPublicKey = senderPublicKey;
         this.senderPrivateKey = senderPrivateKey;
         this.receiverPublicKey = receiverPublicKey;
+        this.receiverPrivateKey = receiverPrivateKey;
     }
 
     public void setPlainText(String plainText){
@@ -162,7 +167,7 @@ public class PGP {
     /*
         Alice 3. 전자서명과 메시지 원본 합치기
      */
-    private String concatResult(String plainText, String digitalSignature){
+    private String appendSignatureToBody(String plainText, String digitalSignature){
         StringBuffer sb = new StringBuffer();
         sb.append("-----BEGIN PLAIN TEXT-----\n");
         sb.append(plainText);
@@ -265,7 +270,7 @@ public class PGP {
     /*
         Alice 8. 결과물과 전자봉투 합치기
      */
-    private String generateFinalResult(String body, String EE){
+    private String appendEEWithBody(String body, String EE){
         StringBuffer sb = new StringBuffer();
         sb.append("-----BEGIN BODY-----\n");
         sb.append(body);
@@ -332,7 +337,7 @@ public class PGP {
     }
 
     /*
-        전달받은 body를 plainText와 전자서명으로 분할
+        전달받은 body를 plainText와 DigitalSignature로 분할
      */
     private PGP bodySplitter(){
         String[] lines = this.body.split(System.getProperty("line.separator"));
@@ -385,9 +390,9 @@ public class PGP {
     }
 
     /*
-        DigitalSignature 를 Alice의 public key로 열기
+        Bob: DigitalSignature 를 Alice의 public key로 열기
      */
-    private String encryptDigitalSignature(String digitalSignature, String senderPublicKey){
+    private String decryptDigitalSignature(String digitalSignature, String senderPublicKey){
         return decryptWithPublicKey(digitalSignature, senderPublicKey);
     }
 
@@ -409,12 +414,14 @@ public class PGP {
         데이터 보내기 - PGP 순방향 프로세스
     */
     public String sendData(String plainText){
+        this.plainText = plainText;
         String mac = generateMAC(plainText);
         String digitalSignature = encryptMAC(mac);
-        String body = concatResult(this.plainText,digitalSignature);
+        String body = appendSignatureToBody(plainText, digitalSignature);
         SecretKey secretKey = generateSymmetricKey();
-        String result = encryptBody(body, secretKey);
-        String finalResult = createEE(secretKey, this.receiverPublicKey);
+        String enctyptedBody = encryptBody(body, secretKey);
+        String EE = createEE(secretKey, this.receiverPublicKey);
+        String finalResult = appendEEWithBody(enctyptedBody, EE);
         return finalResult;
     }
 
@@ -424,11 +431,30 @@ public class PGP {
     public String receiveData(String cipherText) throws InvalidMessageIntegrityException{
         this.dataSplitter(cipherText).bodySplitter();
         String aesKey = openEE(this.receiverPrivateKey);
-        String receivedMAC = encryptDigitalSignature(this.digitalSignature, this.senderPublicKey);
+        String body = decryptBodyWithAESKey(this.body, aesKey);
+        String receivedMAC = decryptDigitalSignature(this.digitalSignature, this.senderPublicKey);
         String generatedMAC = hashPlainText(this.plainText);
         if(!compareMAC(receivedMAC, generatedMAC)){
             throw new InvalidMessageIntegrityException("Message Integrity is invalid. Message has changed or broken while communication");
         }
-        return this.plainText;
+        return this.result;
+    }
+
+    private String decryptBodyWithAESKey(String body, String aesKey) {
+        // String 에서 aes key 복원하는 과정 진행...
+        SecretKey secretKey = new SecretKeySpec(aesKey.getBytes(),"AES");
+
+        String encryptedData = "";
+        try {
+            Cipher aesCipher = Cipher.getInstance("AES");
+            aesCipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            byte[] byteCipherText = aesCipher.doFinal(body.getBytes());    // 암호문 생성
+            encryptedData = new String(byteCipherText);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return encryptedData;
+
+        // return this.decryptedMAC;
     }
 }
