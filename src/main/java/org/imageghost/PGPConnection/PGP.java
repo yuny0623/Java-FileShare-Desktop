@@ -11,10 +11,22 @@ public class PGP {
     /*
         PGP Communication Implementation - by yuny0623
      */
+
+    /*
+        Alice
+     */
     private String plainText;
     private String senderPublicKey;
     private String senderPrivateKey;
     private String receiverPublicKey;
+
+    /*
+        Bob
+     */
+    private String mac;
+    private String message;
+    private String body;
+    private String ee;
 
     public PGP(){
 
@@ -288,7 +300,7 @@ public class PGP {
     /*
         Bob 1:
      */
-    public HashMap<String, String> messageSplitter(String message){
+    public HashMap<String, String> dataSplitter(String message){
         String[] lines = message.split(System.getProperty("line.separator"));
         HashMap<String, String> splitedData = new HashMap<>();
         boolean beginBody = false;
@@ -331,9 +343,6 @@ public class PGP {
         splitedData.put("EE", eeBuffer.toString());
         return splitedData;
     }
-
-
-
 
     public String openEE(String receiverPrivateKey){
         return new String("");
