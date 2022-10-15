@@ -57,6 +57,11 @@ public class PGP {
         this.receiverPublicKey = receiverPublicKey;
     }
 
+    public void setReceiverPrivateKey(String receiverPrivateKey){
+        this.receiverPrivateKey = receiverPrivateKey;
+    }
+
+
     /*
         How to use?
 
@@ -80,7 +85,7 @@ public class PGP {
     /*
         Alice 1: MAC 생성
      */
-    public String generateMAC(String plainText) {
+    private String generateMAC(String plainText) {
         MessageDigest md = null;
         try {
             md = MessageDigest.getInstance("SHA-256");
@@ -102,14 +107,14 @@ public class PGP {
     /*
         Alice 2. MAC 암호화
      */
-    public String encryptMAC(String MAC){
+    private String encryptMAC(String MAC){
         return encryptWithPrivateKey(MAC, this.senderPrivateKey);
     }
 
     /*
         private key로 전자서명에 사인
      */
-    public String encryptWithPrivateKey(String plainText, String senderPrivateKey) {
+    private String encryptWithPrivateKey(String plainText, String senderPrivateKey) {
         PrivateKey privateKey;
         String encryptedText = "";
 
@@ -133,7 +138,7 @@ public class PGP {
     /*
         public key로 전자서명 풀기
      */
-    public String decryptWithPublicKey(String cipherText, String senderPublicKey) {
+    private String decryptWithPublicKey(String cipherText, String senderPublicKey) {
         PublicKey publicKey;
         String decryptedText = "";
         try{
@@ -157,7 +162,7 @@ public class PGP {
     /*
         Alice 3. 전자서명과 메시지 원본 합치기
      */
-    public String concatResult(String plainText, String digitalSignature){
+    private String concatResult(String plainText, String digitalSignature){
         StringBuffer sb = new StringBuffer();
         sb.append("-----BEGIN PLAIN TEXT-----\n");
         sb.append(plainText);
@@ -171,7 +176,7 @@ public class PGP {
     /*
         Alice 4. 대칭키 생성
      */
-    public SecretKey generateSymmetricKey(){
+    private SecretKey generateSymmetricKey(){
         KeyGenerator generator = null;
         try {
             generator = KeyGenerator.getInstance("AES");   // AES Key Generator 객체 생성
@@ -186,7 +191,7 @@ public class PGP {
     /*
         Alice 5. 내용물을 대칭키로 암호화
      */
-    public String encryptBody(String body, SecretKey secretKey){
+    private String encryptBody(String body, SecretKey secretKey){
         String encryptedData = "";
         try {
             Cipher aesCipher = Cipher.getInstance("AES");
@@ -202,7 +207,7 @@ public class PGP {
     /*
         Alice 6. 전자봉투 생성
      */
-    public String createEE(SecretKey secretKey, String receiverPublicKey){
+    private String createEE(SecretKey secretKey, String receiverPublicKey){
         return encryptWithPublicKey(secretKey.getEncoded().toString(), receiverPublicKey);
     }
 
@@ -260,7 +265,7 @@ public class PGP {
     /*
         Alice 8. 결과물과 전자봉투 합치기
      */
-    public String generateFinalResult(String body, String EE){
+    private String generateFinalResult(String body, String EE){
         StringBuffer sb = new StringBuffer();
         sb.append("-----BEGIN BODY-----\n");
         sb.append(body);
@@ -283,7 +288,7 @@ public class PGP {
     /*
         전달받은 데이터를 body와 ee로 분할
      */
-    public PGP dataSplitter(String message){
+    private PGP dataSplitter(String message){
         String[] lines = message.split(System.getProperty("line.separator"));
         boolean beginBody = false;
         boolean endBody = false;
@@ -329,7 +334,7 @@ public class PGP {
     /*
         전달받은 body를 plainText와 전자서명으로 분할
      */
-    public PGP bodySplitter(){
+    private PGP bodySplitter(){
         String[] lines = this.body.split(System.getProperty("line.separator"));
         boolean beginPlainText = false;
         boolean endPlainText = false;
@@ -375,27 +380,27 @@ public class PGP {
     /*
         Bob의 private key를 사용해서 전자봉투 열어서 AES 키 꺼내기
      */
-    public String openEE(String receiverPrivateKey){
+    private String openEE(String receiverPrivateKey){
         return decryptWithPrivateKey(this.ee, receiverPrivateKey);
     }
 
     /*
         DigitalSignature 를 Alice의 public key로 열기
      */
-    public String encryptDigitalSignature(String digitalSignature, String senderPublicKey){
+    private String encryptDigitalSignature(String digitalSignature, String senderPublicKey){
         return decryptWithPublicKey(digitalSignature, senderPublicKey);
     }
 
     /*
         SHA-256 사용해서 MAC 생성
      */
-    public String hashPlainText(String receivedPlainText){
+    private String hashPlainText(String receivedPlainText){
         return generateMAC(receivedPlainText);
     }
     /*
         mac 값 비교
      */
-    public boolean compareMAC(String receivedMAC, String generatedMAC){
+    private boolean compareMAC(String receivedMAC, String generatedMAC){
         return receivedMAC.equals(generatedMAC);
     }
 
