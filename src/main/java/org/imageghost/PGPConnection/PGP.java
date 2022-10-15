@@ -19,6 +19,7 @@ public class PGP {
     private String senderPublicKey;
     private String senderPrivateKey;
     private String receiverPublicKey;
+    private String receiverPrivateKey;
 
     /*
         Bob
@@ -270,26 +271,6 @@ public class PGP {
 
 
     /*
-        데이터 보내기 - PGP 순방향 프로세스
-     */
-    public String sendData(String plainText){
-        String mac = generateMAC(plainText);
-        String digitalSignature = encryptMAC(mac);
-        String body = concatResult(this.plainText,digitalSignature);
-        SecretKey secretKey = generateSymmetricKey();
-        String result = encryptBody(body, secretKey);
-        String finalResult = createEE(secretKey, this.receiverPublicKey);
-        return finalResult;
-    }
-
-    /*
-        데이터 받기 - PGP 역방향 프로세스
-     */
-    public String receiveData(String cipherText){
-        return new String("");
-    }
-
-    /*
         1. open EE with Bob's private key to get symmetric key from EE. (receiver authentication)
            2. encrypt message body with symmetric key from 1 step.
            3. encrypt digital signature via Alice's public key (sender authentication)
@@ -393,26 +374,54 @@ public class PGP {
         Bob의 private key를 사용해서 전자봉투 열어서 AES 키 꺼내기
      */
     public String openEE(String receiverPrivateKey){
-        return new String("");
+        return decryptWithPrivateKey(this.ee, receiverPrivateKey);
     }
 
     /*
         DigitalSignature 를 Alice의 public key로 열기
      */
     public String encryptDigitalSignature(String digitalSignature, String senderPublicKey){
-        return new String("");
+        return decryptWithPublicKey(digitalSignature, senderPublicKey);
     }
 
     /*
         SHA-256 사용해서 MAC 생성
      */
     public String hashPlainText(String receivedPlainText){
-        return new String("");
+        return generateMAC(receivedPlainText);
     }
     /*
         mac 값 비교
      */
     public boolean compareMAC(String receivedMAC, String generatedMAC){
         return receivedMAC.equals(generatedMAC);
+    }
+
+
+    /*
+        데이터 보내기 - PGP 순방향 프로세스
+    */
+    public String sendData(String plainText){
+        String mac = generateMAC(plainText);
+        String digitalSignature = encryptMAC(mac);
+        String body = concatResult(this.plainText,digitalSignature);
+        SecretKey secretKey = generateSymmetricKey();
+        String result = encryptBody(body, secretKey);
+        String finalResult = createEE(secretKey, this.receiverPublicKey);
+        return finalResult;
+    }
+
+    /*
+        데이터 받기 - PGP 역방향 프로세스
+     */
+    public String receiveData(String cipherText){
+        this.dataSplitter(cipherText).bodySplitter();
+        String aesKey = openEE(this.receiverPrivateKey);
+        String receivedMAC = encryptDigitalSignature(this.digitalSignature, this.senderPublicKey);
+        String generatedMAC = hashPlainText(this.plainText);
+        if(!compareMAC(receivedMAC, generatedMAC)){
+            return new String("");
+        }
+        return this.plainText;
     }
 }
