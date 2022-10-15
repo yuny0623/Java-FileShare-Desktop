@@ -12,6 +12,9 @@ public class Main {
         new MyFrame();
 
 
+        /*
+            simple test
+         */
         HashMap<String, String> keyPair = AsymmetricKeyGenerator.generateKeyPair();
         String publicKey = keyPair.get("publicKey");
         String privateKey = keyPair.get("privateKey");
@@ -24,8 +27,6 @@ public class Main {
         System.out.println(cipherText);
         System.out.println(originalPlainText);
         System.out.println(plainText);
-
-        // 테스트 성공이네.
-
+        // 테스트 성공이네. 휴...
     }
 }
