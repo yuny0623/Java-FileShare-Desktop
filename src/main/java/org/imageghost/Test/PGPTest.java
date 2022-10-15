@@ -104,5 +104,7 @@ public class PGPTest {
         System.out.printf("A: %s\n", secretKeyA.getEncoded());
         System.out.printf("B: %s\n", secretKeyB.getEncoded());
         Assert.assertEquals(new String(secretKeyA.getEncoded()), new String(secretKeyB.getEncoded()));
+
+
     }
 }
