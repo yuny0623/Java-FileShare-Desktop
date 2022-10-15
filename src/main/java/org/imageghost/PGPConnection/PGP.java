@@ -239,14 +239,16 @@ public class PGP {
             Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(cipher.ENCRYPT_MODE, publicKey);
 
+            System.out.printf("sendData - 3 (최종 input): %s\n", data.getBytes());
             // plainText 암호화
             byteEncryptedData = cipher.doFinal(data.getBytes());
-            System.out.printf("sendData - 3: %s\n", byteEncryptedData);
+            System.out.printf("sendData - 4 (암호화된 cipher): %s\n", byteEncryptedData);
             encryptedData = Base64.getEncoder().encodeToString(byteEncryptedData);
-            System.out.printf("sendData - 4: %s\n", encryptedData);
+            System.out.printf("sendData - 5 (base64 인코딩): %s\n", encryptedData);
         }catch(Exception e){
             e.printStackTrace();
         }
+        //return new String(byteEncryptedData);
         return encryptedData;
         // return encryptedData;
     }
@@ -269,11 +271,11 @@ public class PGP {
 
             // 암호문 복호화
             byte[] byteEncryptedData = Base64.getDecoder().decode(cipherText.getBytes());
-            System.out.printf("receiveData - 1 %s\n", byteEncryptedData);
+            System.out.printf("receiveData - 1 (base64인코딩):%s\n", byteEncryptedData);
             byte[] byteDecryptedData = cipher.doFinal(byteEncryptedData);
-            System.out.printf("receiveData - 2 %s\n", byteDecryptedData);
+            System.out.printf("receiveData - 2 (첫 output): %s\n", byteDecryptedData);
             decryptedData = new String(byteDecryptedData);
-            System.out.printf("receiveData - 3 %s\n", decryptedData);
+            System.out.printf("receiveData - 3: %s\n", decryptedData);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -355,7 +357,7 @@ public class PGP {
     public SecretKey openEE(String ee, String receiverPrivateKey){
         String decryptedData = decryptWithPrivateKey(ee, receiverPrivateKey);
         SecretKey secretKey = new SecretKeySpec(decryptedData.getBytes(),"AES");
-        System.out.printf("receiveData - 4 %s\n", secretKey.getEncoded());
+        System.out.printf("receiveData - 4 %s\n", new String(secretKey.getEncoded()));
         return secretKey;
     }
 
@@ -389,7 +391,7 @@ public class PGP {
         String digitalSignature = encryptMAC(mac);
         String body = appendSignatureToBody(plainText, digitalSignature);
         SecretKey secretKey = generateSymmetricKey();
-        System.out.printf("sendData - 1: %s\n", secretKey.getEncoded());
+        System.out.printf("sendData - 1: %s\n", new String(secretKey.getEncoded()));
         String enctyptedBody = encryptBody(body, secretKey);
         String EE = createEE(secretKey, this.receiverPublicKey);
         String finalResult = appendEEWithBody(enctyptedBody, EE);
@@ -402,7 +404,7 @@ public class PGP {
     public String receiveData(String cipherText) throws InvalidMessageIntegrityException{
         HashMap<String, String> dataMap = dataSplitter(cipherText);
         SecretKey secretKey = openEE(dataMap.get("ee"), this.receiverPrivateKey);
-        System.out.printf("receiveData - 5: %s\n", secretKey.getEncoded());
+        System.out.printf("receiveData - 5: %s\n", new String(secretKey.getEncoded()));
         decryptBodyWithAESKey(dataMap.get("body"), secretKey);
         HashMap<String, String> bodyMap = bodySplitter(dataMap.get("body"));
         String receivedMAC = decryptDigitalSignature(this.digitalSignature, this.senderPublicKey);
