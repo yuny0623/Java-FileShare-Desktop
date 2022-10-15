@@ -30,7 +30,7 @@ public class PGPTest {
 
         // when
         String fromData = pgp.sendData("테스트입니다.");
-        System.out.println("-------------------");
+        System.out.println("-----send Data---------");
         System.out.println(fromData);
         System.out.println("-------------------");
 
@@ -40,7 +40,7 @@ public class PGPTest {
         }catch(InvalidMessageIntegrityException e){
             e.printStackTrace();
         }
-        System.out.println("-------------------");
+        System.out.println("------receive Data-------");
         System.out.println("toData: " + toData + "\n");
         System.out.println("-------------------");
 
@@ -53,9 +53,7 @@ public class PGPTest {
 
     }
 
-    @Test
-    public void 전자봉투테스트(){
-        /*
+    /*
             Alice
             1. aes 키 생성
             2. aes 키를 BOB의  public key로 잠구
@@ -63,25 +61,26 @@ public class PGPTest {
             Bob:
             1. 전자봉투를 private key로 열어서 aes 키 얻어냄.
          */
-
+    @Test
+    public void 전자봉투테스트(){
         // given
         PGP pgp = new PGP();
 
-        HashMap<String, String> receiverKeyPair = AsymmetricKeyGenerator.generateKeyPair();
-        String receiverPublicKey = receiverKeyPair.get("publicKey");
-        String receiverPrivateKey = receiverKeyPair.get("privateKey");
+        HashMap<String, String> receivedKeyPair = AsymmetricKeyGenerator.generateKeyPair();
+        String receiverPublicKey = receivedKeyPair.get("publicKey");
+        String receiverPrivateKey = receivedKeyPair.get("privateKey");
 
         SecretKey secretKey = AESKeyMaker.generateAESKey();
         String aesKey = new String(secretKey.getEncoded());
         // when
         String ee = pgp.createEE(secretKey, receiverPublicKey);
-        String receivedAesKey = pgp.openEE(ee, receiverPrivateKey);
+        SecretKey secretKey1 = pgp.openEE(ee, receiverPrivateKey);
 
         System.out.printf("ee: %s\n", ee);
         System.out.printf("aesKey: %s\n", aesKey);
-        System.out.printf("receivedAesKey: %s\n", receivedAesKey);
+        System.out.printf("receivedAesKey: %s\n", secretKey1.getEncoded());
 
-        Assert.assertEquals(aesKey, receivedAesKey);
+        Assert.assertEquals(aesKey, secretKey1.getEncoded());
         // then
     }
 }

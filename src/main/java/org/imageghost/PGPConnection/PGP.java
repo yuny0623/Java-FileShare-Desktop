@@ -36,6 +36,9 @@ public class PGP {
     private String ee;
     private String aesKey;
 
+    private String sendAESKey;
+    private String receiveAESKey;
+
     public PGP(){
 
     }
@@ -214,7 +217,9 @@ public class PGP {
         Alice 6. 전자봉투 생성
      */
     public String createEE(SecretKey secretKey, String receiverPublicKey){
-        return encryptWithPublicKey(new String(secretKey.getEncoded()), receiverPublicKey);
+        String data = new String(secretKey.getEncoded());
+        System.out.printf("sendData - 2: %s\n", data);
+        return encryptWithPublicKey(data, receiverPublicKey);
     }
 
     /*
@@ -236,7 +241,9 @@ public class PGP {
 
             // plainText 암호화
             byteEncryptedData = cipher.doFinal(data.getBytes());
+            System.out.printf("sendData - 3: %s\n", byteEncryptedData);
             encryptedData = Base64.getEncoder().encodeToString(byteEncryptedData);
+            System.out.printf("sendData - 4: %s\n", encryptedData);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -249,7 +256,6 @@ public class PGP {
      */
     private String decryptWithPrivateKey(String cipherText, String receiverPrivateKey){
         String decryptedData = null;
-        // byte[] decryptedData = null;
         try {
             // Private Key 객체 생성
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
@@ -263,9 +269,11 @@ public class PGP {
 
             // 암호문 복호화
             byte[] byteEncryptedData = Base64.getDecoder().decode(cipherText.getBytes());
+            System.out.printf("receiveData - 1 %s\n", byteEncryptedData);
             byte[] byteDecryptedData = cipher.doFinal(byteEncryptedData);
+            System.out.printf("receiveData - 2 %s\n", byteDecryptedData);
             decryptedData = new String(byteDecryptedData);
-            //decryptedData = byteDecryptedData;
+            System.out.printf("receiveData - 3 %s\n", decryptedData);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -344,8 +352,11 @@ public class PGP {
     /*
         Bob의 private key를 사용해서 전자봉투 열어서 AES 키 꺼내기
      */
-    public String openEE(String ee, String receiverPrivateKey){
-        return decryptWithPrivateKey(ee, receiverPrivateKey);
+    public SecretKey openEE(String ee, String receiverPrivateKey){
+        String decryptedData = decryptWithPrivateKey(ee, receiverPrivateKey);
+        SecretKey secretKey = new SecretKeySpec(decryptedData.getBytes(),"AES");
+        System.out.printf("receiveData - 4 %s\n", secretKey.getEncoded());
+        return secretKey;
     }
 
     /*
@@ -378,7 +389,7 @@ public class PGP {
         String digitalSignature = encryptMAC(mac);
         String body = appendSignatureToBody(plainText, digitalSignature);
         SecretKey secretKey = generateSymmetricKey();
-        System.out.printf("sendData:aesKey: %s\n", secretKey.getEncoded());
+        System.out.printf("sendData - 1: %s\n", secretKey.getEncoded());
         String enctyptedBody = encryptBody(body, secretKey);
         String EE = createEE(secretKey, this.receiverPublicKey);
         String finalResult = appendEEWithBody(enctyptedBody, EE);
@@ -390,9 +401,9 @@ public class PGP {
      */
     public String receiveData(String cipherText) throws InvalidMessageIntegrityException{
         HashMap<String, String> dataMap = dataSplitter(cipherText);
-        String aesKey = openEE(dataMap.get("ee"), this.receiverPrivateKey);
-        System.out.printf("receiveData:aesKey: %s\n", aesKey);
-        decryptBodyWithAESKey(dataMap.get("body"), aesKey);
+        SecretKey secretKey = openEE(dataMap.get("ee"), this.receiverPrivateKey);
+        System.out.printf("receiveData - 5: %s\n", secretKey.getEncoded());
+        decryptBodyWithAESKey(dataMap.get("body"), secretKey);
         HashMap<String, String> bodyMap = bodySplitter(dataMap.get("body"));
         String receivedMAC = decryptDigitalSignature(this.digitalSignature, this.senderPublicKey);
         String generatedMAC = hashPlainText(this.plainText);
@@ -402,9 +413,8 @@ public class PGP {
         return this.result;
     }
 
-    private void decryptBodyWithAESKey(String body, String aesKey) {
+    private void decryptBodyWithAESKey(String body, SecretKey secretKey) {
         // String 에서 aes key 복원하는 과정 진행...
-        SecretKey secretKey = new SecretKeySpec(aesKey.getBytes(),"AES");
         String encryptedData = "";
         try {
             Cipher aesCipher = Cipher.getInstance("AES");
