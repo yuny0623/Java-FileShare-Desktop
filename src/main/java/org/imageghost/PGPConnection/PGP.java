@@ -296,13 +296,16 @@ public class PGP {
      */
     private HashMap<String, String> dataSplitter(String message){
         System.out.println("This is dataSplitter output.");
+        String bodyString = "-----BEGIN BODY-----\n";
+        String eeString = "-----BEGIN EE-----\n";
+
         int bodyBeginIndex = message.indexOf("-----BEGIN BODY-----\n");
         int bodyEndIndex = message.indexOf("\n-----END BODY-----\n");
         int eeBeginIndex = message.indexOf("-----BEGIN EE-----\n");
         int eeEndIndex = message.indexOf("\n-----END EE-----\n");
 
-        String body = message.substring(bodyBeginIndex + 21, bodyEndIndex);
-        String ee = message.substring(eeBeginIndex + 19, eeEndIndex);
+        String body = message.substring(bodyBeginIndex + bodyString.length(), bodyEndIndex);
+        String ee = message.substring(eeBeginIndex + eeString.length(), eeEndIndex);
 
         System.out.println("dataSplitter result -> ee: "+ ee);
         System.out.println("dataSplitter result -> body: "+ body);
@@ -317,22 +320,25 @@ public class PGP {
         전달받은 body를 plainText와 DigitalSignature로 분할
      */
     private HashMap<String, String> bodySplitter(String body){
-        System.out.println("This is dataSplitter output.");
-        int bodyBeginIndex = body.indexOf("-----BEGIN BODY-----\n");
-        int bodyEndIndex = body.indexOf("\n-----END BODY-----\n");
-        int eeBeginIndex = body.indexOf("-----BEGIN EE-----\n");
-        int eeEndIndex = body.indexOf("\n-----END EE-----\n");
+        System.out.println("This is bodySplitter output.");
+        String plainTextString = "-----BEGIN PLAIN TEXT-----\n";
+        String digitalSignatureString = "-----BEGIN DIGITAL SIGNATURE-----\n";
 
-        String plainText = body.substring(bodyBeginIndex + 21, bodyEndIndex);
-        String ee = body.substring(eeBeginIndex + 19, eeEndIndex);
+        int plainTextBeginIndex = body.indexOf("-----BEGIN PLAIN TEXT-----\n");
+        int plainTextEndIndex = body.indexOf("\n-----END PLAIN TEXT-----\n");
+        int digitalSignatureBeginIndex = body.indexOf("-----BEGIN DIGITAL SIGNATURE-----\n");
+        int digitalSignatureEndIndex = body.indexOf("\n-----END DIGITAL SIGNATURE-----\n");
 
-        System.out.println("dataSplitter result -> ee: "+ ee);
-        System.out.println("dataSplitter result -> body: "+ body);
+        String receivedPlainText = body.substring(plainTextBeginIndex + plainTextString.length(), plainTextEndIndex);
+        String digitalSignature = body.substring(digitalSignatureBeginIndex + digitalSignatureString.length(), digitalSignatureEndIndex);
 
-        HashMap<String, String> dataMap = new HashMap<>();
-        dataMap.put("ee", ee);
-        dataMap.put("body", body);
-        return dataMap;
+        System.out.println("bodySplitter result -> receivedPlainText: " + receivedPlainText);
+        System.out.println("bodySplitter result -> digitalSignature: " + digitalSignature);
+
+        HashMap<String, String> bodyMap = new HashMap<>();
+        bodyMap.put("receivedPlainText", receivedPlainText);
+        bodyMap.put("digitalSignature", digitalSignature);
+        return bodyMap;
     }
 
     /*
