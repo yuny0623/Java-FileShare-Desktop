@@ -72,12 +72,12 @@ public class PGPTest {
         String receiverPrivateKey = receiverKeyPair.get("privateKey");
 
         SecretKey secretKey = AESKeyMaker.generateAESKey();
-        byte[] aesKey = secretKey.getEncoded();
+        String aesKey = new String(secretKey.getEncoded());
         // when
         String ee = pgp.createEE(secretKey, receiverPublicKey);
         String receivedAesKey = pgp.openEE(ee, receiverPrivateKey);
 
-        Assert.assertEquals(secretKey.getEncoded().toString(), receivedAesKey);
+        Assert.assertEquals(new String(secretKey.getEncoded()), receivedAesKey);
         // then
     }
 }

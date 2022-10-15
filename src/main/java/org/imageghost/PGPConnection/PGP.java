@@ -214,7 +214,7 @@ public class PGP {
         Alice 6. 전자봉투 생성
      */
     public String createEE(SecretKey secretKey, String receiverPublicKey){
-        return encryptWithPublicKey(secretKey.getEncoded().toString(), receiverPublicKey);
+        return encryptWithPublicKey(new String(secretKey.getEncoded()), receiverPublicKey);
     }
 
     /*
@@ -222,6 +222,7 @@ public class PGP {
      */
     private String encryptWithPublicKey(String data, String receiverPublicKey) {
         String encryptedData = null;
+        byte[] byteEncryptedData = null;
         try{
             // Public key 만들기
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
@@ -234,12 +235,13 @@ public class PGP {
             cipher.init(cipher.ENCRYPT_MODE, publicKey);
 
             // plainText 암호화
-            byte[] byteEncryptedData = cipher.doFinal(data.getBytes());
+            byteEncryptedData = cipher.doFinal(data.getBytes());
             encryptedData = Base64.getEncoder().encodeToString(byteEncryptedData);
         }catch(Exception e){
             e.printStackTrace();
         }
         return encryptedData;
+        // return encryptedData;
     }
 
     /*
@@ -247,6 +249,7 @@ public class PGP {
      */
     private String decryptWithPrivateKey(String cipherText, String receiverPrivateKey){
         String decryptedData = null;
+        // byte[] decryptedData = null;
         try {
             // Private Key 객체 생성
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
@@ -262,6 +265,7 @@ public class PGP {
             byte[] byteEncryptedData = Base64.getDecoder().decode(cipherText.getBytes());
             byte[] byteDecryptedData = cipher.doFinal(byteEncryptedData);
             decryptedData = new String(byteDecryptedData);
+            //decryptedData = byteDecryptedData;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -354,7 +358,7 @@ public class PGP {
     /*
         SHA-256 사용해서 MAC 생성
      */
-    private String hashPlainText(String receivedPlainText){
+    private byte[] hashPlainText(String receivedPlainText){
         return generateMAC(receivedPlainText);
     }
     /*
@@ -370,13 +374,13 @@ public class PGP {
     */
     public String sendData(String plainText){
         this.plainText = plainText;
-        String mac = generateMAC(plainText);
+        String mac = generateMAC(plainText).toString();
         String digitalSignature = encryptMAC(mac);
         String body = appendSignatureToBody(plainText, digitalSignature);
         SecretKey secretKey = generateSymmetricKey();
         System.out.printf("sendData:aesKey: %s\n", secretKey.getEncoded());
         String enctyptedBody = encryptBody(body, secretKey);
-        String EE = createEE(secretKey, this.receiverPublicKey);
+        String EE = createEE(secretKey, this.receiverPublicKey).toString();
         String finalResult = appendEEWithBody(enctyptedBody, EE);
         return finalResult;
     }
@@ -386,12 +390,12 @@ public class PGP {
      */
     public String receiveData(String cipherText) throws InvalidMessageIntegrityException{
         HashMap<String, String> dataMap = dataSplitter(cipherText);
-        String aesKey = openEE(this.ee, this.receiverPrivateKey);
+        String aesKey = openEE(dataMap.get("ee"), this.receiverPrivateKey).toString();
         System.out.printf("receiveData:aesKey: %s\n", aesKey);
         decryptBodyWithAESKey(dataMap.get("body"), aesKey);
         HashMap<String, String> bodyMap = bodySplitter(dataMap.get("body"));
         String receivedMAC = decryptDigitalSignature(this.digitalSignature, this.senderPublicKey);
-        String generatedMAC = hashPlainText(this.plainText);
+        String generatedMAC = hashPlainText(this.plainText).toString();
         if(!compareMAC(receivedMAC, generatedMAC)){
             throw new InvalidMessageIntegrityException("Message Integrity is invalid. Message has changed or broken while communication");
         }
