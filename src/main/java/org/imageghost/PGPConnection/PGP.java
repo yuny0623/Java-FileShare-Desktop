@@ -304,6 +304,11 @@ public class PGP {
         int eeBeginIndex = message.indexOf("-----BEGIN EE-----\n");
         int eeEndIndex = message.indexOf("\n-----END EE-----\n");
 
+        System.out.println(bodyBeginIndex);
+        System.out.println(bodyEndIndex);
+        System.out.println(eeBeginIndex);
+        System.out.println(eeEndIndex);
+
         String body = message.substring(bodyBeginIndex + bodyString.length(), bodyEndIndex);
         String ee = message.substring(eeBeginIndex + eeString.length(), eeEndIndex);
 
@@ -321,6 +326,7 @@ public class PGP {
      */
     private HashMap<String, String> bodySplitter(String body){
         System.out.println("This is bodySplitter output.");
+        System.out.println(body);
         String plainTextString = "-----BEGIN PLAIN TEXT-----\n";
         String digitalSignatureString = "-----BEGIN DIGITAL SIGNATURE-----\n";
 
@@ -328,6 +334,15 @@ public class PGP {
         int plainTextEndIndex = body.indexOf("\n-----END PLAIN TEXT-----\n");
         int digitalSignatureBeginIndex = body.indexOf("-----BEGIN DIGITAL SIGNATURE-----\n");
         int digitalSignatureEndIndex = body.indexOf("\n-----END DIGITAL SIGNATURE-----\n");
+
+        System.out.println(plainTextBeginIndex);
+        System.out.println(plainTextEndIndex);
+        System.out.println(digitalSignatureBeginIndex);
+        System.out.println(digitalSignatureEndIndex);
+        System.out.println("bodySplitter debug console");
+        System.out.printf("body length: %d\n", body.length());
+        System.out.printf("plainTextString length: %d\n", plainTextString.length());
+
 
         String receivedPlainText = body.substring(plainTextBeginIndex + plainTextString.length(), plainTextEndIndex);
         String digitalSignature = body.substring(digitalSignatureBeginIndex + digitalSignatureString.length(), digitalSignatureEndIndex);
@@ -392,19 +407,11 @@ public class PGP {
     public String receiveData(String cipherText) throws InvalidMessageIntegrityException{
         System.out.println("*** receiveData method ***");
         System.out.println("cipherText: " + cipherText);
+        // HashMap<String, String> bodyMap = bodySplitter(dataMap.get("body"));
+
         HashMap<String, String> dataMap = dataSplitter(cipherText);
-        HashMap<String, String> bodyMap = bodySplitter(dataMap.get("body"));
-
-        System.out.println("------------receiveData-------------");
-        System.out.println(dataMap.get("body"));
-        System.out.println(dataMap.get("ee"));
-        System.out.println(bodyMap.get("receivedPlainText"));
-        System.out.println(bodyMap.get("digitalSignature"));
-        System.out.println("------------receiveData-------------");
-
         String aesKey = openEE(this.receiverPrivateKey);
-        System.out.println("aesKey: " + aesKey);
-        decryptBodyWithAESKey(this.body, aesKey);
+        decryptBodyWithAESKey(dataMap.get("body"), aesKey);
         String receivedMAC = decryptDigitalSignature(this.digitalSignature, this.senderPublicKey);
         String generatedMAC = hashPlainText(this.plainText);
         if(!compareMAC(receivedMAC, generatedMAC)){
