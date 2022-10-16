@@ -116,7 +116,7 @@ public class PGP {
     /*
         Alice 2. MAC 암호화
      */
-    public String encryptMAC(String MAC, String senderPrivateKey){
+    public String generateDigitalSignature(String MAC, String senderPrivateKey){
         return encryptWithPrivateKey(MAC, senderPrivateKey);
     }
 
@@ -147,7 +147,7 @@ public class PGP {
     /*
         public key로 전자서명 풀기
      */
-    public String decryptWithPublicKey(String cipherText, String senderPublicKey) {
+    public String solveDigitalSignature(String cipherText, String senderPublicKey) {
         PublicKey publicKey;
         String decryptedText = "";
         try{
@@ -171,7 +171,7 @@ public class PGP {
     /*
         Alice 3. 전자서명과 메시지 원본 합치기
      */
-    public String appendSignatureToBody(String plainText, String digitalSignature){
+    public String generateBody(String plainText, String digitalSignature){
         StringBuffer sb = new StringBuffer();
         sb.append("-----BEGIN PLAIN TEXT-----\n");
         sb.append(plainText);
@@ -368,7 +368,7 @@ public class PGP {
         Bob: DigitalSignature 를 Alice의 public key로 열기
      */
     public String decryptDigitalSignature(String digitalSignature, String senderPublicKey){
-        return decryptWithPublicKey(digitalSignature, senderPublicKey);
+        return solveDigitalSignature(digitalSignature, senderPublicKey);
     }
 
     /*
@@ -394,11 +394,11 @@ public class PGP {
         System.out.printf("sendData - MAC: %s\n", MAC);
 
         // 2
-        String digitalSignature = encryptMAC(MAC, this.senderPrivateKey);
+        String digitalSignature = generateDigitalSignature(MAC, this.senderPrivateKey);
         System.out.printf("sendData - digitalSignature: %s\n", digitalSignature);
 
         // 3
-        String body = appendSignatureToBody(plainText, digitalSignature);
+        String body = generateBody(plainText, digitalSignature);
         System.out.printf("sendData - body: %s\n", body);
 
         // 4

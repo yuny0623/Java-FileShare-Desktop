@@ -52,25 +52,6 @@ public class PGPTest {
     }
 
     @Test
-    public void splitter_작동_테스트(){
-        String data = "-----BEGIN BODY-----\n" +
-                "� �\u0003�\u0014 7�Ya�\n" +
-                "iF�M�J��������-/��N�s���\u0019�\n" +
-                "\u0004.\u0005Q�\u007F��\n" +
-                "\n" +
-                "-----END BODY-----\n" +
-                "-----BEGIN EE-----\n" +
-                "KS+oTdF04fcCU5G8T0D+HP6hHIFkFQKERcdzZUmDC+AnrDSRKn3B+BR1QkA5bUap3cE2IH64mdls/qJvHGrYyE744+Xym2PtPxnF6jKKPq0ecxOCZWqeH0MmqZhp3/vSp3Q2lNB53oo7F7pGthzJIJHyHEgC5Qn2H4rkyFycfMyznROXP7aT3pEmEae0fzVgaCk057oizzvwJ20LIl8yRONmO0hmaCa6EXmijvcUiNcnC4UX87MAkQOxLIYgUlGRvLCPh1k9Z2aCHB3OpTJ9jzk8FG9Dpqw8Xyo1RfRY66Yv2L5s+Iatey8bgDllpPwl22y9GK6x9Xk3pA/Q4nMaAA==\n" +
-                "-----END EE-----";
-        // given
-
-        // when
-
-        // then
-    }
-
-
-    @Test
     public void 전자봉투_송수신_테스트(){
         // given
         PGP pgp = new PGP();
@@ -119,12 +100,49 @@ public class PGPTest {
         String originalMessage = "테스트입니다.";
         pgp.setPlainText(originalMessage);
         String originalMAC = pgp.generateMAC(originalMessage);
-        String digitalSignature = pgp.encryptMAC(originalMAC, senderPrivateKey);
+        String digitalSignature = pgp.generateDigitalSignature(originalMAC, senderPrivateKey);
         String decodedMAC = pgp.decryptDigitalSignature(digitalSignature, senderPublicKey);
 
         // then
         System.out.printf("original MAC: %s\n", originalMAC);
         System.out.printf("original decodedMAC: %s\n", decodedMAC);
         Assert.assertEquals(originalMAC, decodedMAC);
+    }
+
+
+    @Test
+    public void 메시지_body_생성_테스트(){
+        HashMap<String, String> senderKeyPair = AsymmetricKeyGenerator.generateKeyPair();
+        String senderPublicKey = senderKeyPair.get("publicKey");
+        String senderPrivateKey = senderKeyPair.get("privateKey");
+
+        HashMap<String, String> receiverKeyPair = AsymmetricKeyGenerator.generateKeyPair();
+        String receiverPublicKey = receiverKeyPair.get("publicKey");
+        String receiverPrivateKey = receiverKeyPair.get("privateKey");
+
+        PGP pgp = new PGP();
+        pgp.setReceiverPublicKey(senderPublicKey);
+        pgp.setSenderPrivateKey(senderPrivateKey);
+        pgp.setReceiverPublicKey(receiverPublicKey);
+        pgp.setReceiverPrivateKey(receiverPrivateKey);
+
+        // when
+        String originalPlainText = "테스트입니다.";
+        pgp.setPlainText(originalPlainText);
+        String originalMAC = pgp.generateMAC(originalPlainText);
+        String originalDigitalSignature = pgp.generateDigitalSignature(originalMAC, senderPrivateKey);
+        String body = pgp.generateBody(originalPlainText, originalDigitalSignature);
+
+        System.out.println(body);
+
+        HashMap<String, String> bodyMap = pgp.bodySplitter(body);
+        String receivedPlainText = bodyMap.get("receivedPlainText");
+        String receivedDigitalSignature = bodyMap.get("digitalSignature");
+
+        // 평문 비교
+        Assert.assertEquals(originalPlainText, receivedPlainText);
+
+        // 전자서명 비교
+        Assert.assertEquals(originalDigitalSignature, receivedDigitalSignature);
     }
 }
