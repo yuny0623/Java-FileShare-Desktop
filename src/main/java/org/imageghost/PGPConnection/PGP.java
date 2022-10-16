@@ -94,7 +94,7 @@ public class PGP {
     /*
         Alice 1: MAC 생성
      */
-    private String generateMAC(String plainText) {
+    public String generateMAC(String plainText) {
         MessageDigest md = null;
         try {
             md = MessageDigest.getInstance("SHA-256");
@@ -116,14 +116,14 @@ public class PGP {
     /*
         Alice 2. MAC 암호화
      */
-    private String encryptMAC(String MAC, String senderPrivateKey){
+    public String encryptMAC(String MAC, String senderPrivateKey){
         return encryptWithPrivateKey(MAC, senderPrivateKey);
     }
 
     /*
         private key로 전자서명에 사인
      */
-    private String encryptWithPrivateKey(String plainText, String senderPrivateKey) {
+    public String encryptWithPrivateKey(String plainText, String senderPrivateKey) {
         PrivateKey privateKey;
         String encryptedText = "";
 
@@ -147,7 +147,7 @@ public class PGP {
     /*
         public key로 전자서명 풀기
      */
-    private String decryptWithPublicKey(String cipherText, String senderPublicKey) {
+    public String decryptWithPublicKey(String cipherText, String senderPublicKey) {
         PublicKey publicKey;
         String decryptedText = "";
         try{
@@ -171,7 +171,7 @@ public class PGP {
     /*
         Alice 3. 전자서명과 메시지 원본 합치기
      */
-    private String appendSignatureToBody(String plainText, String digitalSignature){
+    public String appendSignatureToBody(String plainText, String digitalSignature){
         StringBuffer sb = new StringBuffer();
         sb.append("-----BEGIN PLAIN TEXT-----\n");
         sb.append(plainText);
@@ -185,7 +185,7 @@ public class PGP {
     /*
         Alice 4. 대칭키 생성
      */
-    private SecretKey generateSymmetricKey(){
+    public SecretKey generateSymmetricKey(){
         KeyGenerator generator = null;
         try {
             generator = KeyGenerator.getInstance("AES");   // AES Key Generator 객체 생성
@@ -200,7 +200,7 @@ public class PGP {
     /*
         Alice 5. 내용물을 대칭키로 암호화
      */
-    private String encryptBody(String body, SecretKey secretKey){
+    public String encryptBody(String body, SecretKey secretKey){
         String encryptedData = "";
         try {
             Cipher aesCipher = Cipher.getInstance("AES");
@@ -224,7 +224,7 @@ public class PGP {
     /*
         public key로 암호화
      */
-    private String encryptWithPublicKey(SecretKey secretKey, String receiverPublicKey) {
+    public String encryptWithPublicKey(SecretKey secretKey, String receiverPublicKey) {
         String encryptedData = null;
         byte[] byteEncryptedData = null;
         try{
@@ -257,7 +257,7 @@ public class PGP {
     /*
         private key로 복호화
      */
-    private String decryptWithPrivateKey(String cipherText, String receiverPrivateKey){
+    public String decryptWithPrivateKey(String cipherText, String receiverPrivateKey){
         String decryptedData = null;
         try {
             System.out.println("1");
@@ -287,7 +287,7 @@ public class PGP {
     /*
         Alice 8. 결과물과 전자봉투 합치기
      */
-    private String appendEEWithBody(String body, String EE){
+    public String appendEEWithBody(String body, String EE){
         StringBuffer sb = new StringBuffer();
         sb.append("-----BEGIN BODY-----\n");
         sb.append(body);
@@ -310,7 +310,7 @@ public class PGP {
     /*
         전달받은 데이터를 body와 ee로 분할
      */
-    private HashMap<String, String> dataSplitter(String message){
+    public HashMap<String, String> dataSplitter(String message){
         String bodyString = "-----BEGIN BODY-----\n";
         String eeString = "-----BEGIN EE-----\n";
 
@@ -332,7 +332,7 @@ public class PGP {
     /*
         전달받은 body를 plainText와 DigitalSignature로 분할
      */
-    private HashMap<String, String> bodySplitter(String body){
+    public HashMap<String, String> bodySplitter(String body){
         System.out.println("body splitter");
         System.out.println(body);
         System.out.println(body.length());
@@ -367,20 +367,20 @@ public class PGP {
     /*
         Bob: DigitalSignature 를 Alice의 public key로 열기
      */
-    private String decryptDigitalSignature(String digitalSignature, String senderPublicKey){
+    public String decryptDigitalSignature(String digitalSignature, String senderPublicKey){
         return decryptWithPublicKey(digitalSignature, senderPublicKey);
     }
 
     /*
         SHA-256 사용해서 MAC 생성
      */
-    private String hashPlainText(String receivedPlainText){
+    public String hashPlainText(String receivedPlainText){
         return generateMAC(receivedPlainText);
     }
     /*
         mac 값 비교
      */
-    private boolean compareMAC(String receivedMAC, String generatedMAC){
+    public boolean compareMAC(String receivedMAC, String generatedMAC){
         return receivedMAC.equals(generatedMAC);
     }
 
@@ -461,7 +461,7 @@ public class PGP {
         return bodyMap.get("receivedPlainText");
     }
 
-    private String decryptBodyWithAESKey(String body, SecretKey secretKey) {
+    public String decryptBodyWithAESKey(String body, SecretKey secretKey) {
         // String 에서 aes key 복원하는 과정 진행...
         String encryptedData = "";
         try {

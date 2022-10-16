@@ -101,9 +101,25 @@ public class PGPTest {
     @Test
     public void 전자서명테스트(){
         // given
+        HashMap<String, String> senderKeyPair = AsymmetricKeyGenerator.generateKeyPair();
+        String senderPublicKey = senderKeyPair.get("publicKey");
+        String senderPrivateKey = senderKeyPair.get("privateKey");
+
+        HashMap<String, String> receiverKeyPair = AsymmetricKeyGenerator.generateKeyPair();
+        String receiverPublicKey = receiverKeyPair.get("publicKey");
+        String receiverPrivateKey = receiverKeyPair.get("privateKey");
+
+        PGP pgp = new PGP();
+        pgp.setReceiverPublicKey(senderPublicKey);
+        pgp.setSenderPrivateKey(senderPrivateKey);
+        pgp.setReceiverPublicKey(receiverPublicKey);
+        pgp.setReceiverPrivateKey(receiverPrivateKey);
 
         // when
+        String originalMessage = "테스트입니다.";
+        pgp.setPlainText(originalMessage);
 
+        pgp.
         // then
     }
 }
