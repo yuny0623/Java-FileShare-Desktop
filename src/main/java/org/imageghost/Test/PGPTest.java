@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 public class PGPTest {
     @Test
-    public void pgp구조테스트(){
+    public void pgp구조_전체동작_테스트(){
         // given
         HashMap<String, String> senderKeyPair = AsymmetricKeyGenerator.generateKeyPair();
         String senderPublicKey = senderKeyPair.get("publicKey");
@@ -52,7 +52,7 @@ public class PGPTest {
     }
 
     @Test
-    public void splitter테스트(){
+    public void splitter_작동_테스트(){
         String data = "-----BEGIN BODY-----\n" +
                 "� �\u0003�\u0014 7�Ya�\n" +
                 "iF�M�J��������-/��N�s���\u0019�\n" +
@@ -71,7 +71,7 @@ public class PGPTest {
 
 
     @Test
-    public void 전자봉투테스트(){
+    public void 전자봉투_송수신_테스트(){
         // given
         PGP pgp = new PGP();
         HashMap<String, String> receivedKeyPair = AsymmetricKeyGenerator.generateKeyPair();
@@ -99,7 +99,7 @@ public class PGPTest {
     }
 
     @Test
-    public void 전자서명테스트(){
+    public void 전자서명_송수신_테스트(){
         // given
         HashMap<String, String> senderKeyPair = AsymmetricKeyGenerator.generateKeyPair();
         String senderPublicKey = senderKeyPair.get("publicKey");
@@ -118,8 +118,13 @@ public class PGPTest {
         // when
         String originalMessage = "테스트입니다.";
         pgp.setPlainText(originalMessage);
+        String originalMAC = pgp.generateMAC(originalMessage);
+        String digitalSignature = pgp.encryptMAC(originalMAC, senderPrivateKey);
+        String decodedMAC = pgp.decryptDigitalSignature(digitalSignature, senderPublicKey);
 
-        pgp.
         // then
+        System.out.printf("original MAC: %s\n", originalMAC);
+        System.out.printf("original decodedMAC: %s\n", decodedMAC);
+        Assert.assertEquals(originalMAC, decodedMAC);
     }
 }
