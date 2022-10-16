@@ -144,6 +144,13 @@ public class PGPTest {
         System.out.printf("receive - receivedPlainText: %s, %d\n", receivedPlainText, receivedPlainText.length());
         System.out.printf("receive - receivedDigitalSignature: %s\n", receivedDigitalSignature);
 
+        String hashPlainText = pgp.hashPlainText(receivedPlainText);
+
+        System.out.printf("receive - originalMAC: %s\n", originalMAC);
+        System.out.printf("receive - hashPlainText: %s\n", hashPlainText);
+
+        // MAC 값 비교
+        Assert.assertEquals(originalMAC, hashPlainText);
         // 평문 비교
         Assert.assertEquals(originalPlainText, receivedPlainText);
         // 전자서명 비교
