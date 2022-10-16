@@ -133,15 +133,19 @@ public class PGPTest {
         String originalDigitalSignature = pgp.generateDigitalSignature(originalMAC, senderPrivateKey);
         String body = pgp.generateBody(originalPlainText, originalDigitalSignature);
 
-        System.out.println(body);
+        System.out.printf("send - originalPlainText: %s, %d\n", originalPlainText, originalPlainText.length());
+        System.out.printf("send - originalDigitalSignature: %s\n", originalDigitalSignature);
+
 
         HashMap<String, String> bodyMap = pgp.bodySplitter(body);
         String receivedPlainText = bodyMap.get("receivedPlainText");
         String receivedDigitalSignature = bodyMap.get("digitalSignature");
 
+        System.out.printf("receive - receivedPlainText: %s, %d\n", receivedPlainText, receivedPlainText.length());
+        System.out.printf("receive - receivedDigitalSignature: %s\n", receivedDigitalSignature);
+
         // 평문 비교
         Assert.assertEquals(originalPlainText, receivedPlainText);
-
         // 전자서명 비교
         Assert.assertEquals(originalDigitalSignature, receivedDigitalSignature);
     }

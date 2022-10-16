@@ -333,9 +333,6 @@ public class PGP {
         전달받은 body를 plainText와 DigitalSignature로 분할
      */
     public HashMap<String, String> bodySplitter(String body){
-        System.out.println("body splitter");
-        System.out.println(body);
-        System.out.println(body.length());
         String plainTextString = "-----BEGIN PLAIN TEXT-----\n";
         String digitalSignatureString = "-----BEGIN DIGITAL SIGNATURE-----\n";
 
@@ -344,8 +341,8 @@ public class PGP {
         int digitalSignatureBeginIndex = body.indexOf("-----BEGIN DIGITAL SIGNATURE-----\n");
         int digitalSignatureEndIndex = body.indexOf("\n-----END DIGITAL SIGNATURE-----\n");
 
-        String receivedPlainText = body.substring(plainTextBeginIndex + plainTextString.length(), plainTextEndIndex + 1);
-        String digitalSignature = body.substring(digitalSignatureBeginIndex + digitalSignatureString.length(), digitalSignatureEndIndex + 1);
+        String receivedPlainText = body.substring(plainTextBeginIndex + plainTextString.length(), plainTextEndIndex);
+        String digitalSignature = body.substring(digitalSignatureBeginIndex + digitalSignatureString.length(), digitalSignatureEndIndex);
 
         HashMap<String, String> bodyMap = new HashMap<>();
         bodyMap.put("receivedPlainText", receivedPlainText);
