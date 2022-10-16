@@ -381,7 +381,6 @@ public class PGPTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return decryptedText;
     }
 
