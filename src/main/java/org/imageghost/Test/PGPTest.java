@@ -85,26 +85,19 @@ public class PGPTest {
         String receiverPublicKey = receivedKeyPair.get("publicKey");
         String receiverPrivateKey = receivedKeyPair.get("privateKey");
 
-        SecretKey secretKey = AESKeyMaker.generateAESKey();
-        String aesKey = new String(secretKey.getEncoded());
         // when
-        String ee = pgp.createEE(secretKey, receiverPublicKey);
-        SecretKey secretKey1 = pgp.openEE(ee, receiverPrivateKey);
+        SecretKey secretKeyOriginal = AESKeyMaker.generateAESKey();
+        String ee = pgp.createEE(secretKeyOriginal, receiverPublicKey);
+        SecretKey secretKeyDecoded = pgp.openEE(ee, receiverPrivateKey);
+        String secretKey1 = new String(secretKeyOriginal.getEncoded());
+        String secretKey2 = new String(secretKeyDecoded.getEncoded());
+        System.out.println("secretKey1: " + secretKey1);
+        System.out.println("secretKey2: " + secretKey2);
+        SecretKey secretKeyA = new SecretKeySpec(secretKey1.getBytes(), "AES");
+        SecretKey secretKeyB = new SecretKeySpec(secretKey2.getBytes(), "AES");
 
-        // then
-        System.out.printf("ee: %s\n", ee);
-        System.out.printf("aesKey: %s\n", aesKey);
-        System.out.printf("receivedAesKey: %s\n", new String(secretKey1.getEncoded()));
-        String secretKeyString = new String(secretKey1.getEncoded());
-
-        SecretKey secretKeyA = new SecretKeySpec(aesKey.getBytes(),"AES");
-        SecretKey secretKeyB = new SecretKeySpec(secretKeyString.getBytes(), "AES");
-        Assert.assertEquals(aesKey, new String(secretKey1.getEncoded()));
-
-        System.out.printf("A: %s\n", secretKeyA.getEncoded());
-        System.out.printf("B: %s\n", secretKeyB.getEncoded());
-        Assert.assertEquals(new String(secretKeyA.getEncoded()), new String(secretKeyB.getEncoded()));
-
-
+        // then 
+        Assert.assertEquals(secretKey1, secretKey2);
+        Assert.assertEquals(secretKeyA, secretKeyB);
     }
 }
