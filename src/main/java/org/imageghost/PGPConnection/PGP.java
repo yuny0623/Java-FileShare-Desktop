@@ -8,6 +8,7 @@ import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.sql.SQLOutput;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
 
@@ -91,9 +92,6 @@ public class PGP {
            5. compare the 3 step's mac and received mac (message integrity)
      */
 
-    /*
-        Alice 1: MAC 생성
-     */
     public String generateMAC(String plainText) {
         MessageDigest md = null;
         try {
@@ -260,6 +258,37 @@ public class PGP {
         }
     }
 
+    public String decryptBodyFixed2(String secretKey, String encryptedBody){
+        byte[] decodedKey = Base64.getDecoder().decode(secretKey);
+
+        try {
+            Cipher cipher = Cipher.getInstance("AES");
+            // rebuild key using SecretKeySpec
+            SecretKey originalKey = new SecretKeySpec(Arrays.copyOf(decodedKey, 16), "AES");
+            cipher.init(Cipher.DECRYPT_MODE, originalKey);
+            byte[] cipherText = cipher.doFinal(Base64.getDecoder().decode(encryptedBody));
+            return new String(cipherText);
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Error occured while decrypting data", e);
+        }
+    }
+    public String encryptedBodyFixed2(String secretKey, String body){
+        byte[] decodedKey = Base64.getDecoder().decode(secretKey);
+
+        try {
+            Cipher cipher = Cipher.getInstance("AES");
+            // rebuild key using SecretKeySpec
+            SecretKey originalKey = new SecretKeySpec(Arrays.copyOf(decodedKey, 16), "AES");
+            cipher.init(Cipher.ENCRYPT_MODE, originalKey);
+            byte[] cipherText = cipher.doFinal(body.getBytes("UTF-8"));
+            return Base64.getEncoder().encodeToString(cipherText);
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Error occured while encrypting data", e);
+        }
+    }
+
     /*
         Alice 6. 전자봉투 생성
      */
@@ -272,63 +301,75 @@ public class PGP {
         public key로 암호화
      */
     public String encryptWithPublicKey(SecretKey secretKey, String receiverPublicKey) {
-        String encryptedData = null;
-        byte[] byteEncryptedData = null;
-        try{
-            // Public key 만들기
+        String encryptedText = null;
+
+        try {
+            // 평문으로 전달받은 공개키를 사용하기 위해 공개키 객체 생성
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             byte[] bytePublicKey = Base64.getDecoder().decode(receiverPublicKey.getBytes());
             X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(bytePublicKey);
             PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
 
-            // 암호화 모드 설정
+            // 만들어진 공개키 객체로 암호화 설정
             Cipher cipher = Cipher.getInstance("RSA");
-            cipher.init(cipher.ENCRYPT_MODE, publicKey);
+            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
 
-            // System.out.printf("sendData - 3 (최종 input): %s\n", secretKey.getEncoded());
-            // plainText 암호화
-            byteEncryptedData = cipher.doFinal(secretKey.getEncoded());
-            // System.out.printf("sendData - 4 (암호화된 cipher): %s\n", byteEncryptedData);
-            encryptedData = Base64.getEncoder().encodeToString(byteEncryptedData);
-            // encryptedData = Base64.getEncoder().encodeToString(byteEncryptedData);
-
-            // System.out.printf("sendData - 5 (base64 인코딩): %s\n", encryptedData);
-        }catch(Exception e){
+            byte[] encryptedBytes = cipher.doFinal(secretKey.getEncoded());
+            encryptedText = Base64.getEncoder().encodeToString(encryptedBytes);
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        // return new String(byteEncryptedData);
-        return encryptedData;
-        // return encryptedData;
+
+        return encryptedText;
+    }
+    public String encryptWithPublicKey(String secretKey, String receiverPublicKey) {
+        String encryptedText = null;
+        try {
+            // 평문으로 전달받은 공개키를 사용하기 위해 공개키 객체 생성
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            byte[] bytePublicKey = Base64.getDecoder().decode(receiverPublicKey.getBytes());
+            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(bytePublicKey);
+            PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
+
+            // 만들어진 공개키 객체로 암호화 설정
+            Cipher cipher = Cipher.getInstance("RSA");
+            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+
+            byte[] encryptedBytes = cipher.doFinal(secretKey.getBytes("UTF-8"));
+            encryptedText = Base64.getEncoder().encodeToString(encryptedBytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return encryptedText;
     }
 
     /*
         private key로 복호화
      */
     public String decryptWithPrivateKey(String cipherText, String receiverPrivateKey){
-        String decryptedData = null;
+        String decryptedText = null;
+
         try {
-            System.out.println("1");
-            // Private Key 객체 생성
+            // 평문으로 전달받은 공개키를 사용하기 위해 공개키 객체 생성
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             byte[] bytePrivateKey = Base64.getDecoder().decode(receiverPrivateKey.getBytes());
             PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(bytePrivateKey);
             PrivateKey privateKey = keyFactory.generatePrivate(privateKeySpec);
 
-            // 암호화 모드 설정
+            // 만들어진 공개키 객체로 복호화 설정
             Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
 
-            // 암호문 복호화
-            byte[] byteEncryptedData = Base64.getDecoder().decode(cipherText);
-            // System.out.printf("receiveData - 1 (base64인코딩):%s\n", byteEncryptedData);
-            byte[] byteDecryptedData = cipher.doFinal(byteEncryptedData);
-            // System.out.printf("receiveData - 2 (첫 output): %s\n", byteDecryptedData);
-            decryptedData = new String(byteDecryptedData);
-            // System.out.printf("receiveData - 3: %s\n", decryptedData);
+            // 암호문을 평문화하는 과정
+            byte[] encryptedBytes =  Base64.getDecoder().decode(cipherText.getBytes());
+            byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+            decryptedText = Base64.getEncoder().encodeToString(decryptedBytes);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return decryptedData;
+
+        return decryptedText;
     }
 
     /*
@@ -402,9 +443,7 @@ public class PGP {
      */
     public SecretKey openEE(String ee, String receiverPrivateKey){
         String decryptedData = decryptWithPrivateKey(ee, receiverPrivateKey);
-        // System.out.printf("here? : %s\n", decryptedData);
         SecretKey secretKey = new SecretKeySpec(decryptedData.getBytes(),"AES");
-        // System.out.printf("receiveData - 4 %s\n", new String(secretKey.getEncoded()));
         return secretKey;
     }
 
