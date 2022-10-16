@@ -197,40 +197,43 @@ public class PGP {
         return secKey;
     }
 
-    /*
-        Alice 5. 내용물을 대칭키로 암호화
-        Will deperecated. use encryptBodyFixed
-     */
-    public String encryptBody(String body, SecretKey secretKey){
-        String encryptedData = "";
-        try {
-            Cipher aesCipher = Cipher.getInstance("AES");
-            aesCipher.init(Cipher.ENCRYPT_MODE, secretKey);
-            byte[] byteCipherText = aesCipher.doFinal(body.getBytes());    // 암호문 생성
-            encryptedData = new String(byteCipherText);
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        return encryptedData;
-    }
-    /*
-        Will deprecated, use decryptBodyFixed
-     */
-    public String decryptBody(String encryptedBody, SecretKey secretKey) {
-        // String 에서 aes key 복원하는 과정 진행...
-        String encryptedData = "";
-        try {
-            Cipher aesCipher = Cipher.getInstance("AES");
-            aesCipher.init(Cipher.DECRYPT_MODE, secretKey);    // 복호화 모드 초기화
-            byte[] bytePlainText = aesCipher.doFinal(encryptedBody.getBytes());   // 암호문 -> 평문으로 복호화
-            encryptedData = new String(bytePlainText);
-            this.body = encryptedData;
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        return encryptedData;
-    }
+//    /*
+//        Alice 5. 내용물을 대칭키로 암호화
+//        Will deperecated. use encryptBodyFixed
+//     */
+//    public String encryptBody(String body, SecretKey secretKey){
+//        String encryptedData = "";
+//        try {
+//            Cipher aesCipher = Cipher.getInstance("AES");
+//            aesCipher.init(Cipher.ENCRYPT_MODE, secretKey);
+//            byte[] byteCipherText = aesCipher.doFinal(body.getBytes());    // 암호문 생성
+//            encryptedData = new String(byteCipherText);
+//        }catch(Exception e){
+//            e.printStackTrace();
+//        }
+//        return encryptedData;
+//    }
+//    /*
+//        Will deprecated, use decryptBodyFixed
+//     */
+//    public String decryptBody(String encryptedBody, SecretKey secretKey) {
+//        // String 에서 aes key 복원하는 과정 진행...
+//        String encryptedData = "";
+//        try {
+//            Cipher aesCipher = Cipher.getInstance("AES");
+//            aesCipher.init(Cipher.DECRYPT_MODE, secretKey);    // 복호화 모드 초기화
+//            byte[] bytePlainText = aesCipher.doFinal(encryptedBody.getBytes());   // 암호문 -> 평문으로 복호화
+//            encryptedData = new String(bytePlainText);
+//            this.body = encryptedData;
+//        }catch(Exception e){
+//            e.printStackTrace();
+//        }
+//        return encryptedData;
+//    }
 
+    /*
+        Recommended
+     */
     public String encryptBodyFixed(String body, SecretKey secretKey){
         try {
             Cipher cipher = Cipher.getInstance("AES");
@@ -242,6 +245,9 @@ public class PGP {
                     "Error occured while encrypting data", e);
         }
     }
+    /*
+        Recommended
+     */
     public String decryptBodyFixed(String encryptedBody, SecretKey secretKey){
         try {
             Cipher cipher = Cipher.getInstance("AES");
@@ -328,7 +334,7 @@ public class PGP {
     /*
         Alice 8. 결과물과 전자봉투 합치기
      */
-    public String appendEEWithBody(String body, String EE){
+    public String appendEEWithBody(String EE, String body){
         StringBuffer sb = new StringBuffer();
         sb.append("-----BEGIN BODY-----\n");
         sb.append(body);
@@ -447,7 +453,7 @@ public class PGP {
         System.out.printf("sendData - FIXED-AES-KEY: %s\n", new String(fixedSecretKey.getEncoded()));
         System.out.printf("sendData -FIXED-AES-KEY SIZE: %d\n", new String(fixedSecretKey.getEncoded()).length());
         // 5
-        String encrpytedBody = encryptBody(body, fixedSecretKey);
+        String encrpytedBody = encryptBodyFixed(body, fixedSecretKey);
         System.out.printf("sendData - encrpytedBody: %s\n", encrpytedBody);
 
         // 6
@@ -479,7 +485,7 @@ public class PGP {
         System.out.printf("receivedData - FIXED-AES-KEY: %s\n", new String(fixedSecretKey.getEncoded()));
 
         // 3
-        String body = decryptBody(dataMap.get("body"), fixedSecretKey);
+        String body = decryptBodyFixed(dataMap.get("body"), fixedSecretKey);
         System.out.printf("receivedData - body: %s\n", dataMap.get("body"));
 
         // 4
