@@ -33,9 +33,9 @@ public class PGPTest {
         String originalMessage = "테스트입니다.";
 
         String sendingCipherText = pgp.sendData(originalMessage);
-        System.out.println("-----sendingCipherText---------");
+        System.out.println("-------sendingCipherText-------");
         System.out.println(sendingCipherText);
-        System.out.println("-------------------");
+        System.out.println("-------------------------------");
 
         String receivedMessage = "";
         try {
@@ -44,6 +44,9 @@ public class PGPTest {
             e.printStackTrace();
         }
 
+        System.out.println("--------receivedMessage---------");
+        System.out.println(receivedMessage);
+        System.out.println("--------------------------------");
         // then
         Assert.assertEquals(originalMessage, receivedMessage);
     }
@@ -93,5 +96,14 @@ public class PGPTest {
         // Assert.assertEquals(secretKeyOriginal, secretKeyDecoded); // -> 통과 실패
         Assert.assertEquals(secretKey1, secretKey2);                 // -> 통과 성공
         Assert.assertEquals(secretKeyA, secretKeyB);                 // -> 통과 성공
+    }
+
+    @Test
+    public void 전자서명테스트(){
+        // given
+
+        // when
+
+        // then
     }
 }
