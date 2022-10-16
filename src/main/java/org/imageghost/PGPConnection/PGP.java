@@ -199,6 +199,7 @@ public class PGP {
 
     /*
         Alice 5. 내용물을 대칭키로 암호화
+        Will deperecated. use encryptBodyFixed
      */
     public String encryptBody(String body, SecretKey secretKey){
         String encryptedData = "";
@@ -211,6 +212,46 @@ public class PGP {
             e.printStackTrace();
         }
         return encryptedData;
+    }
+    /*
+        Will deprecated, use decryptBodyFixed
+     */
+    public String decryptBody(String encryptedBody, SecretKey secretKey) {
+        // String 에서 aes key 복원하는 과정 진행...
+        String encryptedData = "";
+        try {
+            Cipher aesCipher = Cipher.getInstance("AES");
+            aesCipher.init(Cipher.DECRYPT_MODE, secretKey);    // 복호화 모드 초기화
+            byte[] bytePlainText = aesCipher.doFinal(encryptedBody.getBytes());   // 암호문 -> 평문으로 복호화
+            encryptedData = new String(bytePlainText);
+            this.body = encryptedData;
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return encryptedData;
+    }
+
+    public String encryptBodyFixed(String body, SecretKey secretKey){
+        try {
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            byte[] cipherText = cipher.doFinal(body.getBytes("UTF-8"));
+            return Base64.getEncoder().encodeToString(cipherText);
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Error occured while encrypting data", e);
+        }
+    }
+    public String decryptBodyFixed(String encryptedBody, SecretKey secretKey){
+        try {
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+            byte[] cipherText = cipher.doFinal(Base64.getDecoder().decode(encryptedBody));
+            return new String(cipherText);
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Error occured while decrypting data", e);
+        }
     }
 
     /*
@@ -438,7 +479,7 @@ public class PGP {
         System.out.printf("receivedData - FIXED-AES-KEY: %s\n", new String(fixedSecretKey.getEncoded()));
 
         // 3
-        String body = decryptBodyWithAESKey(dataMap.get("body"), fixedSecretKey);
+        String body = decryptBody(dataMap.get("body"), fixedSecretKey);
         System.out.printf("receivedData - body: %s\n", dataMap.get("body"));
 
         // 4
@@ -456,20 +497,5 @@ public class PGP {
 
         // 6
         return bodyMap.get("receivedPlainText");
-    }
-
-    public String decryptBodyWithAESKey(String body, SecretKey secretKey) {
-        // String 에서 aes key 복원하는 과정 진행...
-        String encryptedData = "";
-        try {
-            Cipher aesCipher = Cipher.getInstance("AES");
-            aesCipher.init(Cipher.DECRYPT_MODE, secretKey);    // 복호화 모드 초기화
-            byte[] bytePlainText = aesCipher.doFinal(body.getBytes());   // 암호문 -> 평문으로 복호화
-            encryptedData = new String(bytePlainText);
-            this.body = encryptedData;
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        return encryptedData;
     }
 }
