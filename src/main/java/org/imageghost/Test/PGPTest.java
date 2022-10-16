@@ -30,23 +30,22 @@ public class PGPTest {
         pgp.setReceiverPrivateKey(receiverPrivateKey);
 
         // when
-        String fromData = pgp.sendData("테스트입니다.");
-        System.out.println("-----send Data---------");
-        System.out.println(fromData);
+        String originalMessage = "테스트입니다.";
+
+        String sendingCipherText = pgp.sendData(originalMessage);
+        System.out.println("-----sendingCipherText---------");
+        System.out.println(sendingCipherText);
         System.out.println("-------------------");
 
-        String toData = "";
+        String receivedMessage = "";
         try {
-            toData = pgp.receiveData(fromData);
+            receivedMessage = pgp.receiveData(sendingCipherText);
         }catch(InvalidMessageIntegrityException e){
             e.printStackTrace();
         }
-        System.out.println("------receive Data-------");
-        System.out.println("toData: " + toData + "\n");
-        System.out.println("-------------------");
 
         // then
-        Assert.assertEquals(fromData, toData);
+        Assert.assertEquals(originalMessage, receivedMessage);
     }
 
     @Test

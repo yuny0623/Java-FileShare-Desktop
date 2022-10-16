@@ -393,36 +393,36 @@ public class PGP {
         데이터 보내기 - PGP 순방향 프로세스
     */
     public String sendData(String plainText){
-        this.plainText = plainText;
-        String mac = generateMAC(plainText);
-        String digitalSignature = encryptMAC(mac);
-        String body = appendSignatureToBody(plainText, digitalSignature);
-        SecretKey secretKey = generateSymmetricKey();
-        // System.out.printf("sendData - 1: %s\n", new String(secretKey.getEncoded()));
-        String enctyptedBody = encryptBody(body, secretKey);
-        String EE = createEE(secretKey, this.receiverPublicKey);
-        System.out.printf("send EE: %s\n", EE);
-        String finalResult = appendEEWithBody(enctyptedBody, EE);
-        return finalResult;
+//        this.plainText = plainText;
+//        String mac = generateMAC(plainText);
+//        String digitalSignature = encryptMAC(mac);
+//        String body = appendSignatureToBody(plainText, digitalSignature);
+//        SecretKey secretKey = generateSymmetricKey();
+//        // System.out.printf("sendData - 1: %s\n", new String(secretKey.getEncoded()));
+//        String enctyptedBody = encryptBody(body, secretKey);
+//        String EE = createEE(secretKey, this.receiverPublicKey);
+//        System.out.printf("send EE: %s\n", EE);
+//        String finalResult = appendEEWithBody(enctyptedBody, EE);
+//        return finalResult;
     }
 
     /*
         데이터 받기 - PGP 역방향 프로세스
      */
     public String receiveData(String cipherText) throws InvalidMessageIntegrityException{
-        HashMap<String, String> dataMap = dataSplitter(cipherText);
-        System.out.printf("receive EE: %s\n", dataMap.get("ee"));
-        SecretKey secretKey = openEE(dataMap.get("ee"), this.receiverPrivateKey);
-        // System.out.printf("receiveData - 5: %s\n", new String(secretKey.getEncoded()));
-        SecretKey secretKeyFixed = new SecretKeySpec(secretKey.getEncoded(), "AES");
-        String body = decryptBodyWithAESKey(dataMap.get("body"), secretKeyFixed);
-        HashMap<String, String> bodyMap = bodySplitter(body);
-        String receivedMAC = decryptDigitalSignature(this.digitalSignature, this.senderPublicKey);
-        String generatedMAC = hashPlainText(this.plainText);
-        if(!compareMAC(receivedMAC, generatedMAC)){
-            throw new InvalidMessageIntegrityException("Message Integrity is invalid. Message has changed or broken while communication");
-        }
-        return this.result;
+//        HashMap<String, String> dataMap = dataSplitter(cipherText);
+//        System.out.printf("receive EE: %s\n", dataMap.get("ee"));
+//        SecretKey secretKey = openEE(dataMap.get("ee"), this.receiverPrivateKey);
+//        // System.out.printf("receiveData - 5: %s\n", new String(secretKey.getEncoded()));
+//        SecretKey secretKeyFixed = new SecretKeySpec(secretKey.getEncoded(), "AES");
+//        String body = decryptBodyWithAESKey(dataMap.get("body"), secretKeyFixed);
+//        HashMap<String, String> bodyMap = bodySplitter(body);
+//        String receivedMAC = decryptDigitalSignature(this.digitalSignature, this.senderPublicKey);
+//        String generatedMAC = hashPlainText(this.plainText);
+//        if(!compareMAC(receivedMAC, generatedMAC)){
+//            throw new InvalidMessageIntegrityException("Message Integrity is invalid. Message has changed or broken while communication");
+//        }
+//        return this.result;
     }
 
     private String decryptBodyWithAESKey(String body, SecretKey secretKey) {
