@@ -262,6 +262,7 @@ public class PGPTest {
 
     @Test
     public void 전자봉투에서_키꺼내기_테스트(){
+
         HashMap<String, String> senderKeyPair = AsymmetricKeyGenerator.generateKeyPair();
         String senderPublicKey = senderKeyPair.get("publicKey");
         String senderPrivateKey = senderKeyPair.get("privateKey");
@@ -281,8 +282,8 @@ public class PGPTest {
         System.out.printf("send - sendEE: %s\n", sendEE);
 
         SecretKey receivedSecretKey = pgp.openEE(sendEE, receiverPrivateKey);
-        SecretKey receivedSecretKeyFixed = new SecretKeySpec(new String(receivedSecretKey.getEncoded()).getBytes(), "AES");
+        SecretKey receivedSecretKeyFixed = new SecretKeySpec(receivedSecretKey.getEncoded(), "AES");
         Assert.assertEquals(originalSecretKey,
-                receivedSecretKeyFixed) ;
+                receivedSecretKey) ;
     }
 }
