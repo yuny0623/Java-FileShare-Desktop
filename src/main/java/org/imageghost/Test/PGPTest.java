@@ -9,8 +9,6 @@ import org.junit.Test;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import java.security.spec.KeySpec;
-import java.sql.SQLOutput;
 import java.util.HashMap;
 
 public class PGPTest {
@@ -69,14 +67,7 @@ public class PGPTest {
         // then
     }
 
-    /*
-            Alice
-            1. aes 키 생성
-            2. aes 키를 BOB의  public key로 잠구
 
-            Bob:
-            1. 전자봉투를 private key로 열어서 aes 키 얻어냄.
-         */
     @Test
     public void 전자봉투테스트(){
         // given
@@ -89,15 +80,19 @@ public class PGPTest {
         SecretKey secretKeyOriginal = AESKeyMaker.generateAESKey();
         String ee = pgp.createEE(secretKeyOriginal, receiverPublicKey);
         SecretKey secretKeyDecoded = pgp.openEE(ee, receiverPrivateKey);
+
         String secretKey1 = new String(secretKeyOriginal.getEncoded());
         String secretKey2 = new String(secretKeyDecoded.getEncoded());
+
         System.out.println("secretKey1: " + secretKey1);
         System.out.println("secretKey2: " + secretKey2);
+
         SecretKey secretKeyA = new SecretKeySpec(secretKey1.getBytes(), "AES");
         SecretKey secretKeyB = new SecretKeySpec(secretKey2.getBytes(), "AES");
 
-        // then 
-        Assert.assertEquals(secretKey1, secretKey2);
-        Assert.assertEquals(secretKeyA, secretKeyB);
+        // then
+        // Assert.assertEquals(secretKeyOriginal, secretKeyDecoded); // -> 통과 실패
+        Assert.assertEquals(secretKey1, secretKey2);                 // -> 통과 성공
+        Assert.assertEquals(secretKeyA, secretKeyB);                 // -> 통과 성공
     }
 }

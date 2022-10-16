@@ -36,8 +36,8 @@ public class PGP {
     private String ee;
     private String aesKey;
 
-    private String sendAESKey;
-    private String receiveAESKey;
+    private String SENDER_AES_KEY;
+    private String RECEIVER_AES_KEY;
 
     public PGP(){
 
@@ -217,7 +217,7 @@ public class PGP {
         Alice 6. 전자봉투 생성
      */
     public String createEE(SecretKey secretKey, String receiverPublicKey){
-        System.out.printf("sendData - 2: %s\n", secretKey.getEncoded());
+        // System.out.printf("sendData - 2: %s\n", secretKey.getEncoded());
         return encryptWithPublicKey(secretKey, receiverPublicKey);
     }
 
@@ -238,14 +238,14 @@ public class PGP {
             Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(cipher.ENCRYPT_MODE, publicKey);
 
-            System.out.printf("sendData - 3 (최종 input): %s\n", secretKey.getEncoded());
+            // System.out.printf("sendData - 3 (최종 input): %s\n", secretKey.getEncoded());
             // plainText 암호화
             byteEncryptedData = cipher.doFinal(secretKey.getEncoded());
-            System.out.printf("sendData - 4 (암호화된 cipher): %s\n", byteEncryptedData);
+            // System.out.printf("sendData - 4 (암호화된 cipher): %s\n", byteEncryptedData);
             encryptedData = Base64.getEncoder().encodeToString(byteEncryptedData);
             // encryptedData = Base64.getEncoder().encodeToString(byteEncryptedData);
 
-            System.out.printf("sendData - 5 (base64 인코딩): %s\n", encryptedData);
+            // System.out.printf("sendData - 5 (base64 인코딩): %s\n", encryptedData);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -273,11 +273,11 @@ public class PGP {
 
             // 암호문 복호화
             byte[] byteEncryptedData = Base64.getDecoder().decode(cipherText);
-            System.out.printf("receiveData - 1 (base64인코딩):%s\n", byteEncryptedData);
+            // System.out.printf("receiveData - 1 (base64인코딩):%s\n", byteEncryptedData);
             byte[] byteDecryptedData = cipher.doFinal(byteEncryptedData);
-            System.out.printf("receiveData - 2 (첫 output): %s\n", byteDecryptedData);
+            // System.out.printf("receiveData - 2 (첫 output): %s\n", byteDecryptedData);
             decryptedData = new String(byteDecryptedData);
-            System.out.printf("receiveData - 3: %s\n", decryptedData);
+            // System.out.printf("receiveData - 3: %s\n", decryptedData);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -328,6 +328,7 @@ public class PGP {
         dataMap.put("ee", ee);
         dataMap.put("body", body);
         return dataMap;
+
     }
 
     /*
@@ -361,9 +362,9 @@ public class PGP {
      */
     public SecretKey openEE(String ee, String receiverPrivateKey){
         String decryptedData = decryptWithPrivateKey(ee, receiverPrivateKey);
-        System.out.printf("here? : %s\n", decryptedData);
+        // System.out.printf("here? : %s\n", decryptedData);
         SecretKey secretKey = new SecretKeySpec(decryptedData.getBytes(),"AES");
-        System.out.printf("receiveData - 4 %s\n", new String(secretKey.getEncoded()));
+        // System.out.printf("receiveData - 4 %s\n", new String(secretKey.getEncoded()));
         return secretKey;
     }
 
@@ -397,9 +398,10 @@ public class PGP {
         String digitalSignature = encryptMAC(mac);
         String body = appendSignatureToBody(plainText, digitalSignature);
         SecretKey secretKey = generateSymmetricKey();
-        System.out.printf("sendData - 1: %s\n", new String(secretKey.getEncoded()));
+        // System.out.printf("sendData - 1: %s\n", new String(secretKey.getEncoded()));
         String enctyptedBody = encryptBody(body, secretKey);
         String EE = createEE(secretKey, this.receiverPublicKey);
+        System.out.printf("send EE: %s\n", EE);
         String finalResult = appendEEWithBody(enctyptedBody, EE);
         return finalResult;
     }
@@ -409,9 +411,11 @@ public class PGP {
      */
     public String receiveData(String cipherText) throws InvalidMessageIntegrityException{
         HashMap<String, String> dataMap = dataSplitter(cipherText);
+        System.out.printf("receive EE: %s\n", dataMap.get("ee"));
         SecretKey secretKey = openEE(dataMap.get("ee"), this.receiverPrivateKey);
-        System.out.printf("receiveData - 5: %s\n", new String(secretKey.getEncoded()));
-        String body = decryptBodyWithAESKey(dataMap.get("body"), secretKey);
+        // System.out.printf("receiveData - 5: %s\n", new String(secretKey.getEncoded()));
+        SecretKey secretKeyFixed = new SecretKeySpec(secretKey.getEncoded(), "AES");
+        String body = decryptBodyWithAESKey(dataMap.get("body"), secretKeyFixed);
         HashMap<String, String> bodyMap = bodySplitter(body);
         String receivedMAC = decryptDigitalSignature(this.digitalSignature, this.senderPublicKey);
         String generatedMAC = hashPlainText(this.plainText);
