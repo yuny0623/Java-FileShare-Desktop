@@ -387,4 +387,43 @@ public class PGPTest {
         // then
         Assert.assertEquals(plainText, fixedText);
     }
+
+    @Test
+    public void SecretKey에서_Bytes로_Bytes에서_다시_SecretKey로_복원테스트(){
+        // given
+        HashMap<String, String> senderKeyPair = AsymmetricKeyGenerator.generateKeyPair();
+        String senderPublicKey = senderKeyPair.get("publicKey");
+        String senderPrivateKey = senderKeyPair.get("privateKey");
+
+        HashMap<String, String> receiverKeyPair = AsymmetricKeyGenerator.generateKeyPair();
+        String receiverPublicKey = receiverKeyPair.get("publicKey");
+        String receiverPrivateKey = receiverKeyPair.get("privateKey");
+
+        PGP pgp = new PGP();
+        pgp.setReceiverPublicKey(senderPublicKey);
+        pgp.setSenderPrivateKey(senderPrivateKey);
+        pgp.setReceiverPublicKey(receiverPublicKey);
+        pgp.setReceiverPrivateKey(receiverPrivateKey);
+
+        SecretKey originalSecretKey = pgp.generateSymmetricKey();
+        // when
+        byte[] intermediateByteArray = originalSecretKey.getEncoded();
+        String intermediateString = new String(intermediateByteArray);
+
+        /*
+            intermediateByteArray: [B@4e04a765
+            intermediateString: � �!��v�Ik �~q
+
+            결과가 위처럼 나왔는데 new String 으로 String으로 만들어준다고 해서 byte로 출력되는 문자열이 그대로 나오는게 아니라
+            변환되서 나오는걸 확인할 수 있음.
+
+            결과는 new SecretKeySpec에 전달할때는 SecretKey를 getEncoded 한 byte array 를 줘야만 원래 SecretKey로 복원됨을 알 수 있음.
+         */
+        System.out.printf("intermediateByteArray: %s\n", intermediateByteArray);
+        System.out.printf("intermediateString: %s\n", intermediateString);
+        // then
+        SecretKey fixedSecretKey = new SecretKeySpec(intermediateByteArray, "AES");
+
+        Assert.assertEquals(originalSecretKey, fixedSecretKey);
+    }
 }
