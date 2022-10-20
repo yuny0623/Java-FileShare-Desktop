@@ -37,6 +37,7 @@ public class RsaUtil {
             RSAPublicKeySpec publicSpec = keyFactory.getKeySpec(publicKey, RSAPublicKeySpec.class);
             String modulus = publicSpec.getModulus().toString(16);
             String exponent = publicSpec.getPublicExponent().toString(16);
+            rsa.put("publicKey", publicKey);
             rsa.put("privateKey", privateKey);
             rsa.put("modulus", modulus);
             rsa.put("exponent", exponent);

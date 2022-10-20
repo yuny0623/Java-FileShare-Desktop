@@ -195,40 +195,6 @@ public class PGP {
         return secKey;
     }
 
-//    /*
-//        Alice 5. 내용물을 대칭키로 암호화
-//        Will deperecated. use encryptBodyFixed
-//     */
-//    public String encryptBody(String body, SecretKey secretKey){
-//        String encryptedData = "";
-//        try {
-//            Cipher aesCipher = Cipher.getInstance("AES");
-//            aesCipher.init(Cipher.ENCRYPT_MODE, secretKey);
-//            byte[] byteCipherText = aesCipher.doFinal(body.getBytes());    // 암호문 생성
-//            encryptedData = new String(byteCipherText);
-//        }catch(Exception e){
-//            e.printStackTrace();
-//        }
-//        return encryptedData;
-//    }
-//    /*
-//        Will deprecated, use decryptBodyFixed
-//     */
-//    public String decryptBody(String encryptedBody, SecretKey secretKey) {
-//        // String 에서 aes key 복원하는 과정 진행...
-//        String encryptedData = "";
-//        try {
-//            Cipher aesCipher = Cipher.getInstance("AES");
-//            aesCipher.init(Cipher.DECRYPT_MODE, secretKey);    // 복호화 모드 초기화
-//            byte[] bytePlainText = aesCipher.doFinal(encryptedBody.getBytes());   // 암호문 -> 평문으로 복호화
-//            encryptedData = new String(bytePlainText);
-//            this.body = encryptedData;
-//        }catch(Exception e){
-//            e.printStackTrace();
-//        }
-//        return encryptedData;
-//    }
-
     /*
         Recommended
      */
@@ -293,37 +259,35 @@ public class PGP {
         Alice 6. 전자봉투 생성
      */
     public String createEE(SecretKey secretKey, String receiverPublicKey){
-        // System.out.printf("sendData - 2: %s\n", secretKey.getEncoded());
-        return encryptWithPublicKey(secretKey, receiverPublicKey);
+        // return encryptWithPublicKeyToSting(new String(secretKey.getEncoded()), receiverPublicKey);
+        return encryptWithPublicKey(new String(secretKey.getEncoded()), receiverPublicKey);
     }
 
     /*
         public key로 암호화
      */
-    public String encryptWithPublicKey(SecretKey secretKey, String receiverPublicKey) {
-        String encryptedText = null;
-
-        try {
-            // 평문으로 전달받은 공개키를 사용하기 위해 공개키 객체 생성
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            byte[] bytePublicKey = Base64.getDecoder().decode(receiverPublicKey.getBytes());
-            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(bytePublicKey);
-            PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
-
-            // 만들어진 공개키 객체로 암호화 설정
-            Cipher cipher = Cipher.getInstance("RSA");
-            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-
-            byte[] encryptedBytes = cipher.doFinal(secretKey.getEncoded());
-            encryptedText = Base64.getEncoder().encodeToString(encryptedBytes);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return encryptedText;
-    }
-
-    public String encryptWithPublicKeyToSting(String secretKey, String receiverPublicKey) {
+//    public String encryptWithPublicKey(SecretKey secretKey, String receiverPublicKey) {
+//        String encryptedText = null;
+//        try {
+//            // 평문으로 전달받은 공개키를 사용하기 위해 공개키 객체 생성
+//            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+//            byte[] bytePublicKey = Base64.getDecoder().decode(receiverPublicKey.getBytes());
+//            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(bytePublicKey);
+//            PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
+//
+//            // 만들어진 공개키 객체로 암호화 설정
+//            Cipher cipher = Cipher.getInstance("RSA");
+//            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+//
+//            byte[] encryptedBytes = cipher.doFinal(secretKey.getEncoded());
+//            encryptedText = Base64.getEncoder().encodeToString(encryptedBytes);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        return encryptedText;
+//    }
+    public String encryptWithPublicKey(String secretKey, String receiverPublicKey) {
         String encryptedText = null;
         try {
             // 평문으로 전달받은 공개키를 사용하기 위해 공개키 객체 생성
@@ -336,12 +300,11 @@ public class PGP {
             Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
 
-            byte[] encryptedBytes = cipher.doFinal(secretKey.getBytes("UTF-8"));
+            byte[] encryptedBytes = cipher.doFinal(secretKey.getBytes());
             encryptedText = Base64.getEncoder().encodeToString(encryptedBytes);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return encryptedText;
     }
 
@@ -444,7 +407,12 @@ public class PGP {
      */
     public SecretKey openEE(String ee, String receiverPrivateKey){
         String decryptedData = decryptWithPrivateKey(ee, receiverPrivateKey);
-        SecretKey secretKey = new SecretKeySpec(decryptedData.getBytes(),"AES");
+        SecretKey secretKey = null;
+        try {
+            secretKey = new SecretKeySpec(decryptedData.getBytes("UTF-8"), "AES");
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         return secretKey;
     }
 
@@ -461,6 +429,7 @@ public class PGP {
     public String hashPlainText(String receivedPlainText){
         return generateMAC(receivedPlainText);
     }
+
     /*
         mac 값 비교
      */
