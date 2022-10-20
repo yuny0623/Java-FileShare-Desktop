@@ -517,7 +517,7 @@ public class PGP {
     /**
      * 암호화
      */
-    static String encode(String plainData, String stringPublicKey) {
+    public String encode(String plainData, String stringPublicKey) {
         String encryptedData = null;
         try {
             //평문으로 전달받은 공개키를 공개키객체로 만드는 과정
@@ -542,7 +542,7 @@ public class PGP {
     /**
      * 복호화
      */
-    static String decode(String encryptedData, String stringPrivateKey) {
+    public String decode(String encryptedData, String stringPrivateKey) {
         String decryptedData = null;
         try {
             //평문으로 전달받은 개인키를 개인키객체로 만드는 과정

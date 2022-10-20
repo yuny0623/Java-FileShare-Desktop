@@ -373,4 +373,18 @@ public class PGPTest {
         // then
         Assert.assertEquals(plainText, decryptedCipherText);
     }
+
+    @Test
+    public void getBytes에서_다시_String으로변환테스트(){
+        // given
+        String plainText = "테스트입니다.";
+        // when
+        String fixedText = new String(plainText.getBytes());
+
+        System.out.printf("plainText: %s\n", plainText);
+        System.out.printf("fixedText: %s\n", fixedText);
+
+        // then
+        Assert.assertEquals(plainText, fixedText);
+    }
 }
