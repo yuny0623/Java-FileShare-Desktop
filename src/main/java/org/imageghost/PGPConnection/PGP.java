@@ -103,14 +103,6 @@ public class PGP {
         return new String(md.digest());
     }
 
-//    public String bytesToHex(byte[] bytes) {
-//        StringBuilder builder = new StringBuilder();
-//        for (byte b : bytes) {
-//            builder.append(String.format("%02x", b));
-//        }
-//        return builder.toString();
-//    }
-
     /*
         Alice 2. MAC 암호화
      */
@@ -255,30 +247,7 @@ public class PGP {
         }
     }
 
-    /*
-        Alice 6. 전자봉투 생성
-     */
-    public String createEE(SecretKey secretKey, String receiverPublicKey){
-        // return encryptWithPublicKeyToSting(new String(secretKey.getEncoded()), receiverPublicKey);
-        return encryptWithPublicKey(new String(secretKey.getEncoded()), receiverPublicKey);
-    }
-//    public String createEEFixed(SecretKey secretKey, String receiverPublicKey){
-//        return encode()
-//    }
 
-    /*
-        Bob의 private key를 사용해서 전자봉투 열어서 AES 키 꺼내기
-     */
-    public SecretKey openEE(String ee, String receiverPrivateKey){
-        String decryptedData = decryptWithPrivateKey(ee, receiverPrivateKey);
-        SecretKey secretKey = null;
-        try {
-            secretKey = new SecretKeySpec(decryptedData.getBytes("UTF-8"), "AES");
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        return secretKey;
-    }
 
     public String encryptWithPublicKey(String secretKey, String receiverPublicKey) {
         String encryptedText = null;
@@ -417,80 +386,57 @@ public class PGP {
         return receivedMAC.equals(generatedMAC);
     }
 
-
-    /*
-        데이터 보내기 - PGP 순방향 프로세스
-    */
-    public String sendData(String plainText){
-        // 1
-        String MAC = generateMAC(plainText);
-        System.out.printf("sendData - MAC: %s\n", MAC);
-
-        // 2
-        String digitalSignature = generateDigitalSignature(MAC, this.senderPrivateKey);
-        System.out.printf("sendData - digitalSignature: %s\n", digitalSignature);
-
-        // 3
-        String body = generateBody(plainText, digitalSignature);
-        System.out.printf("sendData - body: %s\n", body);
-
-        // 4
-        SecretKey secretKey = generateSymmetricKey();
-        String temp = new String(secretKey.getEncoded());
-        System.out.printf("sendData - AES-KEY: %s\n", temp);
-        SecretKey fixedSecretKey = new SecretKeySpec(temp.getBytes(), "AES");
-        System.out.printf("sendData - FIXED-AES-KEY: %s\n", new String(fixedSecretKey.getEncoded()));
-        System.out.printf("sendData -FIXED-AES-KEY SIZE: %d\n", new String(fixedSecretKey.getEncoded()).length());
-        // 5
-        String encrpytedBody = encryptBodyFixed(body, fixedSecretKey);
-        System.out.printf("sendData - encrpytedBody: %s\n", encrpytedBody);
-
-        // 6
-        String EE = createEE(secretKey, this.receiverPublicKey);
-        System.out.printf("sendData - EE: %s\n", EE);
-
-        // 7
-        String finalResult = appendEEWithBody(encrpytedBody, EE);
-        System.out.printf("sendData - finalResult: %s\n", finalResult);
-
-        return finalResult;
+    public String createEE(byte[] secretKeyArray, String receiverPublicKey){
+        return encode(secretKeyArray, receiverPublicKey);
     }
 
-    /*
-        데이터 받기 - PGP 역방향 프로세스
+    public byte[] openEE(String cipherText, String receiverPrivateKey){
+        return decode(cipherText, receiverPrivateKey);
+    }
+
+    /**
+     * 암호화
      */
-    public String receiveData(String cipherText) throws InvalidMessageIntegrityException{
+    public String encode(byte[] plainData, String stringPublicKey) {
+        String encryptedData = null;
+        try {
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            byte[] bytePublicKey = Base64.getDecoder().decode(stringPublicKey.getBytes());
+            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(bytePublicKey);
+            PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
 
-        // 1
-        HashMap<String, String> dataMap = dataSplitter(cipherText);
-        System.out.printf("receivedData - body: %s\n", dataMap.get("body"));
-        System.out.printf("receivedData - ee: %s\n", dataMap.get("ee"));
+            Cipher cipher = Cipher.getInstance("RSA");
+            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
 
-        // 2
-        SecretKey secretKey = openEE(dataMap.get("ee"), this.receiverPrivateKey);
-        String temp = new String(secretKey.getEncoded());
-        System.out.printf("receivedData - AES-KEY: %s\n", temp);
-        SecretKey fixedSecretKey = new SecretKeySpec(temp.getBytes(), "AES");
-        System.out.printf("receivedData - FIXED-AES-KEY: %s\n", new String(fixedSecretKey.getEncoded()));
+            byte[] byteEncryptedData = cipher.doFinal(plainData);
+            encryptedData = Base64.getEncoder().encodeToString(byteEncryptedData);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return encryptedData;
+    }
 
-        // 3
-        String body = decryptBodyFixed(dataMap.get("body"), fixedSecretKey);
-        System.out.printf("receivedData - body: %s\n", dataMap.get("body"));
+    /**
+     * 복호화
+     */
+    public byte[] decode(String encryptedData, String stringPrivateKey) {
+        String decryptedData = null;
+        byte[] byteDecryptedData = null;
 
-        // 4
-        HashMap<String, String> bodyMap = bodySplitter(body);
-        System.out.printf("receivedData - receivedPlainText: %s\n", bodyMap.get("receivedPlainText"));
-        System.out.printf("receivedData - digitalSignature: %s\n", bodyMap.get("digitalSignature"));
+        try {
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            byte[] bytePrivateKey = Base64.getDecoder().decode(stringPrivateKey.getBytes());
+            PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(bytePrivateKey);
+            PrivateKey privateKey = keyFactory.generatePrivate(privateKeySpec);
 
-        // 5
-        String receivedMAC = decryptDigitalSignature(bodyMap.get("digitalSignature"), this.senderPublicKey);
-        String generatedMAC = hashPlainText(bodyMap.get("receivedPlainText"));
+            Cipher cipher = Cipher.getInstance("RSA");
+            cipher.init(Cipher.DECRYPT_MODE, privateKey);
 
-        /*
-            무결성 체크 로직 필요함.
-         */
-
-        // 6
-        return bodyMap.get("receivedPlainText");
+            byte[] byteEncryptedData = Base64.getDecoder().decode(encryptedData.getBytes());
+            byteDecryptedData = cipher.doFinal(byteEncryptedData);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return byteDecryptedData;
     }
 }

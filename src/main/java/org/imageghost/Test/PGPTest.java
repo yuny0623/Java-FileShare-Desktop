@@ -33,14 +33,10 @@ public class PGPTest {
 
         // when
         SecretKey secretKeyOriginal = AESKeyMaker.generateAESKey();
-        String ee = pgp.createEE(secretKeyOriginal, receiverPublicKey);
-        SecretKey secretKeyDecoded = pgp.openEE(ee, receiverPrivateKey);
+        String ee = pgp.createEE(secretKeyOriginal.getEncoded(), receiverPublicKey);
+        byte[] byteArray = pgp.openEE(ee, receiverPrivateKey);
 
         // then
-        System.out.printf("secretKeyOriginal: %s \n", secretKeyOriginal.getEncoded());
-        System.out.printf("secretKeyDecoded: %s \n", secretKeyDecoded.getEncoded());
-
-        Assert.assertEquals(secretKeyOriginal, secretKeyDecoded);
     }
 
     @Test
@@ -207,7 +203,7 @@ public class PGPTest {
         String encryptedBody = pgp.encryptBodyFixed(body, secretKeyOriginal);
 
         // 전자봉투 생성
-        String ee = pgp.createEE(secretKeyOriginal, receiverPublicKey);
+        String ee = pgp.createEE(secretKeyOriginal.getEncoded(), receiverPublicKey);
         String finalResult = pgp.appendEEWithBody(ee, encryptedBody); // 최종 결과물
 
         System.out.printf("send - originalPlainText: %s\n", originalPlainText);
@@ -270,8 +266,8 @@ public class PGPTest {
         SecretKey originalSecretKey = pgp.generateSymmetricKey();
         System.out.printf("originalSecretKey: %s\n", originalSecretKey.getEncoded());
 
-        String EE = createEE(originalSecretKey.getEncoded(), receiverPublicKey);
-        byte[] secretKeyByteArray = openEE(EE, receiverPrivateKey);
+        String EE = pgp.createEE(originalSecretKey.getEncoded(), receiverPublicKey);
+        byte[] secretKeyByteArray = pgp.openEE(EE, receiverPrivateKey);
 
         SecretKey decryptedSecretKey = new SecretKeySpec(secretKeyByteArray, "AES");
         Assert.assertEquals(originalSecretKey, decryptedSecretKey);
@@ -321,8 +317,8 @@ public class PGPTest {
         SecretKey originalSecretKey = pgp.generateSymmetricKey(); // 대칭키 생성
         String plainText = new String(originalSecretKey.getEncoded());
 
-        String cipherText = encode(plainText.getBytes(), receiverPublicKey);
-        byte[] decryptedCipherText = decode(cipherText, receiverPrivateKey);
+        String cipherText = pgp.encode(plainText.getBytes(), receiverPublicKey);
+        byte[] decryptedCipherText = pgp.decode(cipherText, receiverPrivateKey);
 
         System.out.printf("plainText: %s\n", plainText);
         System.out.printf("cipherText: %s\n", cipherText);
@@ -404,8 +400,8 @@ public class PGPTest {
         pgp.setReceiverPrivateKey(receiverPrivateKey);
 
         SecretKey secretKey = pgp.generateSymmetricKey();
-        String cipherText = encode(secretKey.getEncoded(), receiverPublicKey);
-        byte[] plainText = decode(cipherText, receiverPrivateKey);
+        String cipherText = pgp.encode(secretKey.getEncoded(), receiverPublicKey);
+        byte[] plainText = pgp.decode(cipherText, receiverPrivateKey);
 
         String a = new String(secretKey.getEncoded(), "UTF-8");
         String b =  new String(plainText, "UTF-8");
@@ -418,62 +414,10 @@ public class PGPTest {
         Assert.assertEquals(new String(secretKey.getEncoded()), new String(plainText));
     }
 
-    public String createEE(byte[] secretKeyArray, String receiverPublicKey){
-        return encode(secretKeyArray, receiverPublicKey);
-    }
 
-    public byte[] openEE(String cipherText, String receiverPrivateKey){
-        return decode(cipherText, receiverPrivateKey);
-    }
-
-    /**
-     * 암호화
-     */
-    public String encode(byte[] plainData, String stringPublicKey) {
-        String encryptedData = null;
-        try {
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            byte[] bytePublicKey = Base64.getDecoder().decode(stringPublicKey.getBytes());
-            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(bytePublicKey);
-            PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
-
-            Cipher cipher = Cipher.getInstance("RSA");
-            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-
-            byte[] byteEncryptedData = cipher.doFinal(plainData);
-            encryptedData = Base64.getEncoder().encodeToString(byteEncryptedData);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return encryptedData;
-    }
-
-    /**
-     * 복호화
-     */
-    public byte[] decode(String encryptedData, String stringPrivateKey) {
-        String decryptedData = null;
-        byte[] byteDecryptedData = null;
-
-        try {
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            byte[] bytePrivateKey = Base64.getDecoder().decode(stringPrivateKey.getBytes());
-            PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(bytePrivateKey);
-            PrivateKey privateKey = keyFactory.generatePrivate(privateKeySpec);
-
-            Cipher cipher = Cipher.getInstance("RSA");
-            cipher.init(Cipher.DECRYPT_MODE, privateKey);
-
-            byte[] byteEncryptedData = Base64.getDecoder().decode(encryptedData.getBytes());
-            byteDecryptedData = cipher.doFinal(byteEncryptedData);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return byteDecryptedData;
-    }
 
     @Test
-    public void 통합테스트(){
+    public void 전체PGP_통합테스트(){
         // given
         HashMap<String, String> senderKeyPair = AsymmetricKeyGenerator.generateKeyPair();
         String senderPublicKey = senderKeyPair.get("publicKey");
@@ -503,7 +447,7 @@ public class PGPTest {
         String encryptedBody = pgp.encryptBodyFixed(body, secretKeyOriginal);
 
         // 전자봉투 생성
-        String ee = createEE(secretKeyOriginal.getEncoded(), receiverPublicKey);
+        String ee = pgp.createEE(secretKeyOriginal.getEncoded(), receiverPublicKey);
         String finalResult = pgp.appendEEWithBody(ee, encryptedBody); // 최종 결과물
 
         System.out.printf("send - originalPlainText: %s\n", originalPlainText);
@@ -523,7 +467,7 @@ public class PGPTest {
         System.out.printf("receive - receivedEE: %s\n", receivedEE);
         System.out.printf("receive - receivedBody: %s\n", receivedBody);
 
-        byte[] aesKey = openEE(receivedEE, receiverPrivateKey);
+        byte[] aesKey = pgp.openEE(receivedEE, receiverPrivateKey);
         SecretKey decryptedSecretKey = new SecretKeySpec(aesKey, "AES");
 
         // body 복호화
