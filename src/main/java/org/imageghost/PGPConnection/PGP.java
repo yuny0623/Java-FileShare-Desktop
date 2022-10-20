@@ -8,10 +8,45 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.HashMap;
 
+
 public class PGP {
-    /*
-        PGP Communication Implementation - by yuny0623
+
+    /**
+     PGP Communication Implementation in Java.
+     @Date 2022-10-20
+     @Author yuny0623
+     @Version 1.0.0
+
+     1. PGP - Pretty Good Privacy.
+        Pretty Good Privacy (PGP) is an encryption program that provides cryptographic privacy and authentication for data communication.
+        PGP is used for signing, encrypting, and decrypting texts, e-mails, files, directories, and whole disk partitions and to increase the security of e-mail communications.
+        Phil Zimmermann developed PGP in 1991.
+        PGP and similar software follow the OpenPGP, an open standard of PGP encryption software, standard (RFC 4880) for encrypting and decrypting data.
+
+
+     2. How to use.
+        - Alice(Sender):
+            1. Generate MAC.
+            2. Encrypt MAC with Alice's private key. This is called Digital Signature.
+            3. Add plainText to the result of step2.
+            4. Generate new symmetric key.
+            5. Encrypt result of step3 with the symmetric key.(generate Body.)
+            6. Put symmetric key into E.E called Electrinic Envelope by encrypt E.E with Bob's public key.
+            7. Add Body and E.E and send it to Bob.
+
+        - Bob(Receiver):
+            1. Open E.E with Bob's private key to get symmetric key from E.E. (Receiver Authentication)
+            2. Encrypt Body with symmetric key. (This will get Digital Signature and PlainText.)
+            3. Encrypt Digital Signature via Alice's public key. and get MAC.(Sender Authentication)
+            4. Hash the original plainText to compare with received MAC.
+            5. compare the hashed PlainText and received mac. (If it is same then message integrity has guranteed.)
+
+
+     3. Get more information about PGP.
+        Link: https://en.wikipedia.org/wiki/Pretty_Good_Privacy
+
      */
+
     private String plainText;
     private String senderPublicKey;
     private String senderPrivateKey;
@@ -50,35 +85,6 @@ public class PGP {
         this.receiverPrivateKey = receiverPrivateKey;
     }
 
-
-    /*
-        How to use.
-
-        Alice:
-           1. generate MAC.
-           2. encrypt MAC with Alice's private key.
-           3. add original message to result of 2 step.
-           4. generate new symmetric key
-           5. encrypt result of 3 step with the result of 4 step. the symmetric key.
-           6. put symmetric key in E.E (encrypt E.E with Bob's public key).
-           7. add all result and send to Bob.
-
-        Bob:
-           1. open EE with Bob's private key to get symmetric key from EE. (receiver authentication)
-           2. encrypt message body with symmetric key from 1 step.
-           3. encrypt digital signature via Alice's public key (sender authentication)
-           4. hash the original plainText to create mac
-           5. compare the 3 step's mac and received mac (message integrity)
-
-           <Appendix>
-           1. open EE with Bob's private key to get symmetric key from EE. (receiver authentication)
-           2. encrypt message body with symmetric key from 1 step.
-           3. encrypt digital signature via Alice's public key (sender authentication)
-           4. hash the original plainText to create mac
-           5. compare the 3 step's mac and received mac (message integrity)
-
-     */
-
     public String generateMAC(String plainText) {
         MessageDigest md = null;
         try {
@@ -90,16 +96,11 @@ public class PGP {
         return new String(md.digest());
     }
 
-    /*
-        Alice 2. MAC 암호화
-     */
+
     public String generateDigitalSignature(String MAC, String senderPrivateKey){
         return encryptWithPrivateKey(MAC, senderPrivateKey);
     }
 
-    /*
-        private key로 전자서명에 사인
-     */
     public String encryptWithPrivateKey(String plainText, String senderPrivateKey) {
         PrivateKey privateKey;
         String encryptedText = "";
@@ -113,7 +114,6 @@ public class PGP {
             Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(Cipher.ENCRYPT_MODE, privateKey);
 
-            // 평문 private key 로 암호화
             encryptedText = Base64.getEncoder().encodeToString(cipher.doFinal(plainText.getBytes()));
         }catch(Exception e){
             e.printStackTrace();
@@ -121,9 +121,6 @@ public class PGP {
         return encryptedText;
     }
 
-    /*
-        public key로 전자서명 풀기
-     */
     public String solveDigitalSignature(String cipherText, String senderPublicKey) {
         PublicKey publicKey;
         String decryptedText = "";
@@ -144,9 +141,6 @@ public class PGP {
         return decryptedText;
     }
 
-    /*
-        Alice 3. 전자서명과 메시지 원본 합치기
-     */
     public String generateBody(String plainText, String digitalSignature){
         StringBuffer sb = new StringBuffer();
         sb.append("-----BEGIN PLAIN TEXT-----\n");
@@ -158,24 +152,18 @@ public class PGP {
         return sb.toString();
     }
 
-    /*
-        Alice 4. 대칭키 생성
-     */
     public SecretKey generateSymmetricKey(){
         KeyGenerator generator = null;
         try {
-            generator = KeyGenerator.getInstance("AES");   // AES Key Generator 객체 생성
+            generator = KeyGenerator.getInstance("AES");
         }catch(NoSuchAlgorithmException e){
             e.printStackTrace();
         }
-        generator.init(128);    // AES Key size 지정
-        SecretKey secKey = generator.generateKey();     // AES 암호화 알고리즘에서 사용할 대칭키 생성
+        generator.init(128);
+        SecretKey secKey = generator.generateKey();
         return secKey;
     }
 
-    /*
-        Recommended
-     */
     public String encryptBodyFixed(String body, SecretKey secretKey){
         try {
             Cipher cipher = Cipher.getInstance("AES");
@@ -186,9 +174,7 @@ public class PGP {
             throw new RuntimeException("Error occured while encrypting data", e);
         }
     }
-    /*
-        Recommended
-     */
+
     public String decryptBodyFixed(String encryptedBody, SecretKey secretKey){
         try {
             Cipher cipher = Cipher.getInstance("AES");
@@ -200,9 +186,6 @@ public class PGP {
         }
     }
 
-    /*
-        Alice 8. 결과물과 전자봉투 합치기
-     */
     public String appendEEWithBody(String EE, String body){
         StringBuffer sb = new StringBuffer();
         sb.append("-----BEGIN BODY-----\n");
@@ -214,10 +197,6 @@ public class PGP {
         return sb.toString();
     }
 
-
-    /*
-        전달받은 데이터를 body와 ee로 분할
-     */
     public HashMap<String, String> dataSplitter(String message){
         String bodyString = "-----BEGIN BODY-----\n";
         String eeString = "-----BEGIN EE-----\n";
@@ -237,9 +216,6 @@ public class PGP {
 
     }
 
-    /*
-        전달받은 body를 plainText와 DigitalSignature로 분할
-     */
     public HashMap<String, String> bodySplitter(String body){
         String plainTextString = "-----BEGIN PLAIN TEXT-----\n";
         String digitalSignatureString = "-----BEGIN DIGITAL SIGNATURE-----\n";
@@ -258,23 +234,14 @@ public class PGP {
         return bodyMap;
     }
 
-    /*
-        Bob: DigitalSignature 를 Alice의 public key로 열기
-     */
     public String decryptDigitalSignature(String digitalSignature, String senderPublicKey){
         return solveDigitalSignature(digitalSignature, senderPublicKey);
     }
 
-    /*
-        SHA-256 사용해서 MAC 생성
-     */
     public String hashPlainText(String receivedPlainText){
         return generateMAC(receivedPlainText);
     }
 
-    /*
-        mac 값 비교
-     */
     public boolean compareMAC(String receivedMAC, String generatedMAC){
         return receivedMAC.equals(generatedMAC);
     }
@@ -332,10 +299,10 @@ public class PGP {
         String originalMAC = this.generateMAC(plainText);
         String originalDigitalSignature = this.generateDigitalSignature(originalMAC, senderPrivateKey);
         String body = this.generateBody(plainText, originalDigitalSignature);
-        SecretKey secretKeyOriginal = this.generateSymmetricKey(); // 대칭키 생성
+        SecretKey secretKeyOriginal = this.generateSymmetricKey();
         String encryptedBody = this.encryptBodyFixed(body, secretKeyOriginal);
         String ee = this.createEE(secretKeyOriginal.getEncoded(), receiverPublicKey);
-        String finalResult = this.appendEEWithBody(ee, encryptedBody); // 최종 결과물
+        String finalResult = this.appendEEWithBody(ee, encryptedBody);
         return finalResult;
     }
 
@@ -357,7 +324,7 @@ public class PGP {
         String receivedDigitalSignature = bodyMap.get("digitalSignature");
         String receivedMAC = this.decryptDigitalSignature(receivedDigitalSignature, senderPublicKey); // sender authentication
         String hashPlainText = this.hashPlainText(receivedPlainText);
-        if(this.compareMAC(receivedMAC, hashPlainText)){ // 무결성 검사
+        if(this.compareMAC(receivedMAC, hashPlainText)){
             return receivedPlainText;
         }else{
             throw new InvalidMessageIntegrityException("Invalid Message Integrity. Message has been changed while transportation.");
