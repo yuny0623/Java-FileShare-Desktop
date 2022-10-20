@@ -1,14 +1,10 @@
 package org.imageghost.PGPConnection;
-
 import org.imageghost.PGPConnection.CutomException.InvalidMessageIntegrityException;
-
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.sql.SQLOutput;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
 
@@ -16,29 +12,11 @@ public class PGP {
     /*
         PGP Communication Implementation - by yuny0623
      */
-
-    /*
-        Alice
-     */
     private String plainText;
     private String senderPublicKey;
     private String senderPrivateKey;
     private String receiverPublicKey;
     private String receiverPrivateKey;
-
-    /*
-        Bob
-     */
-    private String receivedPlainText;
-    private String decryptedMAC;
-    private String result;
-    private String digitalSignature;
-    private String body;
-    private String ee;
-    private String aesKey;
-
-    private String SENDER_AES_KEY;
-    private String RECEIVER_AES_KEY;
 
     public PGP(){
 
@@ -74,7 +52,7 @@ public class PGP {
 
 
     /*
-        How to use?
+        How to use.
 
         Alice:
            1. generate MAC.
@@ -91,6 +69,14 @@ public class PGP {
            3. encrypt digital signature via Alice's public key (sender authentication)
            4. hash the original plainText to create mac
            5. compare the 3 step's mac and received mac (message integrity)
+
+           <Appendix>
+           1. open EE with Bob's private key to get symmetric key from EE. (receiver authentication)
+           2. encrypt message body with symmetric key from 1 step.
+           3. encrypt digital signature via Alice's public key (sender authentication)
+           4. hash the original plainText to create mac
+           5. compare the 3 step's mac and received mac (message integrity)
+
      */
 
     public String generateMAC(String plainText) {
@@ -148,7 +134,6 @@ public class PGP {
             publicKey = keyFactory.generatePublic(publicKeySpec);
 
             Cipher cipher = Cipher.getInstance("RSA");
-
             cipher.init(Cipher.DECRYPT_MODE, publicKey);
 
             // 암호문 public key 로 복호화
@@ -198,8 +183,7 @@ public class PGP {
             byte[] cipherText = cipher.doFinal(body.getBytes("UTF-8"));
             return Base64.getEncoder().encodeToString(cipherText);
         } catch (Exception e) {
-            throw new RuntimeException(
-                    "Error occured while encrypting data", e);
+            throw new RuntimeException("Error occured while encrypting data", e);
         }
     }
     /*
@@ -212,91 +196,8 @@ public class PGP {
             byte[] cipherText = cipher.doFinal(Base64.getDecoder().decode(encryptedBody));
             return new String(cipherText);
         } catch (Exception e) {
-            throw new RuntimeException(
-                    "Error occured while decrypting data", e);
+            throw new RuntimeException("Error occured while decrypting data", e);
         }
-    }
-
-    public String decryptBodyFixed2(String secretKey, String encryptedBody){
-        byte[] decodedKey = Base64.getDecoder().decode(secretKey);
-
-        try {
-            Cipher cipher = Cipher.getInstance("AES");
-            // rebuild key using SecretKeySpec
-            SecretKey originalKey = new SecretKeySpec(Arrays.copyOf(decodedKey, 16), "AES");
-            cipher.init(Cipher.DECRYPT_MODE, originalKey);
-            byte[] cipherText = cipher.doFinal(Base64.getDecoder().decode(encryptedBody));
-            return new String(cipherText);
-        } catch (Exception e) {
-            throw new RuntimeException(
-                    "Error occured while decrypting data", e);
-        }
-    }
-    public String encryptedBodyFixed2(String secretKey, String body){
-        byte[] decodedKey = Base64.getDecoder().decode(secretKey);
-
-        try {
-            Cipher cipher = Cipher.getInstance("AES");
-            // rebuild key using SecretKeySpec
-            SecretKey originalKey = new SecretKeySpec(Arrays.copyOf(decodedKey, 16), "AES");
-            cipher.init(Cipher.ENCRYPT_MODE, originalKey);
-            byte[] cipherText = cipher.doFinal(body.getBytes("UTF-8"));
-            return Base64.getEncoder().encodeToString(cipherText);
-        } catch (Exception e) {
-            throw new RuntimeException(
-                    "Error occured while encrypting data", e);
-        }
-    }
-
-
-
-    public String encryptWithPublicKey(String secretKey, String receiverPublicKey) {
-        String encryptedText = null;
-        try {
-            // 평문으로 전달받은 공개키를 사용하기 위해 공개키 객체 생성
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            byte[] bytePublicKey = Base64.getDecoder().decode(receiverPublicKey.getBytes());
-            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(bytePublicKey);
-            PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
-
-            // 만들어진 공개키 객체로 암호화 설정
-            Cipher cipher = Cipher.getInstance("RSA");
-            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-
-            byte[] encryptedBytes = cipher.doFinal(secretKey.getBytes());
-            encryptedText = Base64.getEncoder().encodeToString(encryptedBytes);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return encryptedText;
-    }
-
-    /*
-        private key로 복호화
-     */
-    public String decryptWithPrivateKey(String cipherText, String receiverPrivateKey){
-        String decryptedText = null;
-
-        try {
-            // 평문으로 전달받은 공개키를 사용하기 위해 공개키 객체 생성
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            byte[] bytePrivateKey = Base64.getDecoder().decode(receiverPrivateKey.getBytes());
-            PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(bytePrivateKey);
-            PrivateKey privateKey = keyFactory.generatePrivate(privateKeySpec);
-
-            // 만들어진 공개키 객체로 복호화 설정
-            Cipher cipher = Cipher.getInstance("RSA");
-            cipher.init(Cipher.DECRYPT_MODE, privateKey);
-
-            // 암호문을 평문화하는 과정
-            byte[] encryptedBytes =  Base64.getDecoder().decode(cipherText.getBytes());
-            byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
-            decryptedText = Base64.getEncoder().encodeToString(decryptedBytes);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return decryptedText;
     }
 
     /*
@@ -313,14 +214,6 @@ public class PGP {
         return sb.toString();
     }
 
-
-    /*
-        1. open EE with Bob's private key to get symmetric key from EE. (receiver authentication)
-           2. encrypt message body with symmetric key from 1 step.
-           3. encrypt digital signature via Alice's public key (sender authentication)
-           4. hash the original plainText to create mac
-           5. compare the 3 step's mac and received mac (message integrity)
-     */
 
     /*
         전달받은 데이터를 body와 ee로 분할
@@ -394,9 +287,7 @@ public class PGP {
         return decode(cipherText, receiverPrivateKey);
     }
 
-    /*
-      암호화
-     */
+
     public String encode(byte[] plainData, String stringPublicKey) {
         String encryptedData = null;
         try {
@@ -416,9 +307,6 @@ public class PGP {
         return encryptedData;
     }
 
-    /**
-     * 복호화
-     */
     public byte[] decode(String encryptedData, String stringPrivateKey) {
         String decryptedData = null;
         byte[] byteDecryptedData = null;
@@ -446,14 +334,12 @@ public class PGP {
         String body = this.generateBody(plainText, originalDigitalSignature);
         SecretKey secretKeyOriginal = this.generateSymmetricKey(); // 대칭키 생성
         String encryptedBody = this.encryptBodyFixed(body, secretKeyOriginal);
-
-        // 전자봉투 생성
         String ee = this.createEE(secretKeyOriginal.getEncoded(), receiverPublicKey);
         String finalResult = this.appendEEWithBody(ee, encryptedBody); // 최종 결과물
         return finalResult;
     }
-    
-    public String receive(String cipherText){
+
+    public String receive(String cipherText) throws Exception{
         HashMap<String, String> dataMap = this.dataSplitter(cipherText);
         String receivedBody = dataMap.get("body");
         String receivedEE = dataMap.get("ee");
@@ -471,8 +357,11 @@ public class PGP {
         String receivedDigitalSignature = bodyMap.get("digitalSignature");
         String receivedMAC = this.decryptDigitalSignature(receivedDigitalSignature, senderPublicKey); // sender authentication
         String hashPlainText = this.hashPlainText(receivedPlainText);
-
-        return receivedPlainText;
+        if(this.compareMAC(receivedMAC, hashPlainText)){ // 무결성 검사
+            return receivedPlainText;
+        }else{
+            throw new InvalidMessageIntegrityException("Invalid Message Integrity. Message has been changed while transportation.");
+        }
     }
 }
 
