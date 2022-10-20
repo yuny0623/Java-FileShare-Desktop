@@ -449,6 +449,13 @@ public class PGPTest {
         String cipherText = pgp.encode(secretKey.getEncoded(), receiverPublicKey);
         String plainText = pgp.decode(cipherText, receiverPrivateKey);
 
+        String a = new String(secretKey.getEncoded(), "UTF-8");
+        String b =  new String(plainText.getBytes(), "UTF-8");
+
+        SecretKey secretKeyA = new SecretKeySpec(a.getBytes(), "AES");
+        SecretKey secretKeyB = new SecretKeySpec(b.getBytes(), "AES");
+
+        Assert.assertEquals(secretKeyA, secretKeyB);
         // UTF-8로 동시에 변환하니까 된다!
         Assert.assertEquals(new String(secretKey.getEncoded(), "UTF-8"), new String(plainText.getBytes(), "UTF-8"));
     }
