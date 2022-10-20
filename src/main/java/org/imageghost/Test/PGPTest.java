@@ -333,7 +333,7 @@ public class PGPTest {
     }
 
     @Test
-    public void getBytes에서_다시_String으로변환테스트(){
+    public void getBytes에서_다시_String으로_변환테스트(){
         // given
         String plainText = "테스트입니다.";
         // when
@@ -388,7 +388,7 @@ public class PGPTest {
     }
 
     @Test
-    public void AES키_암복호화_테스트()throws Exception{
+    public void AES키_암복호화_테스트() throws Exception{
         HashMap<String, String> senderKeyPair = AsymmetricKeyGenerator.generateKeyPair();
         String senderPublicKey = senderKeyPair.get("publicKey");
         String senderPrivateKey = senderKeyPair.get("privateKey");
@@ -421,10 +421,10 @@ public class PGPTest {
     public String createEE(byte[] secretKeyArray, String receiverPublicKey){
         return encode(secretKeyArray, receiverPublicKey);
     }
+
     public byte[] openEE(String cipherText, String receiverPrivateKey){
         return decode(cipherText, receiverPrivateKey);
     }
-
 
     /**
      * 암호화
@@ -432,17 +432,14 @@ public class PGPTest {
     public String encode(byte[] plainData, String stringPublicKey) {
         String encryptedData = null;
         try {
-            //평문으로 전달받은 공개키를 공개키객체로 만드는 과정
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             byte[] bytePublicKey = Base64.getDecoder().decode(stringPublicKey.getBytes());
             X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(bytePublicKey);
             PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
 
-            //만들어진 공개키객체를 기반으로 암호화모드로 설정하는 과정
             Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
 
-            //평문을 암호화하는 과정
             byte[] byteEncryptedData = cipher.doFinal(plainData);
             encryptedData = Base64.getEncoder().encodeToString(byteEncryptedData);
         } catch (Exception e) {
@@ -459,24 +456,100 @@ public class PGPTest {
         byte[] byteDecryptedData = null;
 
         try {
-            //평문으로 전달받은 개인키를 개인키객체로 만드는 과정
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             byte[] bytePrivateKey = Base64.getDecoder().decode(stringPrivateKey.getBytes());
             PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(bytePrivateKey);
             PrivateKey privateKey = keyFactory.generatePrivate(privateKeySpec);
 
-            //만들어진 개인키객체를 기반으로 암호화모드로 설정하는 과정
             Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
 
-            //암호문을 평문화하는 과정
             byte[] byteEncryptedData = Base64.getDecoder().decode(encryptedData.getBytes());
             byteDecryptedData = cipher.doFinal(byteEncryptedData);
-            // decryptedData = new String(byteDecryptedData);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // return decryptedData;
         return byteDecryptedData;
+    }
+
+    @Test
+    public void 통합테스트(){
+        // given
+        HashMap<String, String> senderKeyPair = AsymmetricKeyGenerator.generateKeyPair();
+        String senderPublicKey = senderKeyPair.get("publicKey");
+        String senderPrivateKey = senderKeyPair.get("privateKey");
+
+        HashMap<String, String> receiverKeyPair = AsymmetricKeyGenerator.generateKeyPair();
+        String receiverPublicKey = receiverKeyPair.get("publicKey");
+        String receiverPrivateKey = receiverKeyPair.get("privateKey");
+
+        PGP pgp = new PGP();
+        pgp.setReceiverPublicKey(senderPublicKey);
+        pgp.setSenderPrivateKey(senderPrivateKey);
+        pgp.setReceiverPublicKey(receiverPublicKey);
+        pgp.setReceiverPrivateKey(receiverPrivateKey);
+
+        // when
+        /*
+            송신부
+         */
+        String originalPlainText = "테스트입니다.";
+        pgp.setPlainText(originalPlainText);
+        // body 생성
+        String originalMAC = pgp.generateMAC(originalPlainText);
+        String originalDigitalSignature = pgp.generateDigitalSignature(originalMAC, senderPrivateKey);
+        String body = pgp.generateBody(originalPlainText, originalDigitalSignature);
+        SecretKey secretKeyOriginal = pgp.generateSymmetricKey(); // 대칭키 생성
+        String encryptedBody = pgp.encryptBodyFixed(body, secretKeyOriginal);
+
+        // 전자봉투 생성
+        String ee = createEE(secretKeyOriginal.getEncoded(), receiverPublicKey);
+        String finalResult = pgp.appendEEWithBody(ee, encryptedBody); // 최종 결과물
+
+        System.out.printf("send - originalPlainText: %s\n", originalPlainText);
+        System.out.printf("send - originalMAC: %s\n", originalMAC);
+        System.out.printf("send - originalDigitalSignature: %s\n", originalDigitalSignature);
+        System.out.printf("send - body: %s\n", body);
+        System.out.printf("send - encryptedBody: %s\n", encryptedBody);
+        System.out.printf("send - ee: %s\n", ee);
+        System.out.printf("send - finalResult: %s\n", finalResult);
+
+        /*
+            수신부
+         */
+        HashMap<String, String> dataMap = pgp.dataSplitter(finalResult);
+        String receivedBody = dataMap.get("body");
+        String receivedEE = dataMap.get("ee");
+        System.out.printf("receive - receivedEE: %s\n", receivedEE);
+        System.out.printf("receive - receivedBody: %s\n", receivedBody);
+
+        byte[] aesKey = openEE(receivedEE, receiverPrivateKey);
+        SecretKey decryptedSecretKey = new SecretKeySpec(aesKey, "AES");
+
+        // body 복호화
+        String decryptedBody = pgp.decryptBodyFixed(receivedBody, decryptedSecretKey);
+        HashMap<String, String> bodyMap = pgp.bodySplitter(decryptedBody);
+
+        String receivedPlainText = bodyMap.get("receivedPlainText");
+        String receivedDigitalSignature = bodyMap.get("digitalSignature");
+        String receivedMAC = pgp.decryptDigitalSignature(receivedDigitalSignature, senderPublicKey); // sender authentication
+        String hashPlainText = pgp.hashPlainText(receivedPlainText);
+
+        System.out.printf("receive - decryptedBody: %s\n", decryptedBody);
+        System.out.printf("receive - receivedPlainText: %s\n", receivedPlainText);
+        System.out.printf("receive - receivedDigitalSignature: %s\n", receivedDigitalSignature);
+        System.out.printf("receive - receivedMAC: %s\n", receivedMAC);
+        System.out.printf("receive - hashPlainText: %s\n", hashPlainText);
+
+        // then
+        // MAC 값 비교
+        Assert.assertEquals(receivedMAC, hashPlainText);
+        // 평문 비교
+        Assert.assertEquals(originalPlainText, receivedPlainText);
+        // 전자서명 비교
+        Assert.assertEquals(originalDigitalSignature, receivedDigitalSignature);
+
+        // 전자봉투에서 얻어낸 대칭키가 original key와 같은지 비교
+        Assert.assertEquals(secretKeyOriginal, decryptedSecretKey);
     }
 }
