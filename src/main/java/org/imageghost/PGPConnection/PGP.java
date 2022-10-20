@@ -55,6 +55,7 @@ public class PGP {
     public void setPlainText(String plainText){
         this.plainText = plainText;
     }
+
     public void setSenderPublicKey(String senderPublicKey){
         this.senderPublicKey = senderPublicKey;
     }
@@ -364,7 +365,6 @@ public class PGP {
         return bodyMap;
     }
 
-
     /*
         Bob: DigitalSignature 를 Alice의 public key로 열기
      */
@@ -394,8 +394,8 @@ public class PGP {
         return decode(cipherText, receiverPrivateKey);
     }
 
-    /**
-     * 암호화
+    /*
+      암호화
      */
     public String encode(byte[] plainData, String stringPublicKey) {
         String encryptedData = null;
@@ -439,4 +439,45 @@ public class PGP {
         }
         return byteDecryptedData;
     }
+
+    public String send(String plainText){
+        String originalMAC = this.generateMAC(plainText);
+        String originalDigitalSignature = this.generateDigitalSignature(originalMAC, senderPrivateKey);
+        String body = this.generateBody(plainText, originalDigitalSignature);
+        SecretKey secretKeyOriginal = this.generateSymmetricKey(); // 대칭키 생성
+        String encryptedBody = this.encryptBodyFixed(body, secretKeyOriginal);
+
+        // 전자봉투 생성
+        String ee = this.createEE(secretKeyOriginal.getEncoded(), receiverPublicKey);
+        String finalResult = this.appendEEWithBody(ee, encryptedBody); // 최종 결과물
+        return finalResult;
+    }
+    
+    public String receive(String cipherText){
+        HashMap<String, String> dataMap = this.dataSplitter(cipherText);
+        String receivedBody = dataMap.get("body");
+        String receivedEE = dataMap.get("ee");
+        System.out.printf("receive - receivedEE: %s\n", receivedEE);
+        System.out.printf("receive - receivedBody: %s\n", receivedBody);
+
+        byte[] aesKey = this.openEE(receivedEE, receiverPrivateKey);
+        SecretKey decryptedSecretKey = new SecretKeySpec(aesKey, "AES");
+
+        // body 복호화
+        String decryptedBody = this.decryptBodyFixed(receivedBody, decryptedSecretKey);
+        HashMap<String, String> bodyMap = this.bodySplitter(decryptedBody);
+
+        String receivedPlainText = bodyMap.get("receivedPlainText");
+        String receivedDigitalSignature = bodyMap.get("digitalSignature");
+        String receivedMAC = this.decryptDigitalSignature(receivedDigitalSignature, senderPublicKey); // sender authentication
+        String hashPlainText = this.hashPlainText(receivedPlainText);
+
+        return receivedPlainText;
+    }
 }
+
+
+
+
+
+

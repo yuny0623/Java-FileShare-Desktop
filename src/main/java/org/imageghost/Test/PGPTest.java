@@ -414,8 +414,6 @@ public class PGPTest {
         Assert.assertEquals(new String(secretKey.getEncoded()), new String(plainText));
     }
 
-
-
     @Test
     public void 전체PGP_통합테스트(){
         // given
@@ -492,7 +490,6 @@ public class PGPTest {
         Assert.assertEquals(originalPlainText, receivedPlainText);
         // 전자서명 비교
         Assert.assertEquals(originalDigitalSignature, receivedDigitalSignature);
-
         // 전자봉투에서 얻어낸 대칭키가 original key와 같은지 비교
         Assert.assertEquals(secretKeyOriginal, decryptedSecretKey);
     }
