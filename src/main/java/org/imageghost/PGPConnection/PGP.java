@@ -262,31 +262,24 @@ public class PGP {
         // return encryptWithPublicKeyToSting(new String(secretKey.getEncoded()), receiverPublicKey);
         return encryptWithPublicKey(new String(secretKey.getEncoded()), receiverPublicKey);
     }
+//    public String createEEFixed(SecretKey secretKey, String receiverPublicKey){
+//        return encode()
+//    }
 
     /*
-        public key로 암호화
+        Bob의 private key를 사용해서 전자봉투 열어서 AES 키 꺼내기
      */
-//    public String encryptWithPublicKey(SecretKey secretKey, String receiverPublicKey) {
-//        String encryptedText = null;
-//        try {
-//            // 평문으로 전달받은 공개키를 사용하기 위해 공개키 객체 생성
-//            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-//            byte[] bytePublicKey = Base64.getDecoder().decode(receiverPublicKey.getBytes());
-//            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(bytePublicKey);
-//            PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
-//
-//            // 만들어진 공개키 객체로 암호화 설정
-//            Cipher cipher = Cipher.getInstance("RSA");
-//            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-//
-//            byte[] encryptedBytes = cipher.doFinal(secretKey.getEncoded());
-//            encryptedText = Base64.getEncoder().encodeToString(encryptedBytes);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        return encryptedText;
-//    }
+    public SecretKey openEE(String ee, String receiverPrivateKey){
+        String decryptedData = decryptWithPrivateKey(ee, receiverPrivateKey);
+        SecretKey secretKey = null;
+        try {
+            secretKey = new SecretKeySpec(decryptedData.getBytes("UTF-8"), "AES");
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return secretKey;
+    }
+
     public String encryptWithPublicKey(String secretKey, String receiverPublicKey) {
         String encryptedText = null;
         try {
@@ -402,19 +395,6 @@ public class PGP {
         return bodyMap;
     }
 
-    /*
-        Bob의 private key를 사용해서 전자봉투 열어서 AES 키 꺼내기
-     */
-    public SecretKey openEE(String ee, String receiverPrivateKey){
-        String decryptedData = decryptWithPrivateKey(ee, receiverPrivateKey);
-        SecretKey secretKey = null;
-        try {
-            secretKey = new SecretKeySpec(decryptedData.getBytes("UTF-8"), "AES");
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        return secretKey;
-    }
 
     /*
         Bob: DigitalSignature 를 Alice의 public key로 열기
@@ -517,7 +497,7 @@ public class PGP {
     /**
      * 암호화
      */
-    public String encode(String plainData, String stringPublicKey) {
+    public String encode(byte[] plainData, String stringPublicKey) {
         String encryptedData = null;
         try {
             //평문으로 전달받은 공개키를 공개키객체로 만드는 과정
@@ -531,7 +511,7 @@ public class PGP {
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
 
             //평문을 암호화하는 과정
-            byte[] byteEncryptedData = cipher.doFinal(plainData.getBytes());
+            byte[] byteEncryptedData = cipher.doFinal(plainData);
             encryptedData = Base64.getEncoder().encodeToString(byteEncryptedData);
         } catch (Exception e) {
             e.printStackTrace();

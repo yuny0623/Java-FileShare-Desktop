@@ -363,7 +363,7 @@ public class PGPTest {
         SecretKey originalSecretKey = pgp.generateSymmetricKey(); // 대칭키 생성
         String plainText = new String(originalSecretKey.getEncoded());
 
-        String cipherText = pgp.encode(plainText, receiverPublicKey);
+        String cipherText = pgp.encode(plainText.getBytes(), receiverPublicKey);
         String decryptedCipherText = pgp.decode(cipherText, receiverPrivateKey);
 
         System.out.printf("plainText: %s\n", plainText);
@@ -389,7 +389,7 @@ public class PGPTest {
     }
 
     @Test
-    public void SecretKey에서_Bytes로_Bytes에서_다시_SecretKey로_복원테스트(){
+    public void SecretKey에서_Bytes로_Bytes에서_다시_SecretKey로_복원테스트() throws Exception{
         // given
         HashMap<String, String> senderKeyPair = AsymmetricKeyGenerator.generateKeyPair();
         String senderPublicKey = senderKeyPair.get("publicKey");
@@ -423,7 +423,32 @@ public class PGPTest {
         System.out.printf("intermediateString: %s\n", intermediateString);
         // then
         SecretKey fixedSecretKey = new SecretKeySpec(intermediateByteArray, "AES");
+        System.out.printf("originalSecretKey: %s\n", originalSecretKey.getEncoded());
+        System.out.printf("fixedSecretKey: %s\n", fixedSecretKey.getEncoded());
 
         Assert.assertEquals(originalSecretKey, fixedSecretKey);
+    }
+
+    @Test
+    public void AES키_암복호화_테스트(){
+        HashMap<String, String> senderKeyPair = AsymmetricKeyGenerator.generateKeyPair();
+        String senderPublicKey = senderKeyPair.get("publicKey");
+        String senderPrivateKey = senderKeyPair.get("privateKey");
+
+        HashMap<String, String> receiverKeyPair = AsymmetricKeyGenerator.generateKeyPair();
+        String receiverPublicKey = receiverKeyPair.get("publicKey");
+        String receiverPrivateKey = receiverKeyPair.get("privateKey");
+
+        PGP pgp = new PGP();
+        pgp.setReceiverPublicKey(senderPublicKey);
+        pgp.setSenderPrivateKey(senderPrivateKey);
+        pgp.setReceiverPublicKey(receiverPublicKey);
+        pgp.setReceiverPrivateKey(receiverPrivateKey);
+
+        SecretKey secretKey = pgp.generateSymmetricKey();
+        String cipherText = pgp.encode(secretKey.getEncoded(), receiverPublicKey);
+        String plainText = pgp.decode(cipherText, receiverPrivateKey);
+
+        Assert.assertEquals(secretKey.getEncoded(), plainText.getBytes());
     }
 }
