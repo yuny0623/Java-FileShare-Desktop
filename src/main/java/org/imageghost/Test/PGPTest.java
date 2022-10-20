@@ -317,10 +317,11 @@ public class PGPTest {
             e.printStackTrace();
         }
         // encrypt with receive public key
-        return encryptWithPublicKey(serializedSecretKeyBase64, receiverPublicKey);
+        return encryptWithPublicKeyToSting(serializedSecretKeyBase64, receiverPublicKey);
     }
+
     public SecretKey openEE(String EE, String receiverPrivateKey){
-        String serializedSecretKeyBase64 = decryptWithPrivateKey(EE, receiverPrivateKey);
+        String serializedSecretKeyBase64 = encryptWithPublicKeyToSting(EE, receiverPrivateKey);
         byte[] serializedSecretKey = Base64.getDecoder().decode(serializedSecretKeyBase64);
         SecretKey secretKey2 = null;
         try(ByteArrayInputStream bais = new ByteArrayInputStream(serializedSecretKey)) {
@@ -335,7 +336,7 @@ public class PGPTest {
         return secretKey2;
     }
 
-    public String encryptWithPublicKey(String secretKey, String receiverPublicKey) {
+    public String encryptWithPublicKeyToSting(String secretKey, String receiverPublicKey) {
         String encryptedText = null;
         try {
             // 평문으로 전달받은 공개키를 사용하기 위해 공개키 객체 생성
@@ -357,32 +358,6 @@ public class PGPTest {
         return encryptedText;
     }
 
-    /*
-    private key로 복호화
- */
-    public String decryptWithPrivateKey(String cipherText, String receiverPrivateKey){
-        String decryptedText = null;
-
-        try {
-            // 평문으로 전달받은 공개키를 사용하기 위해 공개키 객체 생성
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            byte[] bytePrivateKey = Base64.getDecoder().decode(receiverPrivateKey.getBytes());
-            PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(bytePrivateKey);
-            PrivateKey privateKey = keyFactory.generatePrivate(privateKeySpec);
-
-            // 만들어진 공개키 객체로 복호화 설정
-            Cipher cipher = Cipher.getInstance("RSA");
-            cipher.init(Cipher.DECRYPT_MODE, privateKey);
-
-            // 암호문을 평문화하는 과정
-            byte[] encryptedBytes =  Base64.getDecoder().decode(cipherText.getBytes());
-            byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
-            decryptedText = Base64.getEncoder().encodeToString(decryptedBytes);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return decryptedText;
-    }
 
     @Test
     public void 암복호화_메서드_테스트(){

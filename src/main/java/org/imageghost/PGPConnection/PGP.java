@@ -322,7 +322,8 @@ public class PGP {
 
         return encryptedText;
     }
-    public String encryptWithPublicKey(String secretKey, String receiverPublicKey) {
+
+    public String encryptWithPublicKeyToSting(String secretKey, String receiverPublicKey) {
         String encryptedText = null;
         try {
             // 평문으로 전달받은 공개키를 사용하기 위해 공개키 객체 생성
