@@ -430,7 +430,7 @@ public class PGPTest {
     }
 
     @Test
-    public void AES키_암복호화_테스트(){
+    public void AES키_암복호화_테스트()throws Exception{
         HashMap<String, String> senderKeyPair = AsymmetricKeyGenerator.generateKeyPair();
         String senderPublicKey = senderKeyPair.get("publicKey");
         String senderPrivateKey = senderKeyPair.get("privateKey");
@@ -449,6 +449,7 @@ public class PGPTest {
         String cipherText = pgp.encode(secretKey.getEncoded(), receiverPublicKey);
         String plainText = pgp.decode(cipherText, receiverPrivateKey);
 
-        Assert.assertEquals(secretKey.getEncoded(), plainText.getBytes());
+        // UTF-8로 동시에 변환하니까 된다!
+        Assert.assertEquals(new String(secretKey.getEncoded(), "UTF-8"), new String(plainText.getBytes(), "UTF-8"));
     }
 }
