@@ -31,7 +31,7 @@ public class PGP {
             3. Add plainText to the result of step2.
             4. Generate new symmetric key.
             5. Encrypt result of step3 with the symmetric key.(generate Body.)
-            6. Put symmetric key into E.E called Electrinic Envelope by encrypt E.E with Bob's public key.
+            6. Put symmetric key into E.E called Electronic Envelope by encrypt E.E with Bob's public key.
             7. Add Body and E.E and send it to Bob.
 
         - Bob(Receiver):
