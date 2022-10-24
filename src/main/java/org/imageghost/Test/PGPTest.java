@@ -209,7 +209,6 @@ public class PGPTest {
 
     @Test
     public void 전자봉투에서_키꺼내기_테스트(){ // fail
-
         SecretKey originalSecretKey = pgp.generateSymmetricKey();
         System.out.printf("originalSecretKey: %s\n", originalSecretKey.getEncoded());
 
