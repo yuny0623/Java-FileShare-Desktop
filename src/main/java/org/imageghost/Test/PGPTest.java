@@ -1,32 +1,45 @@
 package org.imageghost.Test;
 
 import org.imageghost.FileController.AESKeyMaker;
-import org.imageghost.Key.AsymmetricKeyGenerator;
+import org.imageghost.Generator.AsymmetricKeyGenerator;
 import org.imageghost.PGPConnection.PGP;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
-import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.*;
-import java.security.KeyFactory;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Base64;
 import java.util.HashMap;
 
 public class PGPTest {
+    PGP pgp;
+    HashMap<String, String> senderKeyPair;
+    HashMap<String, String> receiverKeyPair;
+    String senderPublicKey;
+    String senderPrivateKey;
+    String receiverPublicKey;
+    String receiverPrivateKey;
+
+    @Before
+    public void setupKeys(){
+        senderKeyPair = AsymmetricKeyGenerator.generateKeyPair();
+        senderPublicKey = senderKeyPair.get("publicKey");
+        senderPrivateKey = senderKeyPair.get("privateKey");
+
+        receiverKeyPair = AsymmetricKeyGenerator.generateKeyPair();
+        receiverPublicKey = receiverKeyPair.get("publicKey");
+        receiverPrivateKey = receiverKeyPair.get("privateKey");
+
+        pgp = new PGP();
+        pgp.setReceiverPublicKey(senderPublicKey);
+        pgp.setSenderPrivateKey(senderPrivateKey);
+        pgp.setReceiverPublicKey(receiverPublicKey);
+        pgp.setReceiverPrivateKey(receiverPrivateKey);
+    }
 
     @Test
     public void 전자봉투_송수신_테스트(){ // fail -> success 로 바꿔 봅시다.
         // given
-        PGP pgp = new PGP();
-        HashMap<String, String> receivedKeyPair = AsymmetricKeyGenerator.generateKeyPair();
-        String receiverPublicKey = receivedKeyPair.get("publicKey");
-        String receiverPrivateKey = receivedKeyPair.get("privateKey");
 
         System.out.printf("receiverPublicKey: %s\n", receiverPublicKey);
         System.out.printf("receiverPrivateKey: %s\n", receiverPrivateKey);
@@ -42,20 +55,6 @@ public class PGPTest {
     @Test
     public void 전자서명_송수신_테스트(){ // success
         // given
-        HashMap<String, String> senderKeyPair = AsymmetricKeyGenerator.generateKeyPair();
-        String senderPublicKey = senderKeyPair.get("publicKey");
-        String senderPrivateKey = senderKeyPair.get("privateKey");
-
-        HashMap<String, String> receiverKeyPair = AsymmetricKeyGenerator.generateKeyPair();
-        String receiverPublicKey = receiverKeyPair.get("publicKey");
-        String receiverPrivateKey = receiverKeyPair.get("privateKey");
-
-        PGP pgp = new PGP();
-        pgp.setReceiverPublicKey(senderPublicKey);
-        pgp.setSenderPrivateKey(senderPrivateKey);
-        pgp.setReceiverPublicKey(receiverPublicKey);
-        pgp.setReceiverPrivateKey(receiverPrivateKey);
-
         // when
         String originalMessage = "테스트입니다.";
         pgp.setPlainText(originalMessage);
@@ -73,19 +72,6 @@ public class PGPTest {
     @Test
     public void 메시지_body_생성_테스트(){ // success
         // given
-        HashMap<String, String> senderKeyPair = AsymmetricKeyGenerator.generateKeyPair();
-        String senderPublicKey = senderKeyPair.get("publicKey");
-        String senderPrivateKey = senderKeyPair.get("privateKey");
-
-        HashMap<String, String> receiverKeyPair = AsymmetricKeyGenerator.generateKeyPair();
-        String receiverPublicKey = receiverKeyPair.get("publicKey");
-        String receiverPrivateKey = receiverKeyPair.get("privateKey");
-
-        PGP pgp = new PGP();
-        pgp.setReceiverPublicKey(senderPublicKey);
-        pgp.setSenderPrivateKey(senderPrivateKey);
-        pgp.setReceiverPublicKey(receiverPublicKey);
-        pgp.setReceiverPrivateKey(receiverPrivateKey);
 
         // when
         String originalPlainText = "테스트입니다.";
@@ -122,19 +108,6 @@ public class PGPTest {
     @Test
     public void body를_AES키로_암호화_복호화_테스트(){ // success
         // given
-        HashMap<String, String> senderKeyPair = AsymmetricKeyGenerator.generateKeyPair();
-        String senderPublicKey = senderKeyPair.get("publicKey");
-        String senderPrivateKey = senderKeyPair.get("privateKey");
-
-        HashMap<String, String> receiverKeyPair = AsymmetricKeyGenerator.generateKeyPair();
-        String receiverPublicKey = receiverKeyPair.get("publicKey");
-        String receiverPrivateKey = receiverKeyPair.get("privateKey");
-
-        PGP pgp = new PGP();
-        pgp.setReceiverPublicKey(senderPublicKey);
-        pgp.setSenderPrivateKey(senderPrivateKey);
-        pgp.setReceiverPublicKey(receiverPublicKey);
-        pgp.setReceiverPrivateKey(receiverPrivateKey);
 
         // when
         String originalPlainText = "테스트입니다.";
@@ -175,19 +148,6 @@ public class PGPTest {
     @Test
     public void EE와_Body합치기_테스트(){ // success
         // given
-        HashMap<String, String> senderKeyPair = AsymmetricKeyGenerator.generateKeyPair();
-        String senderPublicKey = senderKeyPair.get("publicKey");
-        String senderPrivateKey = senderKeyPair.get("privateKey");
-
-        HashMap<String, String> receiverKeyPair = AsymmetricKeyGenerator.generateKeyPair();
-        String receiverPublicKey = receiverKeyPair.get("publicKey");
-        String receiverPrivateKey = receiverKeyPair.get("privateKey");
-
-        PGP pgp = new PGP();
-        pgp.setReceiverPublicKey(senderPublicKey);
-        pgp.setSenderPrivateKey(senderPrivateKey);
-        pgp.setReceiverPublicKey(receiverPublicKey);
-        pgp.setReceiverPrivateKey(receiverPrivateKey);
 
         // when
         /*
@@ -249,19 +209,6 @@ public class PGPTest {
 
     @Test
     public void 전자봉투에서_키꺼내기_테스트(){ // fail
-        HashMap<String, String> senderKeyPair = AsymmetricKeyGenerator.generateKeyPair();
-        String senderPublicKey = senderKeyPair.get("publicKey");
-        String senderPrivateKey = senderKeyPair.get("privateKey");
-
-        HashMap<String, String> receiverKeyPair = AsymmetricKeyGenerator.generateKeyPair();
-        String receiverPublicKey = receiverKeyPair.get("publicKey");
-        String receiverPrivateKey = receiverKeyPair.get("privateKey");
-
-        PGP pgp = new PGP();
-        pgp.setReceiverPublicKey(senderPublicKey);
-        pgp.setSenderPrivateKey(senderPrivateKey);
-        pgp.setReceiverPublicKey(receiverPublicKey);
-        pgp.setReceiverPrivateKey(receiverPrivateKey);
 
         SecretKey originalSecretKey = pgp.generateSymmetricKey();
         System.out.printf("originalSecretKey: %s\n", originalSecretKey.getEncoded());
@@ -271,40 +218,6 @@ public class PGPTest {
 
         SecretKey decryptedSecretKey = new SecretKeySpec(secretKeyByteArray, "AES");
         Assert.assertEquals(originalSecretKey, decryptedSecretKey);
-    }
-
-
-
-    @Test
-    public void 암복호화_메서드_테스트(){
-        // given
-        HashMap<String, String> senderKeyPair = AsymmetricKeyGenerator.generateKeyPair();
-        String senderPublicKey = senderKeyPair.get("publicKey");
-        String senderPrivateKey = senderKeyPair.get("privateKey");
-
-        HashMap<String, String> receiverKeyPair = AsymmetricKeyGenerator.generateKeyPair();
-        String receiverPublicKey = receiverKeyPair.get("publicKey");
-        String receiverPrivateKey = receiverKeyPair.get("privateKey");
-
-        PGP pgp = new PGP();
-        pgp.setReceiverPublicKey(senderPublicKey);
-        pgp.setSenderPrivateKey(senderPrivateKey);
-        pgp.setReceiverPublicKey(receiverPublicKey);
-        pgp.setReceiverPrivateKey(receiverPrivateKey);
-
-        // when
-        SecretKey originalSecretKey = pgp.generateSymmetricKey(); // 대칭키 생성
-        String plainText = new String(originalSecretKey.getEncoded());
-
-        String cipherText = pgp.encode(plainText.getBytes(), receiverPublicKey);
-        byte[] decryptedCipherText = pgp.decode(cipherText, receiverPrivateKey);
-
-        System.out.printf("plainText: %s\n", plainText);
-        System.out.printf("cipherText: %s\n", cipherText);
-        System.out.printf("decryptedCipherText: %s\n", decryptedCipherText);
-
-        // then
-        Assert.assertEquals(plainText, decryptedCipherText);
     }
 
     @Test
@@ -324,19 +237,6 @@ public class PGPTest {
     @Test
     public void SecretKey에서_Bytes로_Bytes에서_다시_SecretKey로_복원테스트() throws Exception{
         // given
-        HashMap<String, String> senderKeyPair = AsymmetricKeyGenerator.generateKeyPair();
-        String senderPublicKey = senderKeyPair.get("publicKey");
-        String senderPrivateKey = senderKeyPair.get("privateKey");
-
-        HashMap<String, String> receiverKeyPair = AsymmetricKeyGenerator.generateKeyPair();
-        String receiverPublicKey = receiverKeyPair.get("publicKey");
-        String receiverPrivateKey = receiverKeyPair.get("privateKey");
-
-        PGP pgp = new PGP();
-        pgp.setReceiverPublicKey(senderPublicKey);
-        pgp.setSenderPrivateKey(senderPrivateKey);
-        pgp.setReceiverPublicKey(receiverPublicKey);
-        pgp.setReceiverPrivateKey(receiverPrivateKey);
 
         SecretKey originalSecretKey = pgp.generateSymmetricKey();
         // when
@@ -364,19 +264,6 @@ public class PGPTest {
 
     @Test
     public void AES키_암복호화_테스트() throws Exception{
-        HashMap<String, String> senderKeyPair = AsymmetricKeyGenerator.generateKeyPair();
-        String senderPublicKey = senderKeyPair.get("publicKey");
-        String senderPrivateKey = senderKeyPair.get("privateKey");
-
-        HashMap<String, String> receiverKeyPair = AsymmetricKeyGenerator.generateKeyPair();
-        String receiverPublicKey = receiverKeyPair.get("publicKey");
-        String receiverPrivateKey = receiverKeyPair.get("privateKey");
-
-        PGP pgp = new PGP();
-        pgp.setReceiverPublicKey(senderPublicKey);
-        pgp.setSenderPrivateKey(senderPrivateKey);
-        pgp.setReceiverPublicKey(receiverPublicKey);
-        pgp.setReceiverPrivateKey(receiverPrivateKey);
 
         SecretKey secretKey = pgp.generateSymmetricKey();
         String cipherText = pgp.encode(secretKey.getEncoded(), receiverPublicKey);
@@ -396,19 +283,6 @@ public class PGPTest {
     @Test
     public void 전체PGP_통합테스트(){
         // given
-        HashMap<String, String> senderKeyPair = AsymmetricKeyGenerator.generateKeyPair();
-        String senderPublicKey = senderKeyPair.get("publicKey");
-        String senderPrivateKey = senderKeyPair.get("privateKey");
-
-        HashMap<String, String> receiverKeyPair = AsymmetricKeyGenerator.generateKeyPair();
-        String receiverPublicKey = receiverKeyPair.get("publicKey");
-        String receiverPrivateKey = receiverKeyPair.get("privateKey");
-
-        PGP pgp = new PGP();
-        pgp.setReceiverPublicKey(senderPublicKey);
-        pgp.setSenderPrivateKey(senderPrivateKey);
-        pgp.setReceiverPublicKey(receiverPublicKey);
-        pgp.setReceiverPrivateKey(receiverPrivateKey);
 
         // when
         /*

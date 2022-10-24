@@ -3,14 +3,13 @@ package org.imageghost.GUIComponents;
 import org.imageghost.ClientCustomException.NoKeyException;
 import org.imageghost.ClientCustomException.NoServerException;
 import org.imageghost.Config;
-import org.imageghost.FileController.AESCipherMaker;
 import org.imageghost.FileController.AESFileTranslator;
 import org.imageghost.FileController.AESKeyMaker;
-import org.imageghost.Key.AsymmetricKeyGenerator;
+import org.imageghost.Generator.AsymmetricKeyGenerator;
 import org.imageghost.Server.Connection;
-import org.imageghost.Wallet.ASymmetricKey;
+import org.imageghost.Key.ASymmetricKey;
 import org.imageghost.Wallet.KeyWallet;
-import org.imageghost.Wallet.SymmetricKey;
+import org.imageghost.Key.SymmetricKey;
 
 import javax.crypto.SecretKey;
 import javax.swing.*;
@@ -18,7 +17,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
-import java.util.List;
 
 public class MyFrame extends JFrame implements ActionListener {
         /*

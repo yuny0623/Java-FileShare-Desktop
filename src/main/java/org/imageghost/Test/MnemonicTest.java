@@ -1,0 +1,29 @@
+package org.imageghost.Test;
+
+import org.imageghost.Generator.AsymmetricKeyGenerator;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.HashMap;
+
+public class MnemonicTest {
+
+    @Test
+    public void privatekey_publickey_길이_테스트(){
+        // given
+        HashMap<String, String> keyPair = AsymmetricKeyGenerator.generateKeyPair();
+        String privateKey = keyPair.get("privateKey");
+        String publicKey = keyPair.get("publicKey");
+
+        // when
+        int privateKeyLength = privateKey.length();
+        int publicKeyLength = publicKey.length();
+
+        System.out.printf("private Key length: %d \n", privateKeyLength);
+        System.out.printf("public Key length: %d \n", publicKeyLength);
+
+        // then
+        Assert.assertEquals(2048, privateKeyLength);
+        Assert.assertEquals(2048, publicKeyLength);
+    }
+}

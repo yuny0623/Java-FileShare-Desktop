@@ -4,7 +4,7 @@ import org.imageghost.ClientCustomException.NoKeyException;
 import org.imageghost.Config;
 import org.imageghost.GUIComponents.MyFrame;
 import org.imageghost.Wallet.KeyWallet;
-import org.imageghost.Wallet.SymmetricKey;
+import org.imageghost.Key.SymmetricKey;
 
 import javax.crypto.SecretKey;
 import java.io.File;
@@ -51,7 +51,7 @@ public class AESFileTranslator {
         AES 암호화된 텍스트 -> 이미지 변환
         (decrypt 시에 main key가 없을 경우 decrypt 불가능.)
      */
-    public static Object AESCispherText2Image(byte[] aesCipherText){ // return type chaned from File to Object
+    public static Object AESCispherText2Image(byte[] aesCipherText){ // return type changed from File to Object
         SymmetricKey symmetricKey = null;
         try {
             symmetricKey = KeyWallet.getMainKeyForSymmetricKey();

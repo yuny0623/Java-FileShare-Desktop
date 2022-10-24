@@ -1,5 +1,6 @@
 package org.imageghost.Test;
 
+import org.imageghost.Config;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,5 +16,17 @@ public class UtilTest {
 
         // then
         Assert.assertTrue(temp.contains(subString));
+    }
+
+    @Test
+    public void Mnemonic문자열배열테스트(){
+        // given
+        int length = Config.MNEMONIC_WORDS.length;
+
+        // when
+        System.out.println(length);
+
+        // then
+        Assert.assertEquals(length, 2048);
     }
 }

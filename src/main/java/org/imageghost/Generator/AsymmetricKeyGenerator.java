@@ -1,12 +1,10 @@
-package org.imageghost.Key;
+package org.imageghost.Generator;
 
 import org.imageghost.ClientCustomException.NoKeyException;
 
 import java.security.*;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.List;
 
 public class AsymmetricKeyGenerator {
     private static final int KEY_SIZE = 2048;
