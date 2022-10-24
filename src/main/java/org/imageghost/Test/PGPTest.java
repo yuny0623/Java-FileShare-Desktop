@@ -273,27 +273,6 @@ public class PGPTest {
         Assert.assertEquals(originalSecretKey, decryptedSecretKey);
     }
 
-    public String encryptWithPublicKeyToSting(String secretKey, String receiverPublicKey) {
-        String encryptedText = null;
-        try {
-            // 평문으로 전달받은 공개키를 사용하기 위해 공개키 객체 생성
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            byte[] bytePublicKey = Base64.getDecoder().decode(receiverPublicKey.getBytes());
-            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(bytePublicKey);
-            PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
-
-            // 만들어진 공개키 객체로 암호화 설정
-            Cipher cipher = Cipher.getInstance("RSA");
-            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-
-            byte[] encryptedBytes = cipher.doFinal(secretKey.getBytes("UTF-8"));
-            encryptedText = Base64.getEncoder().encodeToString(encryptedBytes);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return encryptedText;
-    }
 
 
     @Test
