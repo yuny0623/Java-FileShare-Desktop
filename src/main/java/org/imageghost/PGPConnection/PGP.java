@@ -1,5 +1,5 @@
 package org.imageghost.PGPConnection;
-import org.imageghost.PGPConnection.CustomException.InvalidMessageIntegrityException;
+import org.imageghost.ClientCustomException.InvalidMessageIntegrityException;
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.*;
