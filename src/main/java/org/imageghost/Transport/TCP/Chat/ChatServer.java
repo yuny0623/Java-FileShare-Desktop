@@ -1,5 +1,7 @@
 package org.imageghost.Transport.TCP.Chat;
 
+import org.imageghost.Config;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -18,7 +20,7 @@ public class ChatServer {
 
     public void giveAndTake(){
         try{
-            serverSocket = new ServerSocket(8083);
+            serverSocket = new ServerSocket(Config.TCP_IP_CONNECTION_DEFAULT_PORT);
             serverSocket.setReuseAddress(true);
 
             while(true){

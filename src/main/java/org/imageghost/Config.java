@@ -11,5 +11,8 @@ public class Config {
      */
     public static String FILE_SAVE_PATH = "../Image"; // 이미지 저장 경로
     public static String HEALTH_CHECK_URL = "http://localhost:8080/health-check"; // 서버 상태 확인 URL
-    public static String ORIGINAL_SERVER_URL = "http://localhost:8080";           // 기본 서버 URL
+    public static String ORIGINAL_SERVER_URL = "http://localhost:8080";
+    // 기본 서버 URL
+
+    public static int TCP_IP_CONNECTION_DEFAULT_PORT = 8083;
 }
