@@ -1,4 +1,4 @@
-package org.imageghost.Server;
+package org.imageghost.HTTP;
 
 import org.imageghost.ClientCustomException.NoServerException;
 import org.imageghost.Config;
@@ -11,7 +11,7 @@ import java.net.URL;
 import java.util.HashMap;
 
 
-public class Connection {
+public class HTTPConnection {
     /*
         Check Server is running.
      */
@@ -58,7 +58,7 @@ public class Connection {
         get request to server
      */
     public static String httpGetRequest(String pURL, String pathVariable){
-        if(!Connection.checkServerLive()){
+        if(!HTTPConnection.checkServerLive()){
             throw new NoServerException("Server is not running.");
         }
         String myResult = "";

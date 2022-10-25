@@ -1,7 +1,7 @@
 package org.imageghost.Test;
 
-import org.imageghost.Transport.TCP.Chat.ClientAction;
-import org.imageghost.Transport.TCP.Chat.ServerAction;
+import org.imageghost.Transport.ClientAction;
+import org.imageghost.Transport.ServerAction;
 import org.junit.Test;
 
 public class TransportTest {
@@ -26,11 +26,15 @@ public class TransportTest {
             ClientAction clientAction = new ClientAction();
             clientAction.action();
         }).start();
-        Thread.sleep(10000000);
+        try {
+            Thread.sleep(10000000);
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
     }
 
     @Test
-    public void TCP_클라이언트_테스트_유저2() throws InterruptedException {
+    public void TCP_클라이언트_테스트_유저2(){
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
@@ -40,6 +44,10 @@ public class TransportTest {
             ClientAction clientAction = new ClientAction();
             clientAction.action();
         }).start();
-        Thread.sleep(10000000);
+        try {
+            Thread.sleep(10000000);
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
     }
 }

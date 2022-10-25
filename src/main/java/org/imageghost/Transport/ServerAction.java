@@ -1,4 +1,4 @@
-package org.imageghost.Transport.TCP.Chat;
+package org.imageghost.Transport;
 
 public class ServerAction {
     public ServerAction(){
