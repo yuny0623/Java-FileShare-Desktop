@@ -4,6 +4,7 @@ import org.imageghost.AesEncryption.AESCipherMaker;
 import org.imageghost.CustomException.NoKeyException;
 import org.imageghost.Config;
 import org.imageghost.FileController.FileTranslator;
+import org.imageghost.GUIComponents.AlertGui;
 import org.imageghost.GUIComponents.MainGui;
 import org.imageghost.Key.Keys.Key;
 import org.imageghost.Key.KeyFactory;
@@ -34,7 +35,7 @@ public class AESFileTranslator {
                 cipherText = AESCipherMaker.encryptText(plainTextOfFile, (SecretKey) symmetricKey.getKey());  // Text 를 CipherText로 변환
             } catch(Exception err){
                 err.printStackTrace();
-                MainGui.showAlert("Cannot create Cipher Text from Image!"); // alert
+                new AlertGui("Cannot create Cipher Text from Image! due to:" + err.getMessage(), false);
             }
             return cipherText;
         }
@@ -45,7 +46,7 @@ public class AESFileTranslator {
             cipherText = AESCipherMaker.encryptText(plainTextOfFile, (SecretKey) symmetricKey.getKey()); // Text를 CipherText로 변환
         } catch (Exception e) {
             e.printStackTrace();
-            MainGui.showAlert("Cannot create Cipher Text from Image!"); // alert
+            new AlertGui("Cannot create Cipher Text from Image! due to:"+ e.getMessage(), false);
         }
         return cipherText;
     }
@@ -59,8 +60,8 @@ public class AESFileTranslator {
         try {
             symmetricKey = KeyWallet.getMainKeyForSymmetricKey();
         }catch(NoKeyException e){
+            new AlertGui("No Main Key Existing! due to: " + e.getMessage(), false);
             e.printStackTrace();
-            MainGui.showAlert("No Main Key Existing!");
             return null;            // decrypt 시에 main key가 없을 경우 decrypt 불가능.
         }
 
@@ -69,8 +70,8 @@ public class AESFileTranslator {
         try {
             textOfImage = AESCipherMaker.decryptText(aesCipherText, (SecretKey) symmetricKey.getKey()); // CipherText 복호화
         }catch(Exception e){
+            new AlertGui("Cannot decrypt CipherText! due to:" + e.getMessage(), false);
             e.printStackTrace();
-            MainGui.showAlert("Cannot decrypt CipherText!");
         }
         String uuid = UUID.randomUUID().toString(); // 고유한 문자열 생성
         File file = FileTranslator.transferText2File(textOfImage, Config.FILE_SAVE_PATH, uuid + ".jpg"); // 랜덤 이미지명으로 생성

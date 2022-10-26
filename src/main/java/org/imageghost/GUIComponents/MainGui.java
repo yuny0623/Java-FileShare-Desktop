@@ -150,7 +150,7 @@ public class MainGui extends JFrame implements ActionListener {
             String filePath = textArea1.getText(); // 파일 경로를 읽어들임.
             String cipherText = null;
             if(filePath.equals("file path.")){
-                new AlertGui("File path is required!");
+                new AlertGui("File path is required!", false);
             }else{
                 cipherText = AESFileTranslator.Image2AESCipherText(filePath);
 
@@ -160,8 +160,8 @@ public class MainGui extends JFrame implements ActionListener {
                     sendData.put(aSymmetricKey.getPublicKey(), cipherText);                 // Main 비대칭키의 public Key가 서버의 사용자 식별자
                     HTTPConnection.httpPostRequest(Config.ORIGINAL_SERVER_URL + "/test1", sendData); // Server에 Post 요청
                 }catch(NoServerException error){
+                    new AlertGui("Server is not running! due to:" + error.getMessage(), false);
                     error.printStackTrace();
-                    new AlertGui("Server is not running!");
                 }
             }
         }else if(e.getSource() == button4){
@@ -188,7 +188,7 @@ public class MainGui extends JFrame implements ActionListener {
             button2.setEnabled(false);
             button3.setEnabled(false);
             button4.setEnabled(false);
-            new AlertGui("Server is not running!");
+            new AlertGui("Server is not running!", false);
             return false;
         }
     }

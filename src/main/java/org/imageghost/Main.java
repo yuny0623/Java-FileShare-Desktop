@@ -9,7 +9,7 @@ public class Main {
         try {
             new MainGui();
         } catch(Exception e){
-            new AlertGui("Filed while loading due to: " + e.getMessage());
+            new AlertGui("Filed while loading due to: " + e.getMessage(), false);
             e.printStackTrace();
         }
     }
