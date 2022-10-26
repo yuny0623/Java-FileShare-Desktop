@@ -1,4 +1,4 @@
-package org.imageghost.FileController;
+package org.imageghost.SymmetricKey;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;

@@ -19,7 +19,7 @@ public class UtilTest {
     }
 
     @Test
-    public void Mnemonic문자열배열테스트(){
+    public void Mnemonic문자열array테스트(){
         // given
         int length = Config.MNEMONIC_WORDS.length;
 

@@ -1,4 +1,4 @@
-package org.imageghost.Transport;
+package org.imageghost.TcpTransport;
 
 import org.imageghost.Config;
 

@@ -3,9 +3,9 @@ package org.imageghost.GUIComponents;
 import org.imageghost.ClientCustomException.NoKeyException;
 import org.imageghost.ClientCustomException.NoServerException;
 import org.imageghost.Config;
-import org.imageghost.FileController.AESFileTranslator;
-import org.imageghost.FileController.AESKeyMaker;
-import org.imageghost.Generator.AsymmetricKeyGenerator;
+import org.imageghost.SymmetricKey.AESFileTranslator;
+import org.imageghost.SymmetricKey.AESKeyMaker;
+import org.imageghost.AsymmetricKey.AsymmetricKeyMaker;
 import org.imageghost.HTTP.HTTPConnection;
 import org.imageghost.Key.ASymmetricKey;
 import org.imageghost.Wallet.KeyWallet;
@@ -142,8 +142,8 @@ public class MyFrame extends JFrame implements ActionListener {
         }else if(e.getSource() == button2){ // create asymmetric key
             checkServerConnection();
             // asymmetric key pair 생성
-            AsymmetricKeyGenerator asymmetricKeyGenerator = new AsymmetricKeyGenerator();
-            HashMap<String, String> keyPairHashMap = asymmetricKeyGenerator.generateKeyPair(); // 비대칭키 생성
+            AsymmetricKeyMaker asymmetricKeyMaker = new AsymmetricKeyMaker();
+            HashMap<String, String> keyPairHashMap = asymmetricKeyMaker.generateKeyPair(); // 비대칭키 생성
 
             StringBuffer stringBufferOfPublicKey = new StringBuffer();  // public key string
             stringBufferOfPublicKey.append("-----BEGIN PUBLIC KEY-----\n");

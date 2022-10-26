@@ -18,6 +18,4 @@ public class DiffieHellman {
                 ->
                 ->https://stackoverflow.com/questions/21081713/diffie-hellman-key-exchange-in-java
      */
-
-
 }

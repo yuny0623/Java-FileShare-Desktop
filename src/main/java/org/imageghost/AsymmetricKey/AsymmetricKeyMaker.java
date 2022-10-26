@@ -1,12 +1,10 @@
-package org.imageghost.Generator;
-
-import org.imageghost.ClientCustomException.NoKeyException;
+package org.imageghost.AsymmetricKey;
 
 import java.security.*;
 import java.util.Base64;
 import java.util.HashMap;
 
-public class AsymmetricKeyGenerator {
+public class AsymmetricKeyMaker {
     private static final int KEY_SIZE = 2048;
     private static String privateKey;
     private static String publicKey;
@@ -25,8 +23,8 @@ public class AsymmetricKeyGenerator {
             String stringPublicKey = Base64.getEncoder().encodeToString(publicKey.getEncoded());
             String stringPrivateKey = Base64.getEncoder().encodeToString(privateKey.getEncoded());
 
-            AsymmetricKeyGenerator.publicKey = stringPublicKey;
-            AsymmetricKeyGenerator.privateKey = stringPrivateKey;
+            AsymmetricKeyMaker.publicKey = stringPublicKey;
+            AsymmetricKeyMaker.privateKey = stringPrivateKey;
 
             keyPairHashMap.put("publicKey", stringPublicKey);
             keyPairHashMap.put("privateKey", stringPrivateKey);

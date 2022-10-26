@@ -1,7 +1,7 @@
 package org.imageghost.Test;
 
-import org.imageghost.FileController.AESKeyMaker;
-import org.imageghost.Generator.AsymmetricKeyGenerator;
+import org.imageghost.SymmetricKey.AESKeyMaker;
+import org.imageghost.AsymmetricKey.AsymmetricKeyMaker;
 import org.imageghost.PGPConnection.PGP;
 import org.junit.Assert;
 import org.junit.Before;
@@ -22,11 +22,11 @@ public class PGPTest {
 
     @Before
     public void setupKeys(){
-        senderKeyPair = AsymmetricKeyGenerator.generateKeyPair();
+        senderKeyPair = AsymmetricKeyMaker.generateKeyPair();
         senderPublicKey = senderKeyPair.get("publicKey");
         senderPrivateKey = senderKeyPair.get("privateKey");
 
-        receiverKeyPair = AsymmetricKeyGenerator.generateKeyPair();
+        receiverKeyPair = AsymmetricKeyMaker.generateKeyPair();
         receiverPublicKey = receiverKeyPair.get("publicKey");
         receiverPrivateKey = receiverKeyPair.get("privateKey");
 

@@ -1,4 +1,4 @@
-package org.imageghost.Wallet;
+package org.imageghost.Wallet.MerkleTree;
 
 public class MerkleTree {
     /*
