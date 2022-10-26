@@ -36,20 +36,4 @@ public class AsymmetricKeyGenerator {
 
         return keyPairHashMap;
     }
-
-    public static String getPublicKey(){
-        if(AsymmetricKeyGenerator.publicKey != null){
-            return AsymmetricKeyGenerator.publicKey;
-        }else{
-            throw new NoKeyException("Public Key not existed.");
-        }
-   }
-
-    public static String getPrivateKey(){
-        if(AsymmetricKeyGenerator.privateKey != null) {
-            return AsymmetricKeyGenerator.privateKey;
-        }else{
-            throw new NoKeyException("Private Key not existed.");
-        }
-    }
 }

@@ -11,7 +11,5 @@ public class MerkleTreeTest {
         // when
 
         // then
-
-
     }
 }
