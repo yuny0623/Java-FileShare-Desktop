@@ -1,7 +1,8 @@
 package org.imageghost.Test;
 
-import org.imageghost.SymmetricKey.AESKeyMaker;
-import org.imageghost.AsymmetricKey.AsymmetricKeyMaker;
+import org.imageghost.Key.KeyFactory;
+import org.imageghost.Key.Keys.ASymmetricKey;
+import org.imageghost.Key.Keys.SymmetricKey;
 import org.imageghost.SecureAlgorithm.PGP.PGP;
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,8 +14,11 @@ import java.util.HashMap;
 
 public class PGPTest {
     PGP pgp;
-    HashMap<String, String> senderKeyPair;
-    HashMap<String, String> receiverKeyPair;
+
+    ASymmetricKey senderAsymmetricKey;
+    ASymmetricKey receiverAsymmetricKey;
+
+    SymmetricKey symmetricKey;
     String senderPublicKey;
     String senderPrivateKey;
     String receiverPublicKey;
@@ -22,13 +26,13 @@ public class PGPTest {
 
     @Before
     public void setupKeys(){
-        senderKeyPair = AsymmetricKeyMaker.generateKeyPair();
-        senderPublicKey = senderKeyPair.get("publicKey");
-        senderPrivateKey = senderKeyPair.get("privateKey");
+        senderAsymmetricKey = KeyFactory.createAsymmetricKey();
+        senderPublicKey = senderAsymmetricKey.getPublicKey();
+        senderPrivateKey = senderAsymmetricKey.getPrivateKey();
 
-        receiverKeyPair = AsymmetricKeyMaker.generateKeyPair();
-        receiverPublicKey = receiverKeyPair.get("publicKey");
-        receiverPrivateKey = receiverKeyPair.get("privateKey");
+        receiverAsymmetricKey = KeyFactory.createAsymmetricKey();
+        receiverPublicKey = receiverAsymmetricKey.getPublicKey();
+        receiverPrivateKey = receiverAsymmetricKey.getPrivateKey();
 
         pgp = new PGP();
         pgp.setReceiverPublicKey(senderPublicKey);
@@ -45,7 +49,7 @@ public class PGPTest {
         System.out.printf("receiverPrivateKey: %s\n", receiverPrivateKey);
 
         // when
-        SecretKey secretKeyOriginal = AESKeyMaker.generateAESKey();
+        SecretKey secretKeyOriginal = KeyFactory.createSymmetricKey().getAESKey();
         String ee = pgp.createEE(secretKeyOriginal.getEncoded(), receiverPublicKey);
         byte[] byteArray = pgp.openEE(ee, receiverPrivateKey);
 

@@ -1,6 +1,7 @@
 package org.imageghost.Test;
 
-import org.imageghost.AsymmetricKey.AsymmetricKeyMaker;
+import org.imageghost.Key.KeyFactory;
+import org.imageghost.Key.Keys.ASymmetricKey;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -10,9 +11,9 @@ public class MnemonicTest {
     @Test
     public void privatekey_publickey_길이_테스트(){
         // given
-        HashMap<String, String> keyPair = AsymmetricKeyMaker.generateKeyPair();
-        String privateKey = keyPair.get("privateKey");
-        String publicKey = keyPair.get("publicKey");
+        ASymmetricKey aSymmetricKey = KeyFactory.createAsymmetricKey();
+        String privateKey = aSymmetricKey.getPrivateKey();
+        String publicKey = aSymmetricKey.getPublicKey();
 
         // when
         int privateKeyLength = privateKey.length();

@@ -1,4 +1,4 @@
-package org.imageghost.SymmetricKey;
+package org.imageghost.AesEncryption;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;

@@ -1,6 +1,4 @@
-package org.imageghost.Key;
-
-import org.imageghost.Key.Key;
+package org.imageghost.Key.Keys;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -8,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class SymmetricKey implements Key {
     private SecretKey AESKey;
-    private String descryption;
+    private String content;
 
     public SymmetricKey(){
         KeyGenerator generator = null;
@@ -22,12 +20,12 @@ public class SymmetricKey implements Key {
         this.AESKey = secKey;
     }
 
-    public String getDescryption() {
-        return descryption;
+    public String getContent() {
+        return content;
     }
 
-    public void setDescryption(String descryption) {
-        this.descryption = descryption;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public SecretKey getAESKey(){

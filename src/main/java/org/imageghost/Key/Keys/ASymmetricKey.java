@@ -1,20 +1,14 @@
-package org.imageghost.Key;
+package org.imageghost.Key.Keys;
 
-import org.imageghost.AsymmetricKey.AsymmetricKeyMaker;
-import org.imageghost.Key.Key;
-
-import javax.net.ssl.KeyManager;
 import java.security.*;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.List;
 
 public class ASymmetricKey implements Key{
     private final int KEY_SIZE = 2048;
 
     private HashMap<String, String> keyMap = new HashMap<>();
-    private String descryption;
+    private String content;
 
     private String publicKey;
     private String privateKey;
@@ -42,12 +36,12 @@ public class ASymmetricKey implements Key{
         }
     }
 
-    public void setDescryption(String descryption) {
-        this.descryption = descryption;
+    public void setContent(String content) {
+        this.content = content;
     }
 
-    public String getDescryption() {
-        return descryption;
+    public String getContent() {
+        return content;
     }
 
     public String getPublicKey(){

@@ -1,5 +1,8 @@
 package org.imageghost.Key;
 
+import org.imageghost.Key.Keys.ASymmetricKey;
+import org.imageghost.Key.Keys.SymmetricKey;
+
 public class KeyFactory {
     /*
         static factory method pattern for Key.

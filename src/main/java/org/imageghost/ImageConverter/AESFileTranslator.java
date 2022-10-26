@@ -1,12 +1,13 @@
-package org.imageghost.SymmetricKey;
+package org.imageghost.ImageConverter;
 
+import org.imageghost.AesEncryption.AESCipherMaker;
 import org.imageghost.CustomException.NoKeyException;
 import org.imageghost.Config;
 import org.imageghost.FileController.FileTranslator;
 import org.imageghost.GUIComponents.MainGui;
-import org.imageghost.Key.Key;
+import org.imageghost.Key.Keys.Key;
 import org.imageghost.Key.KeyFactory;
-import org.imageghost.Key.SymmetricKey;
+import org.imageghost.Key.Keys.SymmetricKey;
 import org.imageghost.Wallet.KeyWallet;
 
 import javax.crypto.SecretKey;
@@ -26,7 +27,6 @@ public class AESFileTranslator {
             e.printStackTrace();
             String cipherText = null;
             try {
-                SecretKey secretKey = AESKeyMaker.generateAESKey(); // secretKey 키 생성
                 symmetricKey = KeyFactory.createSymmetricKey(); // 대칭키 생성
                 KeyWallet.saveKeyAsMainKeyForSymmetricKey(symmetricKey); // 키 지갑에 Main키로 저장
                 symmetricKey = KeyWallet.getMainKeyForSymmetricKey();    // 저장된 Main 키를 불러오기

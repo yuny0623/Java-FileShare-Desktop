@@ -1,9 +1,8 @@
 package org.imageghost.Wallet;
 
 import org.imageghost.CustomException.NoKeyException;
-import org.imageghost.Key.ASymmetricKey;
-import org.imageghost.Key.Key;
-import org.imageghost.Key.SymmetricKey;
+import org.imageghost.Key.Keys.ASymmetricKey;
+import org.imageghost.Key.Keys.SymmetricKey;
 
 import java.util.HashMap;
 

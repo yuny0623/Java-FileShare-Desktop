@@ -3,13 +3,10 @@ package org.imageghost.GUIComponents;
 import org.imageghost.CustomException.NoKeyException;
 import org.imageghost.CustomException.NoServerException;
 import org.imageghost.Config;
-import org.imageghost.Key.ASymmetricKey;
-import org.imageghost.Key.Key;
+import org.imageghost.Key.Keys.ASymmetricKey;
 import org.imageghost.Key.KeyFactory;
-import org.imageghost.Key.SymmetricKey;
-import org.imageghost.SymmetricKey.AESFileTranslator;
-import org.imageghost.SymmetricKey.AESKeyMaker;
-import org.imageghost.AsymmetricKey.AsymmetricKeyMaker;
+import org.imageghost.Key.Keys.SymmetricKey;
+import org.imageghost.ImageConverter.AESFileTranslator;
 import org.imageghost.HTTP.HTTPConnection;
 import org.imageghost.Wallet.KeyWallet;
 
@@ -130,7 +127,7 @@ public class MainGui extends JFrame implements ActionListener {
         }
         if(e.getSource() == button1){ // create symmetric key
             checkServerConnection();
-            SecretKey secretKey = AESKeyMaker.generateAESKey(); // symmetric key 생성
+            SecretKey secretKey = KeyFactory.createSymmetricKey().getAESKey(); // symmetric key 생성
             SymmetricKey symmetricKey = KeyFactory.createSymmetricKey();
             try{
 
