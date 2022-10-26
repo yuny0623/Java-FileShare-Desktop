@@ -18,17 +18,6 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 
 public class MainGui extends JFrame implements ActionListener {
-        /*
-            <필요한 기능>
-            1. create symmetric key
-            2. create asymmetric key
-            3. send to server
-                -> choose image (filepath 입력)
-                (send 버튼)
-            4. receive from server
-                -> choose public key (지갑에서 원하는 public key 선택)
-                (receive 버튼)
-         */
     JButton button0 = null; 
     JButton button1 = null;
     JButton button2 = null;
@@ -161,7 +150,7 @@ public class MainGui extends JFrame implements ActionListener {
             String filePath = textArea1.getText(); // 파일 경로를 읽어들임.
             String cipherText = null;
             if(filePath.equals("file path.")){
-                MainGui.showAlert("File path is required!");
+                new AlertGui("File path is required!");
             }else{
                 cipherText = AESFileTranslator.Image2AESCipherText(filePath);
 
@@ -172,7 +161,7 @@ public class MainGui extends JFrame implements ActionListener {
                     HTTPConnection.httpPostRequest(Config.ORIGINAL_SERVER_URL + "/test1", sendData); // Server에 Post 요청
                 }catch(NoServerException error){
                     error.printStackTrace();
-                    MainGui.showAlert("Server is not running!");
+                    new AlertGui("Server is not running!");
                 }
             }
         }else if(e.getSource() == button4){
@@ -180,7 +169,6 @@ public class MainGui extends JFrame implements ActionListener {
             // 서버에서 CipherText 받아오기
             String result = HTTPConnection.httpGetRequest(
                     Config.ORIGINAL_SERVER_URL + "/test-get/", KeyWallet.getMainKeyForASymmetricKey().getPublicKey());
-
             // textArea2 에 결과 출력
             textArea2.setText(result);
         }
@@ -200,15 +188,8 @@ public class MainGui extends JFrame implements ActionListener {
             button2.setEnabled(false);
             button3.setEnabled(false);
             button4.setEnabled(false);
-            MainGui.showAlert("Server is not running!"); // show alert
+            new AlertGui("Server is not running!");
             return false;
         }
-    }
-    /*
-        알림창 띄우기
-     */
-    public static void showAlert(String message){
-        JOptionPane alert = new JOptionPane();
-        alert.showMessageDialog(null, message); // alert
     }
 }
