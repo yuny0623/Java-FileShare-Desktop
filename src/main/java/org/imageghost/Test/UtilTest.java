@@ -24,7 +24,6 @@ public class UtilTest {
         int length = Config.MNEMONIC_WORDS.length;
 
         // when
-        System.out.println(length);
 
         // then
         Assert.assertEquals(length, 2048);
