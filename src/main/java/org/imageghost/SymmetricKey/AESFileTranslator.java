@@ -5,7 +5,6 @@ import org.imageghost.Config;
 import org.imageghost.FileController.FileTranslator;
 import org.imageghost.GUIComponents.MainGui;
 import org.imageghost.Wallet.KeyWallet;
-import org.imageghost.Key.SymmetricKey;
 
 import javax.crypto.SecretKey;
 import java.io.File;

@@ -305,7 +305,6 @@ public class PGP {
         String encryptedBody = this.encryptBodyFixed(body, secretKeyOriginal);
         String ee = this.createEE(secretKeyOriginal.getEncoded(), receiverPublicKey);
         String finalResult = this.appendEEWithBody(ee, encryptedBody);
-
         return new MessageInput(finalResult, true);
     }
 
@@ -323,7 +322,6 @@ public class PGP {
         String receivedDigitalSignature = bodyMap.get("digitalSignature");
         String receivedMAC = this.decryptDigitalSignature(receivedDigitalSignature, senderPublicKey); // sender authentication
         String hashPlainText = this.hashPlainText(receivedPlainText);
-
         return new MessageOutput(receivedPlainText, compareMAC(receivedMAC, hashPlainText));
     }
 }

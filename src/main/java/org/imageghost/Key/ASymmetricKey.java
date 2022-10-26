@@ -1,30 +1,43 @@
 package org.imageghost.Key;
 
+import org.imageghost.AsymmetricKey.AsymmetricKeyMaker;
+import org.imageghost.Key.Key;
+
+import javax.net.ssl.KeyManager;
+import java.security.*;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 
-public class ASymmetricKey {
-    private String description;
-    private List<String> keyPair = new ArrayList<>();
+public class ASymmetricKey implements Key{
+    private static final int KEY_SIZE = 2048;
 
-    public ASymmetricKey(String publicKey, String privateKey){
-        this.keyPair.add(publicKey);
-        this.keyPair.add(privateKey);
-    }
+    private HashMap<String, String> keyMap = new HashMap<>();
 
-    public String getDescription() {
-        return this.description;
-    }
+    private String publicKey;
+    private String privateKey;
 
-    public String getPublicKey(){
-        return this.keyPair.get(0);
-    }
+    public ASymmetricKey(){
+        try {
+            SecureRandom secureRandom = new SecureRandom();
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+            keyPairGenerator.initialize(KEY_SIZE, secureRandom);
+            KeyPair keyPair = keyPairGenerator.genKeyPair();
 
-    public String getPrivateKey(){
-        return this.keyPair.get(1);
-    }
+            PublicKey publicKey = keyPair.getPublic();
+            PrivateKey privateKey = keyPair.getPrivate();
 
-    public void deleteKeyPair(){ // key pair 삭제
-        keyPair.clear();
+            String stringPublicKey = Base64.getEncoder().encodeToString(publicKey.getEncoded());
+            String stringPrivateKey = Base64.getEncoder().encodeToString(privateKey.getEncoded());
+
+            this.publicKey = stringPublicKey;
+            this.privateKey = stringPrivateKey;
+
+            keyMap.put("publicKey", stringPublicKey);
+            keyMap.put("privateKey", stringPrivateKey);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

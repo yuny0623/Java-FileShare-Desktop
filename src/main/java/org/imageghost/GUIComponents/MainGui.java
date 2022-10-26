@@ -7,9 +7,7 @@ import org.imageghost.SymmetricKey.AESFileTranslator;
 import org.imageghost.SymmetricKey.AESKeyMaker;
 import org.imageghost.AsymmetricKey.AsymmetricKeyMaker;
 import org.imageghost.HTTP.HTTPConnection;
-import org.imageghost.Key.ASymmetricKey;
 import org.imageghost.Wallet.KeyWallet;
-import org.imageghost.Key.SymmetricKey;
 
 import javax.crypto.SecretKey;
 import javax.swing.*;
