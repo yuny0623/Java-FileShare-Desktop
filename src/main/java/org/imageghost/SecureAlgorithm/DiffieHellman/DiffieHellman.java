@@ -1,4 +1,4 @@
-package org.imageghost.DiffieHellman;
+package org.imageghost.SecureAlgorithm.DiffieHellman;
 
 public class DiffieHellman {
     /**
@@ -7,6 +7,8 @@ public class DiffieHellman {
         @Date 2022-10-20
         @Author yuny0623
         @Version 1.0.0
+
+
 
         1. Diffie-Hellman
 

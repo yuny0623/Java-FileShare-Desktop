@@ -1,7 +1,7 @@
 package org.imageghost.GUIComponents;
 
-import org.imageghost.ClientCustomException.NoKeyException;
-import org.imageghost.ClientCustomException.NoServerException;
+import org.imageghost.CustomException.NoKeyException;
+import org.imageghost.CustomException.NoServerException;
 import org.imageghost.Config;
 import org.imageghost.SymmetricKey.AESFileTranslator;
 import org.imageghost.SymmetricKey.AESKeyMaker;

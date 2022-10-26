@@ -1,6 +1,6 @@
 package org.imageghost.Wallet;
 
-import org.imageghost.ClientCustomException.NoKeyException;
+import org.imageghost.CustomException.NoKeyException;
 import org.imageghost.Key.ASymmetricKey;
 import org.imageghost.Key.SymmetricKey;
 

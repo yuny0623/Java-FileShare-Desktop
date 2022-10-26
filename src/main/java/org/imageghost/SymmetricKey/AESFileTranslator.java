@@ -1,6 +1,6 @@
 package org.imageghost.SymmetricKey;
 
-import org.imageghost.ClientCustomException.NoKeyException;
+import org.imageghost.CustomException.NoKeyException;
 import org.imageghost.Config;
 import org.imageghost.FileController.FileTranslator;
 import org.imageghost.GUIComponents.MyFrame;

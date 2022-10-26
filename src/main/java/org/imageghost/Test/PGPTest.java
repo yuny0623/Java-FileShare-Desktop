@@ -2,7 +2,7 @@ package org.imageghost.Test;
 
 import org.imageghost.SymmetricKey.AESKeyMaker;
 import org.imageghost.AsymmetricKey.AsymmetricKeyMaker;
-import org.imageghost.PGPConnection.PGP;
+import org.imageghost.SecureAlgorithm.PGP.PGP;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

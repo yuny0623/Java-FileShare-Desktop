@@ -1,6 +1,6 @@
 package org.imageghost.HTTP;
 
-import org.imageghost.ClientCustomException.NoServerException;
+import org.imageghost.CustomException.NoServerException;
 import org.imageghost.Config;
 import org.json.simple.JSONObject;
 

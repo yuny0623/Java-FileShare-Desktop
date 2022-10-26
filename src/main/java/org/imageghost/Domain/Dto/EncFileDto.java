@@ -1,4 +1,4 @@
-package org.imageghost.Dto;
+package org.imageghost.Domain.Dto;
 
 class EncFileDto{
     private String ownerPublicKey;
