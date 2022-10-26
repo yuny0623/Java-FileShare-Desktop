@@ -11,9 +11,10 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ASymmetricKey implements Key{
-    private static final int KEY_SIZE = 2048;
+    private final int KEY_SIZE = 2048;
 
     private HashMap<String, String> keyMap = new HashMap<>();
+    private String descryption;
 
     private String publicKey;
     private String privateKey;
@@ -39,5 +40,26 @@ public class ASymmetricKey implements Key{
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void setDescryption(String descryption) {
+        this.descryption = descryption;
+    }
+
+    public String getDescryption() {
+        return descryption;
+    }
+
+    public String getPublicKey(){
+        return this.publicKey;
+    }
+
+    public String getPrivateKey(){
+        return this.privateKey;
+    }
+
+    @Override
+    public Object getKey() {
+        return this.keyMap;
     }
 }

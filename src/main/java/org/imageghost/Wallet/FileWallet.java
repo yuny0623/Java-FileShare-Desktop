@@ -1,6 +1,6 @@
 package org.imageghost.Wallet;
 
-public class FileWallet {
+public class FileWallet implements Wallet{
     String fileOwnerPublicKey;
     String fileCipherText;
     String merkleTreeRootValue;

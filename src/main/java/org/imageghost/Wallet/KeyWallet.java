@@ -2,11 +2,12 @@ package org.imageghost.Wallet;
 
 import org.imageghost.CustomException.NoKeyException;
 import org.imageghost.Key.ASymmetricKey;
+import org.imageghost.Key.Key;
 import org.imageghost.Key.SymmetricKey;
 
 import java.util.HashMap;
 
-public class KeyWallet {
+public class KeyWallet implements Wallet{
     private static HashMap<String, SymmetricKey> symmetricKeyMap = new HashMap<>(); // 대칭키 전용 지갑 (AES)
     private static HashMap<String, ASymmetricKey> asymmetricKeyMap = new HashMap<>(); // 비대칭키 전용 지갑 (RSA)
 

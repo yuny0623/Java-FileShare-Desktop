@@ -4,6 +4,9 @@ import org.imageghost.CustomException.NoKeyException;
 import org.imageghost.Config;
 import org.imageghost.FileController.FileTranslator;
 import org.imageghost.GUIComponents.MainGui;
+import org.imageghost.Key.Key;
+import org.imageghost.Key.KeyFactory;
+import org.imageghost.Key.SymmetricKey;
 import org.imageghost.Wallet.KeyWallet;
 
 import javax.crypto.SecretKey;
@@ -24,11 +27,11 @@ public class AESFileTranslator {
             String cipherText = null;
             try {
                 SecretKey secretKey = AESKeyMaker.generateAESKey(); // secretKey 키 생성
-                symmetricKey = new SymmetricKey(secretKey, "Main Key"); // 대칭키 생성
+                symmetricKey = KeyFactory.createSymmetricKey(); // 대칭키 생성
                 KeyWallet.saveKeyAsMainKeyForSymmetricKey(symmetricKey); // 키 지갑에 Main키로 저장
                 symmetricKey = KeyWallet.getMainKeyForSymmetricKey();    // 저장된 Main 키를 불러오기
                 String plainTextOfFile = FileTranslator.transferFile2Text(new File(imagePath)); // 이미지를 Text로 변환
-                cipherText = AESCipherMaker.encryptText(plainTextOfFile, symmetricKey.getKey());  // Text 를 CipherText로 변환
+                cipherText = AESCipherMaker.encryptText(plainTextOfFile, (SecretKey) symmetricKey.getKey());  // Text 를 CipherText로 변환
             } catch(Exception err){
                 err.printStackTrace();
                 MainGui.showAlert("Cannot create Cipher Text from Image!"); // alert
@@ -39,7 +42,7 @@ public class AESFileTranslator {
         String plainTextOfFile = FileTranslator.transferFile2Text(new File(imagePath)); // 이미지를 Text로 변환
         String cipherText = null;
         try {
-            cipherText = AESCipherMaker.encryptText(plainTextOfFile, symmetricKey.getKey()); // Text를 CipherText로 변환
+            cipherText = AESCipherMaker.encryptText(plainTextOfFile, (SecretKey) symmetricKey.getKey()); // Text를 CipherText로 변환
         } catch (Exception e) {
             e.printStackTrace();
             MainGui.showAlert("Cannot create Cipher Text from Image!"); // alert
@@ -52,7 +55,7 @@ public class AESFileTranslator {
         (decrypt 시에 main key가 없을 경우 decrypt 불가능.)
      */
     public static Object AESCispherText2Image(byte[] aesCipherText){ // return type changed from File to Object
-        SymmetricKey symmetricKey = null;
+        Key symmetricKey = null;
         try {
             symmetricKey = KeyWallet.getMainKeyForSymmetricKey();
         }catch(NoKeyException e){
@@ -64,7 +67,7 @@ public class AESFileTranslator {
         // 정상 진행
         String textOfImage = null;
         try {
-            textOfImage = AESCipherMaker.decryptText(aesCipherText, symmetricKey.getKey()); // CipherText 복호화
+            textOfImage = AESCipherMaker.decryptText(aesCipherText, (SecretKey) symmetricKey.getKey()); // CipherText 복호화
         }catch(Exception e){
             e.printStackTrace();
             MainGui.showAlert("Cannot decrypt CipherText!");

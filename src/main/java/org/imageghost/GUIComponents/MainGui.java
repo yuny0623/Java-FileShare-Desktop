@@ -3,6 +3,10 @@ package org.imageghost.GUIComponents;
 import org.imageghost.CustomException.NoKeyException;
 import org.imageghost.CustomException.NoServerException;
 import org.imageghost.Config;
+import org.imageghost.Key.ASymmetricKey;
+import org.imageghost.Key.Key;
+import org.imageghost.Key.KeyFactory;
+import org.imageghost.Key.SymmetricKey;
 import org.imageghost.SymmetricKey.AESFileTranslator;
 import org.imageghost.SymmetricKey.AESKeyMaker;
 import org.imageghost.AsymmetricKey.AsymmetricKeyMaker;
@@ -127,7 +131,7 @@ public class MainGui extends JFrame implements ActionListener {
         if(e.getSource() == button1){ // create symmetric key
             checkServerConnection();
             SecretKey secretKey = AESKeyMaker.generateAESKey(); // symmetric key 생성
-            SymmetricKey symmetricKey = new SymmetricKey(secretKey, "new AES key");
+            SymmetricKey symmetricKey = KeyFactory.createSymmetricKey();
             try{
 
                 SymmetricKey existingSymmetricKey = KeyWallet.getMainKeyForSymmetricKey(); // 메인 키를 불러옴.
@@ -140,20 +144,19 @@ public class MainGui extends JFrame implements ActionListener {
         }else if(e.getSource() == button2){ // create asymmetric key
             checkServerConnection();
             // asymmetric key pair 생성
-            AsymmetricKeyMaker asymmetricKeyMaker = new AsymmetricKeyMaker();
-            HashMap<String, String> keyPairHashMap = asymmetricKeyMaker.generateKeyPair(); // 비대칭키 생성
+            ASymmetricKey aSymmetricKey = KeyFactory.createAsymmetricKey(); // 비대칭키 생성
 
             StringBuffer stringBufferOfPublicKey = new StringBuffer();  // public key string
             stringBufferOfPublicKey.append("-----BEGIN PUBLIC KEY-----\n");
-            stringBufferOfPublicKey.append(keyPairHashMap.get("publicKey"));
+            stringBufferOfPublicKey.append(aSymmetricKey.getPublicKey());
             stringBufferOfPublicKey.append("-----END PUBLIC KEY-----\n");
 
             StringBuffer stringBufferOfPrivateKey = new StringBuffer(); // private key string
             stringBufferOfPrivateKey.append("-----BEGIN PRIVATE KEY-----\n");
-            stringBufferOfPrivateKey.append(keyPairHashMap.get("privateKey"));
+            stringBufferOfPrivateKey.append(aSymmetricKey.getPrivateKey());
             stringBufferOfPrivateKey.append("-----END PRIVATE KEY-----\n");
 
-            textArea2.setText(stringBufferOfPublicKey.append(stringBufferOfPrivateKey.toString()).toString()); // 출력
+            textArea2.setText(stringBufferOfPublicKey.append(stringBufferOfPrivateKey).toString()); // 출력
         }else if(e.getSource() == button3){ // send to server
             checkServerConnection();
 
