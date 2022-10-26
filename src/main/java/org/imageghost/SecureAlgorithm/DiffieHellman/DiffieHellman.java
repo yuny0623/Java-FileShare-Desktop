@@ -8,8 +8,6 @@ public class DiffieHellman {
         @Author yuny0623
         @Version 1.0.0
 
-
-
         1. Diffie-Hellman
 
 

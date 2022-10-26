@@ -7,7 +7,7 @@ import org.junit.Test;
 public class TransportTest {
 
     @Test
-    public void udp클라이언트_서버_테스트() throws InterruptedException {
+    public void TCP_클라이언트_서버_테스트() throws InterruptedException {
         new Thread(() -> {
             ServerAction serverAction = new ServerAction();
             serverAction.action();
@@ -16,7 +16,7 @@ public class TransportTest {
     }
 
     @Test
-    public void TCP_클라이언트_테스트_유저1() throws InterruptedException {
+    public void TCP_클라이언트_테스트용_유저1() throws InterruptedException {
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
@@ -34,7 +34,7 @@ public class TransportTest {
     }
 
     @Test
-    public void TCP_클라이언트_테스트_유저2(){
+    public void TCP_클라이언트_테스트용_유저2(){
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
