@@ -1,5 +1,7 @@
 package org.imageghost.SecureAlgorithm.PGP;
-import org.imageghost.CustomException.InvalidMessageIntegrityException;
+import org.imageghost.SecureAlgorithm.Utils.MessageOutput;
+import org.imageghost.SecureAlgorithm.Utils.MessageInput;
+
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.*;
@@ -295,7 +297,7 @@ public class PGP {
         return byteDecryptedData;
     }
 
-    public String send(String plainText){
+    public MessageInput send(String plainText) throws Exception{
         String originalMAC = this.generateMAC(plainText);
         String originalDigitalSignature = this.generateDigitalSignature(originalMAC, senderPrivateKey);
         String body = this.generateBody(plainText, originalDigitalSignature);
@@ -303,32 +305,26 @@ public class PGP {
         String encryptedBody = this.encryptBodyFixed(body, secretKeyOriginal);
         String ee = this.createEE(secretKeyOriginal.getEncoded(), receiverPublicKey);
         String finalResult = this.appendEEWithBody(ee, encryptedBody);
-        return finalResult;
+
+        return new MessageInput(finalResult, true);
     }
 
-    public String receive(String cipherText) throws Exception{
+    public MessageOutput receive(String cipherText) throws Exception{
         HashMap<String, String> dataMap = this.dataSplitter(cipherText);
         String receivedBody = dataMap.get("body");
         String receivedEE = dataMap.get("ee");
         System.out.printf("receive - receivedEE: %s\n", receivedEE);
         System.out.printf("receive - receivedBody: %s\n", receivedBody);
-
         byte[] aesKey = this.openEE(receivedEE, receiverPrivateKey);
         SecretKey decryptedSecretKey = new SecretKeySpec(aesKey, "AES");
-
-        // body 복호화
         String decryptedBody = this.decryptBodyFixed(receivedBody, decryptedSecretKey);
         HashMap<String, String> bodyMap = this.bodySplitter(decryptedBody);
-
         String receivedPlainText = bodyMap.get("receivedPlainText");
         String receivedDigitalSignature = bodyMap.get("digitalSignature");
         String receivedMAC = this.decryptDigitalSignature(receivedDigitalSignature, senderPublicKey); // sender authentication
         String hashPlainText = this.hashPlainText(receivedPlainText);
-        if(this.compareMAC(receivedMAC, hashPlainText)){
-            return receivedPlainText;
-        }else{
-            throw new InvalidMessageIntegrityException("Invalid Message Integrity. Message has been changed while transportation.");
-        }
+
+        return new MessageOutput(receivedPlainText, compareMAC(receivedMAC, hashPlainText));
     }
 }
 
