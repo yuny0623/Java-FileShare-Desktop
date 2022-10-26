@@ -1,4 +1,4 @@
-package org.imageghost.TcpTransport;
+package org.imageghost.GUIComponents;
 
 import javax.swing.*;
 import java.awt.*;

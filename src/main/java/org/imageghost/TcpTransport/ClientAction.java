@@ -1,6 +1,7 @@
 package org.imageghost.TcpTransport;
 
 import org.imageghost.Config;
+import org.imageghost.GUIComponents.ClientGui;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

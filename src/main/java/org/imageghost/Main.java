@@ -1,12 +1,12 @@
 package org.imageghost;
 
-import org.imageghost.GUIComponents.MyFrame;
+import org.imageghost.GUIComponents.MainGui;
 
 
 public class Main {
     public static void main(String[] args){
         try {
-            new MyFrame();
+            new MainGui();
         }catch(Exception e){
             e.printStackTrace();
         }

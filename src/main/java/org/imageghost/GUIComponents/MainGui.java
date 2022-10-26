@@ -18,7 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 
-public class MyFrame extends JFrame implements ActionListener {
+public class MainGui extends JFrame implements ActionListener {
         /*
             <필요한 기능>
             1. create symmetric key
@@ -47,7 +47,7 @@ public class MyFrame extends JFrame implements ActionListener {
     JPanel panel1 = null;
     JPanel panel2 = null;
 
-    public MyFrame(){
+    public MainGui(){
         setTitle("ImageGhostClient");
         setSize(1000, 500);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -163,7 +163,7 @@ public class MyFrame extends JFrame implements ActionListener {
             String filePath = textArea1.getText(); // 파일 경로를 읽어들임.
             String cipherText = null;
             if(filePath.equals("file path.")){
-                MyFrame.showAlert("File path is required!");
+                MainGui.showAlert("File path is required!");
             }else{
                 cipherText = AESFileTranslator.Image2AESCipherText(filePath);
 
@@ -174,7 +174,7 @@ public class MyFrame extends JFrame implements ActionListener {
                     HTTPConnection.httpPostRequest(Config.ORIGINAL_SERVER_URL + "/test1", sendData); // Server에 Post 요청
                 }catch(NoServerException error){
                     error.printStackTrace();
-                    MyFrame.showAlert("Server is not running!");
+                    MainGui.showAlert("Server is not running!");
                 }
             }
         }else if(e.getSource() == button4){
@@ -202,7 +202,7 @@ public class MyFrame extends JFrame implements ActionListener {
             button2.setEnabled(false);
             button3.setEnabled(false);
             button4.setEnabled(false);
-            MyFrame.showAlert("Server is not running!"); // show alert
+            MainGui.showAlert("Server is not running!"); // show alert
             return false;
         }
     }
