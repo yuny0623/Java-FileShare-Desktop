@@ -152,7 +152,7 @@ public class MainGui extends JFrame implements ActionListener {
             if(filePath.equals("file path.")){
                 new AlertGui("File path is required!", false);
             }else{
-                cipherText = AESFileTranslator.Image2CipherText(filePath);
+                cipherText = AESFileTranslator.image2CipherText(filePath);
 
                 try {
                     HashMap<String, String> sendData = new HashMap<>();
@@ -166,24 +166,20 @@ public class MainGui extends JFrame implements ActionListener {
             }
         }else if(e.getSource() == button4){
             checkServerConnection();
-            // 서버에서 CipherText 받아오기
             String result = HTTPConnection.httpGetRequest(
                     Config.ORIGINAL_SERVER_URL + "/test-get/", KeyWallet.getMainKeyForASymmetricKey().getPublicKey());
-            // textArea2 에 결과 출력
             textArea2.setText(result);
         }
     }
-    /*
-        버튼 누름시 서버 상태 체크
-     */
+
     public boolean checkServerConnection(){
-        if(HTTPConnection.checkServerLive()){ // if server is running.
+        if(HTTPConnection.checkServerLive()){
             button1.setEnabled(true);
             button2.setEnabled(true);
             button3.setEnabled(true);
             button4.setEnabled(true);
             return true;
-        }else{ // if server is not running.
+        }else{
             button1.setEnabled(false);
             button2.setEnabled(false);
             button3.setEnabled(false);

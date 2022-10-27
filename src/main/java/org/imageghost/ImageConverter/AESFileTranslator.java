@@ -5,7 +5,6 @@ import org.imageghost.CustomException.NoKeyException;
 import org.imageghost.Config;
 import org.imageghost.FileController.FileTranslator;
 import org.imageghost.GUIComponents.AlertGui;
-import org.imageghost.GUIComponents.MainGui;
 import org.imageghost.Key.Keys.Key;
 import org.imageghost.Key.KeyFactory;
 import org.imageghost.Key.Keys.SymmetricKey;
@@ -14,12 +13,11 @@ import org.imageghost.Wallet.KeyWallet;
 import javax.crypto.SecretKey;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.UUID;
 
 public class AESFileTranslator {
 
-    public static String Image2CipherText(String imagePath){
+    public static String image2CipherText(String imagePath){
         SymmetricKey symmetricKey = null;
         try {
             symmetricKey = KeyWallet.getMainKeyForSymmetricKey();
@@ -55,7 +53,7 @@ public class AESFileTranslator {
         return cipherText;
     }
 
-    public static Object AESCispherText2Image(byte[] aesCipherText) {
+    public static Object cipherText2Image(byte[] aesCipherText) {
         Key symmetricKey = null;
         try {
             symmetricKey = KeyWallet.getMainKeyForSymmetricKey();

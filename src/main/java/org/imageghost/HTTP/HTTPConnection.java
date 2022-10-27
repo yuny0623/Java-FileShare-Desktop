@@ -118,7 +118,6 @@ public class HTTPConnection {
 
             http.setRequestProperty("content-type", "application/json;utf-8"); // set property to application/json
 
-            // send to server
             StringBuffer buffer = new StringBuffer();
 
             JSONObject sendJSONData = new JSONObject();
@@ -129,12 +128,9 @@ public class HTTPConnection {
             PrintWriter writer = new PrintWriter(outStream);
             writer.write(sendJSONData.toJSONString());
             writer.flush();
-
-            // Response Code
             int responseCode = http.getResponseCode();
             System.out.println("response code in POST request:" + responseCode);
 
-            // receive from server
             InputStreamReader tmp = new InputStreamReader(http.getInputStream(), "UTF-8");
             BufferedReader reader = new BufferedReader(tmp);
             StringBuilder builder = new StringBuilder();

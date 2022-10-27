@@ -11,12 +11,12 @@ public class SymmetricKey implements Key {
     public SymmetricKey(){
         KeyGenerator generator = null;
         try {
-            generator = KeyGenerator.getInstance("AES");   // AES Key Generator 객체 생성
+            generator = KeyGenerator.getInstance("AES");
         }catch(NoSuchAlgorithmException e){
             e.printStackTrace();
         }
-        generator.init(128);    // AES Key size 지정
-        SecretKey secKey = generator.generateKey();     // AES 암호화 알고리즘에서 사용할 대칭키 생성
+        generator.init(128);
+        SecretKey secKey = generator.generateKey();
         this.AESKey = secKey;
     }
 

@@ -4,19 +4,6 @@ import java.io.*;
 import java.util.Base64;
 
 public class FileTranslator {
-    private File file;
-
-    /*
-        파일 객체 업로더
-     */
-    public File uploadFile(String filePath){
-        this.file = new File(filePath);
-        return this.file;
-    }
-
-    /*
-        파일 -> 암호텍스트 변환기
-     */
     public static String transferFile2Text(File file) throws Exception{
         String out = "";
         FileInputStream fis = null;
@@ -41,9 +28,6 @@ public class FileTranslator {
         return encoder.encode(buffer);
     }
 
-    /*
-        암호텍스트 -> 파일 변환기
-     */
     public static File transferText2File(String binaryFile, String filePath, String fileName) throws Exception{
         FileOutputStream fos = null ;
 

@@ -322,7 +322,7 @@ public class PGP {
             HashMap<String, String> bodyMap = this.bodySplitter(decryptedBody);
             receivedPlainText = bodyMap.get("receivedPlainText");
             String receivedDigitalSignature = bodyMap.get("digitalSignature");
-            String receivedMAC = this.solveDigitalSignature(receivedDigitalSignature, senderPublicKey); 
+            String receivedMAC = this.solveDigitalSignature(receivedDigitalSignature, senderPublicKey);
             String hashPlainText = this.hashPlainText(receivedPlainText);
             integrity = compareMAC(receivedMAC, hashPlainText);
         }catch(Exception e){

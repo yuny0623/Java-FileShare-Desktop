@@ -37,9 +37,6 @@ public class KeyWallet implements Wallet{
         numberForSymmetricKey = 0;
     }
 
-    /*
-        for Asymmetric key
-     */
     public static void saveKeyForASymmetricKey(ASymmetricKey encKey){
         asymmetricKeyMap.put(String.valueOf(++numberForASymmetricKey), encKey);
     }
