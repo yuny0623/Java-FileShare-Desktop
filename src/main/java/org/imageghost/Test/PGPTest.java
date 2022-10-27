@@ -64,7 +64,7 @@ public class PGPTest {
         pgp.setPlainText(originalMessage);
         String originalMAC = pgp.generateMAC(originalMessage);
         String digitalSignature = pgp.generateDigitalSignature(originalMAC, senderPrivateKey);
-        String decodedMAC = pgp.decryptDigitalSignature(digitalSignature, senderPublicKey);
+        String decodedMAC = pgp.solveDigitalSignature(digitalSignature, senderPublicKey);
 
         // then
         System.out.printf("original MAC: %s\n", originalMAC);
@@ -120,7 +120,7 @@ public class PGPTest {
         String originalDigitalSignature = pgp.generateDigitalSignature(originalMAC, senderPrivateKey);
         String body = pgp.generateBody(originalPlainText, originalDigitalSignature);
         SecretKey secretKey = pgp.generateSymmetricKey(); // 대칭키 생성
-        String encryptedBody = pgp.encryptBodyFixed(body, secretKey);
+        String encryptedBody = pgp.encryptBody(body, secretKey);
 
         System.out.printf("send - originalPlainText: %s\n", originalPlainText);
         System.out.printf("send - originalMAC: %s\n", originalMAC);
@@ -128,7 +128,7 @@ public class PGPTest {
         System.out.printf("send - body: %s\n", body);
         System.out.printf("send - encryptedBody: %s\n", encryptedBody);
 
-        String decryptedBody = pgp.decryptBodyFixed(encryptedBody, secretKey);
+        String decryptedBody = pgp.decryptBody(encryptedBody, secretKey);
 
         HashMap<String, String> bodyMap = pgp.bodySplitter(decryptedBody);
         String receivedPlainText = bodyMap.get("receivedPlainText");
@@ -164,7 +164,7 @@ public class PGPTest {
         String originalDigitalSignature = pgp.generateDigitalSignature(originalMAC, senderPrivateKey);
         String body = pgp.generateBody(originalPlainText, originalDigitalSignature);
         SecretKey secretKeyOriginal = pgp.generateSymmetricKey(); // 대칭키 생성
-        String encryptedBody = pgp.encryptBodyFixed(body, secretKeyOriginal);
+        String encryptedBody = pgp.encryptBody(body, secretKeyOriginal);
 
         // 전자봉투 생성
         String ee = pgp.createEE(secretKeyOriginal.getEncoded(), receiverPublicKey);
@@ -188,12 +188,12 @@ public class PGPTest {
         System.out.printf("receive - receivedBody: %s\n", receivedBody);
 
         // body 복호화
-        String decryptedBody = pgp.decryptBodyFixed(receivedBody, secretKeyOriginal);
+        String decryptedBody = pgp.decryptBody(receivedBody, secretKeyOriginal);
         HashMap<String, String> bodyMap = pgp.bodySplitter(decryptedBody);
 
         String receivedPlainText = bodyMap.get("receivedPlainText");
         String receivedDigitalSignature = bodyMap.get("digitalSignature");
-        String receivedMAC = pgp.decryptDigitalSignature(receivedDigitalSignature, senderPublicKey); // sender authentication
+        String receivedMAC = pgp.solveDigitalSignature(receivedDigitalSignature, senderPublicKey); // sender authentication
         String hashPlainText = pgp.hashPlainText(receivedPlainText);
 
         System.out.printf("receive - decryptedBody: %s\n", decryptedBody);
@@ -298,7 +298,7 @@ public class PGPTest {
         String originalDigitalSignature = pgp.generateDigitalSignature(originalMAC, senderPrivateKey);
         String body = pgp.generateBody(originalPlainText, originalDigitalSignature);
         SecretKey secretKeyOriginal = pgp.generateSymmetricKey(); // 대칭키 생성
-        String encryptedBody = pgp.encryptBodyFixed(body, secretKeyOriginal);
+        String encryptedBody = pgp.encryptBody(body, secretKeyOriginal);
 
         // 전자봉투 생성
         String ee = pgp.createEE(secretKeyOriginal.getEncoded(), receiverPublicKey);
@@ -325,12 +325,12 @@ public class PGPTest {
         SecretKey decryptedSecretKey = new SecretKeySpec(aesKey, "AES");
 
         // body 복호화
-        String decryptedBody = pgp.decryptBodyFixed(receivedBody, decryptedSecretKey);
+        String decryptedBody = pgp.decryptBody(receivedBody, decryptedSecretKey);
         HashMap<String, String> bodyMap = pgp.bodySplitter(decryptedBody);
 
         String receivedPlainText = bodyMap.get("receivedPlainText");
         String receivedDigitalSignature = bodyMap.get("digitalSignature");
-        String receivedMAC = pgp.decryptDigitalSignature(receivedDigitalSignature, senderPublicKey); // sender authentication
+        String receivedMAC = pgp.solveDigitalSignature(receivedDigitalSignature, senderPublicKey); // sender authentication
         String hashPlainText = pgp.hashPlainText(receivedPlainText);
 
         System.out.printf("receive - decryptedBody: %s\n", decryptedBody);

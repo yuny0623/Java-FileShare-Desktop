@@ -10,9 +10,7 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.HashMap;
 
-
 public class PGP {
-
     /**
      PGP Communication Implementation in Java.
      @Date 2022-10-20
@@ -87,7 +85,7 @@ public class PGP {
         this.receiverPrivateKey = receiverPrivateKey;
     }
 
-    public String generateMAC(String plainText) {
+    public String generateMAC(String plainText){
         MessageDigest md = null;
         try {
             md = MessageDigest.getInstance("SHA-256");
@@ -96,11 +94,6 @@ public class PGP {
             e.printStackTrace();
         }
         return new String(md.digest());
-    }
-
-
-    public String generateDigitalSignature(String MAC, String senderPrivateKey){
-        return encryptWithPrivateKey(MAC, senderPrivateKey);
     }
 
     public String encryptWithPrivateKey(String plainText, String senderPrivateKey) {
@@ -121,6 +114,11 @@ public class PGP {
             e.printStackTrace();
         }
         return encryptedText;
+    }
+
+
+    public String generateDigitalSignature(String MAC, String senderPrivateKey){
+        return encryptWithPrivateKey(MAC, senderPrivateKey);
     }
 
     public String solveDigitalSignature(String cipherText, String senderPublicKey) {
@@ -166,7 +164,7 @@ public class PGP {
         return secKey;
     }
 
-    public String encryptBodyFixed(String body, SecretKey secretKey){
+    public String encryptBody(String body, SecretKey secretKey){
         try {
             Cipher cipher = Cipher.getInstance("AES");
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
@@ -177,7 +175,7 @@ public class PGP {
         }
     }
 
-    public String decryptBodyFixed(String encryptedBody, SecretKey secretKey){
+    public String decryptBody(String encryptedBody, SecretKey secretKey){
         try {
             Cipher cipher = Cipher.getInstance("AES");
             cipher.init(Cipher.DECRYPT_MODE, secretKey);
@@ -236,10 +234,6 @@ public class PGP {
         return bodyMap;
     }
 
-    public String decryptDigitalSignature(String digitalSignature, String senderPublicKey){
-        return solveDigitalSignature(digitalSignature, senderPublicKey);
-    }
-
     public String hashPlainText(String receivedPlainText){
         return generateMAC(receivedPlainText);
     }
@@ -277,7 +271,6 @@ public class PGP {
     }
 
     public byte[] decode(String encryptedData, String stringPrivateKey) {
-        String decryptedData = null;
         byte[] byteDecryptedData = null;
 
         try {
@@ -297,32 +290,45 @@ public class PGP {
         return byteDecryptedData;
     }
 
-    public MessageInput send(String plainText) throws Exception{
-        String originalMAC = this.generateMAC(plainText);
-        String originalDigitalSignature = this.generateDigitalSignature(originalMAC, senderPrivateKey);
-        String body = this.generateBody(plainText, originalDigitalSignature);
-        SecretKey secretKeyOriginal = this.generateSymmetricKey();
-        String encryptedBody = this.encryptBodyFixed(body, secretKeyOriginal);
-        String ee = this.createEE(secretKeyOriginal.getEncoded(), receiverPublicKey);
-        String finalResult = this.appendEEWithBody(ee, encryptedBody);
-        return new MessageInput(finalResult, true);
+    public MessageInput send(String plainText){
+        String finalResult = "";
+
+        try {
+            String originalMAC = this.generateMAC(plainText);
+            String originalDigitalSignature = this.generateDigitalSignature(originalMAC, senderPrivateKey);
+            String body = this.generateBody(plainText, originalDigitalSignature);
+            SecretKey secretKeyOriginal = this.generateSymmetricKey();
+            String encryptedBody = this.encryptBody(body, secretKeyOriginal);
+            String ee = this.createEE(secretKeyOriginal.getEncoded(), receiverPublicKey);
+            finalResult = this.appendEEWithBody(ee, encryptedBody);
+        }catch(Exception e){
+            return new MessageInput(finalResult, true, true, e.getMessage());
+        }
+        return new MessageInput(finalResult, true, false, "");
     }
 
-    public MessageOutput receive(String cipherText) throws Exception{
-        HashMap<String, String> dataMap = this.dataSplitter(cipherText);
-        String receivedBody = dataMap.get("body");
-        String receivedEE = dataMap.get("ee");
-        System.out.printf("receive - receivedEE: %s\n", receivedEE);
-        System.out.printf("receive - receivedBody: %s\n", receivedBody);
-        byte[] aesKey = this.openEE(receivedEE, receiverPrivateKey);
-        SecretKey decryptedSecretKey = new SecretKeySpec(aesKey, "AES");
-        String decryptedBody = this.decryptBodyFixed(receivedBody, decryptedSecretKey);
-        HashMap<String, String> bodyMap = this.bodySplitter(decryptedBody);
-        String receivedPlainText = bodyMap.get("receivedPlainText");
-        String receivedDigitalSignature = bodyMap.get("digitalSignature");
-        String receivedMAC = this.decryptDigitalSignature(receivedDigitalSignature, senderPublicKey); // sender authentication
-        String hashPlainText = this.hashPlainText(receivedPlainText);
-        return new MessageOutput(receivedPlainText, compareMAC(receivedMAC, hashPlainText));
+    public MessageOutput receive(String cipherText){
+        String receivedPlainText = "";
+        boolean integrity = false;
+        try {
+            HashMap<String, String> dataMap = this.dataSplitter(cipherText);
+            String receivedBody = dataMap.get("body");
+            String receivedEE = dataMap.get("ee");
+            System.out.printf("receive - receivedEE: %s\n", receivedEE);
+            System.out.printf("receive - receivedBody: %s\n", receivedBody);
+            byte[] aesKey = this.openEE(receivedEE, receiverPrivateKey);
+            SecretKey decryptedSecretKey = new SecretKeySpec(aesKey, "AES");
+            String decryptedBody = this.decryptBody(receivedBody, decryptedSecretKey);
+            HashMap<String, String> bodyMap = this.bodySplitter(decryptedBody);
+            receivedPlainText = bodyMap.get("receivedPlainText");
+            String receivedDigitalSignature = bodyMap.get("digitalSignature");
+            String receivedMAC = this.solveDigitalSignature(receivedDigitalSignature, senderPublicKey); 
+            String hashPlainText = this.hashPlainText(receivedPlainText);
+            integrity = compareMAC(receivedMAC, hashPlainText);
+        }catch(Exception e){
+            return new MessageOutput(receivedPlainText, integrity, true, e.getMessage());
+        }
+        return new MessageOutput(receivedPlainText, integrity, false, "");
     }
 }
 

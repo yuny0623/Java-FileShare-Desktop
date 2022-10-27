@@ -152,7 +152,7 @@ public class MainGui extends JFrame implements ActionListener {
             if(filePath.equals("file path.")){
                 new AlertGui("File path is required!", false);
             }else{
-                cipherText = AESFileTranslator.Image2AESCipherText(filePath);
+                cipherText = AESFileTranslator.Image2CipherText(filePath);
 
                 try {
                     HashMap<String, String> sendData = new HashMap<>();

@@ -13,37 +13,41 @@ import org.imageghost.Wallet.KeyWallet;
 
 import javax.crypto.SecretKey;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.UUID;
 
 public class AESFileTranslator {
 
-    /*
-        이미지 -> AES 암호화된 텍스트
-     */
-    public static String Image2AESCipherText(String imagePath){
+    public static String Image2CipherText(String imagePath){
         SymmetricKey symmetricKey = null;
         try {
             symmetricKey = KeyWallet.getMainKeyForSymmetricKey();
-        }catch(NoKeyException e){ // if no main key exist
-            e.printStackTrace();
+        }catch(NoKeyException e){
             String cipherText = null;
             try {
-                symmetricKey = KeyFactory.createSymmetricKey(); // 대칭키 생성
-                KeyWallet.saveKeyAsMainKeyForSymmetricKey(symmetricKey); // 키 지갑에 Main키로 저장
-                symmetricKey = KeyWallet.getMainKeyForSymmetricKey();    // 저장된 Main 키를 불러오기
-                String plainTextOfFile = FileTranslator.transferFile2Text(new File(imagePath)); // 이미지를 Text로 변환
-                cipherText = AESCipherMaker.encryptText(plainTextOfFile, (SecretKey) symmetricKey.getKey());  // Text 를 CipherText로 변환
+                symmetricKey = KeyFactory.createSymmetricKey();
+                KeyWallet.saveKeyAsMainKeyForSymmetricKey(symmetricKey);
+                symmetricKey = KeyWallet.getMainKeyForSymmetricKey();
+                String plainTextOfFile = FileTranslator.transferFile2Text(new File(imagePath));
+                cipherText = AESCipherMaker.encrypt(plainTextOfFile, (SecretKey) symmetricKey.getKey());
             } catch(Exception err){
                 err.printStackTrace();
-                new AlertGui("Cannot create Cipher Text from Image! due to:" + err.getMessage(), false);
             }
             return cipherText;
         }
-        // if main key exist
-        String plainTextOfFile = FileTranslator.transferFile2Text(new File(imagePath)); // 이미지를 Text로 변환
+        String plainTextOfFile = "";
+        try {
+            plainTextOfFile = FileTranslator.transferFile2Text(new File(imagePath));
+        }catch(FileNotFoundException e){
+            e.printStackTrace();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
         String cipherText = null;
         try {
-            cipherText = AESCipherMaker.encryptText(plainTextOfFile, (SecretKey) symmetricKey.getKey()); // Text를 CipherText로 변환
+            cipherText = AESCipherMaker.encrypt(plainTextOfFile, (SecretKey) symmetricKey.getKey());
         } catch (Exception e) {
             e.printStackTrace();
             new AlertGui("Cannot create Cipher Text from Image! due to:"+ e.getMessage(), false);
@@ -51,30 +55,28 @@ public class AESFileTranslator {
         return cipherText;
     }
 
-    /*
-        AES 암호화된 텍스트 -> 이미지 변환
-        (decrypt 시에 main key가 없을 경우 decrypt 불가능.)
-     */
-    public static Object AESCispherText2Image(byte[] aesCipherText){ // return type changed from File to Object
+    public static Object AESCispherText2Image(byte[] aesCipherText) {
         Key symmetricKey = null;
         try {
             symmetricKey = KeyWallet.getMainKeyForSymmetricKey();
-        }catch(NoKeyException e){
-            new AlertGui("No Main Key Existing! due to: " + e.getMessage(), false);
+        } catch (NoKeyException e) {
             e.printStackTrace();
-            return null;            // decrypt 시에 main key가 없을 경우 decrypt 불가능.
+            return null;
         }
-
-        // 정상 진행
         String textOfImage = null;
         try {
-            textOfImage = AESCipherMaker.decryptText(aesCipherText, (SecretKey) symmetricKey.getKey()); // CipherText 복호화
-        }catch(Exception e){
+            textOfImage = AESCipherMaker.decrypt(aesCipherText, (SecretKey) symmetricKey.getKey());
+        } catch (Exception e) {
             new AlertGui("Cannot decrypt CipherText! due to:" + e.getMessage(), false);
             e.printStackTrace();
         }
-        String uuid = UUID.randomUUID().toString(); // 고유한 문자열 생성
-        File file = FileTranslator.transferText2File(textOfImage, Config.FILE_SAVE_PATH, uuid + ".jpg"); // 랜덤 이미지명으로 생성
+        String uuid = UUID.randomUUID().toString();
+        File file = null;
+        try{
+            file = FileTranslator.transferText2File(textOfImage, Config.FILE_SAVE_PATH, uuid + ".jpg");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return file;
     }
 }

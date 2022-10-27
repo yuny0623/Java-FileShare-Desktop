@@ -60,7 +60,6 @@ public class MerkleTree {
                 }
             }
 
-            // Preorder Traversal
             if(node != null && node.getLeft() != null){
                 queue.add(node.getLeft());
             }

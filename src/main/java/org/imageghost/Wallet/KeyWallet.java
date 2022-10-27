@@ -7,8 +7,8 @@ import org.imageghost.Key.Keys.SymmetricKey;
 import java.util.HashMap;
 
 public class KeyWallet implements Wallet{
-    private static HashMap<String, SymmetricKey> symmetricKeyMap = new HashMap<>(); // 대칭키 전용 지갑 (AES)
-    private static HashMap<String, ASymmetricKey> asymmetricKeyMap = new HashMap<>(); // 비대칭키 전용 지갑 (RSA)
+    private static HashMap<String, SymmetricKey> symmetricKeyMap = new HashMap<>();
+    private static HashMap<String, ASymmetricKey> asymmetricKeyMap = new HashMap<>();
 
     private static int numberForSymmetricKey = 0;
     private static int numberForASymmetricKey = 0;
