@@ -3,7 +3,6 @@ package org.imageghost.SecureAlgorithm.Utils;
 public class MessageOutput {
     String plainText;
     boolean receive;
-
     boolean error;
     String errorMessage;
 

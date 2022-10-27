@@ -12,9 +12,7 @@ import java.util.HashMap;
 
 
 public class HTTPConnection {
-    /*
-        Check Server is running.
-     */
+
     public static boolean checkServerLive(){
         String response = null;
         String URL = Config.HEALTH_CHECK_URL;
@@ -54,32 +52,25 @@ public class HTTPConnection {
         }
     }
 
-    /*
-        get request to server
-     */
     public static String httpGetRequest(String pURL, String pathVariable){
         if(!HTTPConnection.checkServerLive()){
             throw new NoServerException("Server is not running.");
         }
         String myResult = "";
         try {
-            // URL 설정
-            URL url = new URL(pURL + pathVariable); // URL
-            HttpURLConnection http = (HttpURLConnection) url.openConnection(); // 접속
+            URL url = new URL(pURL + pathVariable);
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
 
-            //   전송 모드 설정 - 기본적인 설정
             http.setDefaultUseCaches(false);
-            http.setDoInput(true); // 서버에서 읽기 모드 지정
-            http.setDoOutput(true); // 서버로 쓰기 모드 지정
-            http.setRequestMethod("GET"); // 전송 방식은 GET
+            http.setDoInput(true);
+            http.setDoOutput(true);
+            http.setRequestMethod("GET");
 
-            http.setRequestProperty("content-type", "application/json;utf-8"); // set property to application/json
+            http.setRequestProperty("content-type", "application/json;utf-8");
 
-            // Response Code
             int responseCode = http.getResponseCode();
             System.out.println("response code in GET request:" +  + responseCode);
 
-            // receive from server
             InputStreamReader tmp = new InputStreamReader(http.getInputStream(), "UTF-8");
             BufferedReader reader = new BufferedReader(tmp);
             StringBuilder builder = new StringBuilder();
@@ -98,25 +89,19 @@ public class HTTPConnection {
         return myResult;
     }
 
-    /*
-        post request to server
-     */
     public static String httpPostRequest(String pURL, HashMap <String, String> pList) {
         String myResult = "";
 
         try {
-            // URL 설정
             URL url = new URL(pURL);
-            // 접속
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
 
-            // 전송 모드 설정 - 기본적인 설정
             http.setDefaultUseCaches(false);
-            http.setDoInput(true); // 서버에서 읽기 모드 지정
-            http.setDoOutput(true); // 서버로 쓰기 모드 지정
-            http.setRequestMethod("POST"); // 전송 방식은 POST
+            http.setDoInput(true);
+            http.setDoOutput(true);
+            http.setRequestMethod("POST");
 
-            http.setRequestProperty("content-type", "application/json;utf-8"); // set property to application/json
+            http.setRequestProperty("content-type", "application/json;utf-8");
 
             StringBuffer buffer = new StringBuffer();
 
