@@ -292,7 +292,6 @@ public class PGP {
 
     public MessageInput send(String plainText){
         String finalResult = "";
-
         try {
             String originalMAC = this.generateMAC(plainText);
             String originalDigitalSignature = this.generateDigitalSignature(originalMAC, senderPrivateKey);
@@ -314,8 +313,6 @@ public class PGP {
             HashMap<String, String> dataMap = this.dataSplitter(cipherText);
             String receivedBody = dataMap.get("body");
             String receivedEE = dataMap.get("ee");
-            System.out.printf("receive - receivedEE: %s\n", receivedEE);
-            System.out.printf("receive - receivedBody: %s\n", receivedBody);
             byte[] aesKey = this.openEE(receivedEE, receiverPrivateKey);
             SecretKey decryptedSecretKey = new SecretKeySpec(aesKey, "AES");
             String decryptedBody = this.decryptBody(receivedBody, decryptedSecretKey);

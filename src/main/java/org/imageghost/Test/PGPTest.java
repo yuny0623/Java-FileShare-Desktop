@@ -44,12 +44,12 @@ public class PGPTest {
     @Test
     public void 전자봉투_송수신_테스트(){ // fail -> success 로 바꿔 봅시다.
         // given
+        SecretKey secretKeyOriginal = KeyFactory.createSymmetricKey().getAESKey();
 
-        System.out.printf("receiverPublicKey: %s\n", receiverPublicKey);
-        System.out.printf("receiverPrivateKey: %s\n", receiverPrivateKey);
+//        System.out.printf("receiverPublicKey: %s\n", receiverPublicKey);
+//        System.out.printf("receiverPrivateKey: %s\n", receiverPrivateKey);
 
         // when
-        SecretKey secretKeyOriginal = KeyFactory.createSymmetricKey().getAESKey();
         String ee = pgp.createEE(secretKeyOriginal.getEncoded(), receiverPublicKey);
         byte[] byteArray = pgp.openEE(ee, receiverPrivateKey);
 
@@ -67,8 +67,8 @@ public class PGPTest {
         String decodedMAC = pgp.solveDigitalSignature(digitalSignature, senderPublicKey);
 
         // then
-        System.out.printf("original MAC: %s\n", originalMAC);
-        System.out.printf("original decodedMAC: %s\n", decodedMAC);
+//        System.out.printf("original MAC: %s\n", originalMAC);
+//        System.out.printf("original decodedMAC: %s\n", decodedMAC);
         Assert.assertEquals(originalMAC, decodedMAC);
     }
 
@@ -84,20 +84,20 @@ public class PGPTest {
         String originalDigitalSignature = pgp.generateDigitalSignature(originalMAC, senderPrivateKey);
         String body = pgp.generateBody(originalPlainText, originalDigitalSignature);
 
-        System.out.printf("send - originalPlainText: %s, %d\n", originalPlainText, originalPlainText.length());
-        System.out.printf("send - originalDigitalSignature: %s\n", originalDigitalSignature);
+//        System.out.printf("send - originalPlainText: %s, %d\n", originalPlainText, originalPlainText.length());
+//        System.out.printf("send - originalDigitalSignature: %s\n", originalDigitalSignature);
 
         HashMap<String, String> bodyMap = pgp.bodySplitter(body);
         String receivedPlainText = bodyMap.get("receivedPlainText");
         String receivedDigitalSignature = bodyMap.get("digitalSignature");
 
-        System.out.printf("receive - receivedPlainText: %s, %d\n", receivedPlainText, receivedPlainText.length());
-        System.out.printf("receive - receivedDigitalSignature: %s\n", receivedDigitalSignature);
+//        System.out.printf("receive - receivedPlainText: %s, %d\n", receivedPlainText, receivedPlainText.length());
+//        System.out.printf("receive - receivedDigitalSignature: %s\n", receivedDigitalSignature);
 
         String hashPlainText = pgp.hashPlainText(receivedPlainText); // 받은 평문 해시화
 
-        System.out.printf("receive - originalMAC: %s\n", originalMAC);
-        System.out.printf("receive - hashPlainText: %s\n", hashPlainText);
+//        System.out.printf("receive - originalMAC: %s\n", originalMAC);
+//        System.out.printf("receive - hashPlainText: %s\n", hashPlainText);
 
         // then
         // MAC 값 비교
@@ -122,11 +122,11 @@ public class PGPTest {
         SecretKey secretKey = pgp.generateSymmetricKey(); // 대칭키 생성
         String encryptedBody = pgp.encryptBody(body, secretKey);
 
-        System.out.printf("send - originalPlainText: %s\n", originalPlainText);
-        System.out.printf("send - originalMAC: %s\n", originalMAC);
-        System.out.printf("send - originalDigitalSignature: %s\n", originalDigitalSignature);
-        System.out.printf("send - body: %s\n", body);
-        System.out.printf("send - encryptedBody: %s\n", encryptedBody);
+//        System.out.printf("send - originalPlainText: %s\n", originalPlainText);
+//        System.out.printf("send - originalMAC: %s\n", originalMAC);
+//        System.out.printf("send - originalDigitalSignature: %s\n", originalDigitalSignature);
+//        System.out.printf("send - body: %s\n", body);
+//        System.out.printf("send - encryptedBody: %s\n", encryptedBody);
 
         String decryptedBody = pgp.decryptBody(encryptedBody, secretKey);
 
@@ -135,10 +135,10 @@ public class PGPTest {
         String receivedDigitalSignature = bodyMap.get("digitalSignature");
         String hashPlainText = pgp.hashPlainText(receivedPlainText);
 
-        System.out.printf("receive - decryptedBody: %s\n", decryptedBody);
-        System.out.printf("receive - receivedPlainText: %s\n", receivedPlainText);
-        System.out.printf("receive - receivedDigitalSignature: %s\n", receivedDigitalSignature);
-        System.out.printf("receive - hashPlainText: %s\n", hashPlainText);
+//        System.out.printf("receive - decryptedBody: %s\n", decryptedBody);
+//        System.out.printf("receive - receivedPlainText: %s\n", receivedPlainText);
+//        System.out.printf("receive - receivedDigitalSignature: %s\n", receivedDigitalSignature);
+//        System.out.printf("receive - hashPlainText: %s\n", hashPlainText);
 
         // then
         // MAC 값 비교
@@ -170,13 +170,13 @@ public class PGPTest {
         String ee = pgp.createEE(secretKeyOriginal.getEncoded(), receiverPublicKey);
         String finalResult = pgp.appendEEWithBody(ee, encryptedBody); // 최종 결과물
 
-        System.out.printf("send - originalPlainText: %s\n", originalPlainText);
-        System.out.printf("send - originalMAC: %s\n", originalMAC);
-        System.out.printf("send - originalDigitalSignature: %s\n", originalDigitalSignature);
-        System.out.printf("send - body: %s\n", body);
-        System.out.printf("send - encryptedBody: %s\n", encryptedBody);
-        System.out.printf("send - ee: %s\n", ee);
-        System.out.printf("send - finalResult: %s\n", finalResult);
+//        System.out.printf("send - originalPlainText: %s\n", originalPlainText);
+//        System.out.printf("send - originalMAC: %s\n", originalMAC);
+//        System.out.printf("send - originalDigitalSignature: %s\n", originalDigitalSignature);
+//        System.out.printf("send - body: %s\n", body);
+//        System.out.printf("send - encryptedBody: %s\n", encryptedBody);
+//        System.out.printf("send - ee: %s\n", ee);
+//        System.out.printf("send - finalResult: %s\n", finalResult);
 
         /*
             수신부
@@ -184,8 +184,8 @@ public class PGPTest {
         HashMap<String, String> dataMap = pgp.dataSplitter(finalResult);
         String receivedBody = dataMap.get("body");
         String receivedEE = dataMap.get("ee");
-        System.out.printf("receive - receivedEE: %s\n", receivedEE);
-        System.out.printf("receive - receivedBody: %s\n", receivedBody);
+//        System.out.printf("receive - receivedEE: %s\n", receivedEE);
+//        System.out.printf("receive - receivedBody: %s\n", receivedBody);
 
         // body 복호화
         String decryptedBody = pgp.decryptBody(receivedBody, secretKeyOriginal);
@@ -196,11 +196,11 @@ public class PGPTest {
         String receivedMAC = pgp.solveDigitalSignature(receivedDigitalSignature, senderPublicKey); // sender authentication
         String hashPlainText = pgp.hashPlainText(receivedPlainText);
 
-        System.out.printf("receive - decryptedBody: %s\n", decryptedBody);
-        System.out.printf("receive - receivedPlainText: %s\n", receivedPlainText);
-        System.out.printf("receive - receivedDigitalSignature: %s\n", receivedDigitalSignature);
-        System.out.printf("receive - receivedMAC: %s\n", receivedMAC);
-        System.out.printf("receive - hashPlainText: %s\n", hashPlainText);
+//        System.out.printf("receive - decryptedBody: %s\n", decryptedBody);
+//        System.out.printf("receive - receivedPlainText: %s\n", receivedPlainText);
+//        System.out.printf("receive - receivedDigitalSignature: %s\n", receivedDigitalSignature);
+//        System.out.printf("receive - receivedMAC: %s\n", receivedMAC);
+//        System.out.printf("receive - hashPlainText: %s\n", hashPlainText);
 
         // then
         // MAC 값 비교
@@ -230,8 +230,8 @@ public class PGPTest {
         // when
         String fixedText = new String(plainText.getBytes());
 
-        System.out.printf("plainText: %s\n", plainText);
-        System.out.printf("fixedText: %s\n", fixedText);
+//        System.out.printf("plainText: %s\n", plainText);
+//        System.out.printf("fixedText: %s\n", fixedText);
 
         // then
         Assert.assertEquals(plainText, fixedText);
@@ -255,12 +255,12 @@ public class PGPTest {
 
             결과는 new SecretKeySpec에 전달할때는 SecretKey를 getEncoded 한 byte array 를 줘야만 원래 SecretKey로 복원됨을 알 수 있음.
          */
-        System.out.printf("intermediateByteArray: %s\n", intermediateByteArray);
-        System.out.printf("intermediateString: %s\n", intermediateString);
+//        System.out.printf("intermediateByteArray: %s\n", intermediateByteArray);
+//        System.out.printf("intermediateString: %s\n", intermediateString);
         // then
         SecretKey fixedSecretKey = new SecretKeySpec(intermediateByteArray, "AES");
-        System.out.printf("originalSecretKey: %s\n", originalSecretKey.getEncoded());
-        System.out.printf("fixedSecretKey: %s\n", fixedSecretKey.getEncoded());
+//        System.out.printf("originalSecretKey: %s\n", originalSecretKey.getEncoded());
+//        System.out.printf("fixedSecretKey: %s\n", fixedSecretKey.getEncoded());
 
         Assert.assertEquals(originalSecretKey, fixedSecretKey);
     }
@@ -304,13 +304,13 @@ public class PGPTest {
         String ee = pgp.createEE(secretKeyOriginal.getEncoded(), receiverPublicKey);
         String finalResult = pgp.appendEEWithBody(ee, encryptedBody); // 최종 결과물
 
-        System.out.printf("send - originalPlainText: %s\n", originalPlainText);
-        System.out.printf("send - originalMAC: %s\n", originalMAC);
-        System.out.printf("send - originalDigitalSignature: %s\n", originalDigitalSignature);
-        System.out.printf("send - body: %s\n", body);
-        System.out.printf("send - encryptedBody: %s\n", encryptedBody);
-        System.out.printf("send - ee: %s\n", ee);
-        System.out.printf("send - finalResult: %s\n", finalResult);
+//        System.out.printf("send - originalPlainText: %s\n", originalPlainText);
+//        System.out.printf("send - originalMAC: %s\n", originalMAC);
+//        System.out.printf("send - originalDigitalSignature: %s\n", originalDigitalSignature);
+//        System.out.printf("send - body: %s\n", body);
+//        System.out.printf("send - encryptedBody: %s\n", encryptedBody);
+//        System.out.printf("send - ee: %s\n", ee);
+//        System.out.printf("send - finalResult: %s\n", finalResult);
 
         /*
             수신부
@@ -318,8 +318,8 @@ public class PGPTest {
         HashMap<String, String> dataMap = pgp.dataSplitter(finalResult);
         String receivedBody = dataMap.get("body");
         String receivedEE = dataMap.get("ee");
-        System.out.printf("receive - receivedEE: %s\n", receivedEE);
-        System.out.printf("receive - receivedBody: %s\n", receivedBody);
+//        System.out.printf("receive - receivedEE: %s\n", receivedEE);
+//        System.out.printf("receive - receivedBody: %s\n", receivedBody);
 
         byte[] aesKey = pgp.openEE(receivedEE, receiverPrivateKey);
         SecretKey decryptedSecretKey = new SecretKeySpec(aesKey, "AES");
@@ -332,12 +332,12 @@ public class PGPTest {
         String receivedDigitalSignature = bodyMap.get("digitalSignature");
         String receivedMAC = pgp.solveDigitalSignature(receivedDigitalSignature, senderPublicKey); // sender authentication
         String hashPlainText = pgp.hashPlainText(receivedPlainText);
-
-        System.out.printf("receive - decryptedBody: %s\n", decryptedBody);
-        System.out.printf("receive - receivedPlainText: %s\n", receivedPlainText);
-        System.out.printf("receive - receivedDigitalSignature: %s\n", receivedDigitalSignature);
-        System.out.printf("receive - receivedMAC: %s\n", receivedMAC);
-        System.out.printf("receive - hashPlainText: %s\n", hashPlainText);
+//
+//        System.out.printf("receive - decryptedBody: %s\n", decryptedBody);
+//        System.out.printf("receive - receivedPlainText: %s\n", receivedPlainText);
+//        System.out.printf("receive - receivedDigitalSignature: %s\n", receivedDigitalSignature);
+//        System.out.printf("receive - receivedMAC: %s\n", receivedMAC);
+//        System.out.printf("receive - hashPlainText: %s\n", hashPlainText);
 
         // then
         // MAC 값 비교

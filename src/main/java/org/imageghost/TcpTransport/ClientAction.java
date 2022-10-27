@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 public class ClientAction {
     public ClientAction(){
     }
+
     public void action(){
         try{
             InetAddress ia = InetAddress.getLocalHost();
