@@ -26,7 +26,6 @@ public class MerkleTree {
                 }else{
                     rightChild = new Node(null, null, leftChild.getHash());
                 }
-
                 String parentHash = HashAlgorithm.generateHash(leftChild.getHash() + rightChild.getHash());
                 parents.add(new Node(leftChild, rightChild, parentHash));
                 index += 2;

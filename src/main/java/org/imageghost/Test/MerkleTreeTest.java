@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class MerkleTreeTest {
 
     @Test
-    public void 머클트리생성테스트(){
+    public void 머클트리_생성_테스트(){
         // given
         ArrayList<String> dataBlocks = new ArrayList<>();
         dataBlocks.add("Captain America");
@@ -32,7 +32,7 @@ public class MerkleTreeTest {
         String level2_val1 = HashAlgorithm.generateHash(level1_val1 + level1_val2);
         String level2_val2 = HashAlgorithm.generateHash(level1_val3 + level1_val4);
 
-        String level3_val1 = HashAlgorithm.generateHash(level2_val1 + level2_val2);
+        String level3_val1 = HashAlgorithm.generateHash(level2_val1 + level2_val2); // root
 
         // then
         Assert.assertNotNull(root);
