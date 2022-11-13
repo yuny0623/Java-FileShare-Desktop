@@ -10,7 +10,6 @@ public class AESCipherMaker {
         byte[] byteCipherText = aesCipher.doFinal(plainText.getBytes());
         return new String(byteCipherText);
     }
-
     public static String decrypt(byte[] byteCipherText, SecretKey secKey) throws Exception {
         Cipher aesCipher = Cipher.getInstance("AES");
         aesCipher.init(Cipher.DECRYPT_MODE, secKey);

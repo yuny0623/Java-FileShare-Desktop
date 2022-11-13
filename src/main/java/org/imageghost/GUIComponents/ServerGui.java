@@ -1,11 +1,14 @@
 package org.imageghost.GUIComponents;
 
 import org.imageghost.OpenChat.ServerAction;
+import org.imageghost.Utils.CustomOutputStream;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 
 public class ServerGui extends JFrame implements ActionListener{
     Container container = getContentPane();
@@ -31,6 +34,15 @@ public class ServerGui extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == serverStartButton) {
+            PrintStream printStream = null;
+            try {
+                printStream = new PrintStream(new CustomOutputStream(jTextArea), true, "UTF-8");
+            } catch (UnsupportedEncodingException ex) {
+                throw new RuntimeException(ex);
+            }
+            System.setOut(printStream);
+            System.setErr(printStream);
+
             Thread thread = new Thread(new ServerAction());
             thread.start();
         }

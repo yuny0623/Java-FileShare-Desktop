@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class CustomOutputStream extends OutputStream {
-
     private JTextArea jTextArea;
 
     public CustomOutputStream(JTextArea jTextArea){

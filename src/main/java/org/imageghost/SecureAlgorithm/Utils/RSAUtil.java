@@ -8,7 +8,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
-public class AsymmEnc {
+public class RSAUtil {
     public static String encode(byte[] plainData, String stringPublicKey) {
         String encryptedData = null;
         try {
