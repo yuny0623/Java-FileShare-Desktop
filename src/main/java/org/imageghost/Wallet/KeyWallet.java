@@ -1,65 +1,73 @@
 package org.imageghost.Wallet;
 
-import org.imageghost.ClientCustomException.NoKeyException;
+import org.imageghost.Key.KeyFactory;
+import org.imageghost.Key.Keys.ASymmetricKey;
+import org.imageghost.Key.Keys.SymmetricKey;
 
 import java.util.HashMap;
 
-public class KeyWallet {
-    private static HashMap<String, SymmetricKey> symmetricKeyMap = new HashMap<>(); // 대칭키 전용 지갑 (AES)
-    private static HashMap<String, ASymmetricKey> asymmetricKeyMap = new HashMap<>(); // 비대칭키 전용 지갑 (RSA)
+public class KeyWallet implements Wallet{
+    private static HashMap<String, SymmetricKey> symmetricKeyMap = new HashMap<>();
+    private static HashMap<String, ASymmetricKey> asymmetricKeyMap = new HashMap<>();
+
+    private static SymmetricKey mainSymmetricKey;
+    private static ASymmetricKey mainASymmetricKey;
 
     private static int numberForSymmetricKey = 0;
     private static int numberForASymmetricKey = 0;
 
-    public static void saveKeyForSymmetricKey(SymmetricKey encKey){
-        symmetricKeyMap.put(String.valueOf(++numberForSymmetricKey), encKey);
-    }
-    public static void saveKeyAsMainKeyForSymmetricKey(SymmetricKey encKey){
-        symmetricKeyMap.put("MainKey", encKey);
+    public KeyWallet(){
+
     }
 
-    public static HashMap<String, SymmetricKey> getAllKeyForSymmetricKey(){
+    public void init() {
+        mainASymmetricKey = KeyFactory.createAsymmetricKey();
+        mainSymmetricKey = KeyFactory.createSymmetricKey();
+    }
+
+    public static void saveSymmetricKey(SymmetricKey encKey){
+        symmetricKeyMap.put(String.valueOf(numberForSymmetricKey++), encKey);
+    }
+    public static void saveMainSymmetricKey(SymmetricKey encKey){
+        mainSymmetricKey = encKey;
+    }
+    public static HashMap<String, SymmetricKey> getAllSymmetricKey(){
         return symmetricKeyMap;
     }
-
-    public static SymmetricKey getMainKeyForSymmetricKey() throws NoKeyException{
-        SymmetricKey findSymmetricKey =  symmetricKeyMap.get("Main");
-        if(findSymmetricKey == null){
-            throw new NoKeyException("No Main Symmetric Key");
-        }else{
-            return findSymmetricKey;
+    public static SymmetricKey getMainSymmetricKey(){
+        if(mainSymmetricKey == null){
+            SymmetricKey symmetricKey = KeyFactory.createSymmetricKey();
+            mainSymmetricKey = symmetricKey;
         }
+        return mainSymmetricKey;
     }
-    public static void deleteAllKeysForSymmetricKey(){
+    public static void deleteAllSymmetricKey(){
         symmetricKeyMap.clear();
         numberForSymmetricKey = 0;
     }
 
-    /*
-        for Asymmetric key
-     */
-    public static void saveKeyForASymmetricKey(ASymmetricKey encKey){
-        asymmetricKeyMap.put(String.valueOf(++numberForASymmetricKey), encKey);
+    public static void saveASymmetricKey(ASymmetricKey encKey){
+        asymmetricKeyMap.put(String.valueOf(numberForASymmetricKey++), encKey);
     }
-    public static void saveKeyAsMainKeyForASymmetricKey(ASymmetricKey encKey){
-        asymmetricKeyMap.put("Main", encKey);
+    public static void saveMainASymmetricKey(ASymmetricKey encKey){
+        mainASymmetricKey = encKey;
     }
 
-    public static HashMap<String, ASymmetricKey> getAllKeyForASymmetricKey(){
+    public static HashMap<String, ASymmetricKey> getAllASymmetricKey(){
         return asymmetricKeyMap;
     }
 
-    public static ASymmetricKey getMainKeyForASymmetricKey() throws NoKeyException{
-        ASymmetricKey findASymmetricKey =  asymmetricKeyMap.get("Main");
-        if(findASymmetricKey == null){
-            throw new NoKeyException("No Main ASymmetric Key");
-        }else{
-            return findASymmetricKey;
+    public static ASymmetricKey getMainASymmetricKey(){
+        if(mainASymmetricKey == null){
+            ASymmetricKey aSymmetricKey = KeyFactory.createAsymmetricKey();
+            mainASymmetricKey = aSymmetricKey;
         }
+        return mainASymmetricKey;
     }
 
-    public static void deleteAllKeysForASymmetricKey(){
+    public static void deleteAllASymmetricKey(){
         asymmetricKeyMap.clear();
         numberForASymmetricKey = 0;
     }
+
 }
