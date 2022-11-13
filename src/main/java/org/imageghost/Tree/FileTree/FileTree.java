@@ -1,4 +1,4 @@
-package org.imageghost.Wallet.FileTree;
+package org.imageghost.Tree.FileTree;
 
 public class FileTree {
     /*

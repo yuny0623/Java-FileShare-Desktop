@@ -1,4 +1,4 @@
-package org.imageghost.Wallet.MerkleTree;
+package org.imageghost.Tree.MerkleTree;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

@@ -1,4 +1,4 @@
-package org.imageghost.Wallet.MerkleTree;
+package org.imageghost.Tree.MerkleTree;
 
 import org.apache.commons.codec.binary.Hex;
 

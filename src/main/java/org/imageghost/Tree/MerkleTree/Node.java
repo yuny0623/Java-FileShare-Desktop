@@ -1,14 +1,14 @@
-package org.imageghost.Wallet.FileTree;
+package org.imageghost.Tree.MerkleTree;
 
 public class Node {
     public Node left;
     public Node right;
-    public String cipherText;
+    public String hash;
 
-    public Node(Node left, Node right, String cipherText){
+    public Node(Node left, Node right, String hash){
         this.left = left;
         this.right = right;
-        this.cipherText = cipherText;
+        this.hash = hash;
     }
 
     public Node getLeft() {
@@ -19,12 +19,12 @@ public class Node {
         return right;
     }
 
-    public String getCipherText() {
-        return cipherText;
+    public String getHash() {
+        return hash;
     }
 
-    public void setCipherText(String cipherText) {
-        this.cipherText = cipherText;
+    public void setHash(String hash) {
+        this.hash = hash;
     }
 
     public void setLeft(Node left) {

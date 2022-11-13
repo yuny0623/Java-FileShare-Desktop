@@ -119,12 +119,11 @@ public class MainGui extends JFrame implements ActionListener {
             SecretKey secretKey = KeyFactory.createSymmetricKey().getAESKey(); // symmetric key 생성
             SymmetricKey symmetricKey = KeyFactory.createSymmetricKey();
             try{
-
                 SymmetricKey existingSymmetricKey = KeyWallet.getMainKeyForSymmetricKey(); // 메인 키를 불러옴.
-                KeyWallet.saveKeyForSymmetricKey(existingSymmetricKey); // 일반 키로 저장
+                KeyWallet.saveSymmetricKey(existingSymmetricKey); // 일반 키로 저장
             }catch(NoKeyException error){ // Main AES Key가 없을 경우 NoKeyException 발생
                 error.printStackTrace();
-                KeyWallet.saveKeyAsMainKeyForSymmetricKey(symmetricKey); // 메인 키로 저장
+                KeyWallet.saveMainSymmetricKey(symmetricKey); // 메인 키로 저장
             }
             textArea2.setText(secretKey.getEncoded().toString()); // 출력
         }else if(e.getSource() == button2){ // create asymmetric key
@@ -145,7 +144,6 @@ public class MainGui extends JFrame implements ActionListener {
             textArea2.setText(stringBufferOfPublicKey.append(stringBufferOfPrivateKey).toString()); // 출력
         }else if(e.getSource() == button3){ // send to server
             checkServerConnection();
-
             // 서버로 CipherText 전송
             String filePath = textArea1.getText(); // 파일 경로를 읽어들임.
             String cipherText = null;

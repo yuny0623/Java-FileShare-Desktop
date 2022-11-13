@@ -25,7 +25,7 @@ public class AESFileTranslator {
             String cipherText = null;
             try {
                 symmetricKey = KeyFactory.createSymmetricKey();
-                KeyWallet.saveKeyAsMainKeyForSymmetricKey(symmetricKey);
+                KeyWallet.saveMainSymmetricKey(symmetricKey);
                 symmetricKey = KeyWallet.getMainKeyForSymmetricKey();
                 String plainTextOfFile = FileTranslator.transferFile2Text(new File(imagePath));
                 cipherText = AESCipherMaker.encrypt(plainTextOfFile, (SecretKey) symmetricKey.getKey());

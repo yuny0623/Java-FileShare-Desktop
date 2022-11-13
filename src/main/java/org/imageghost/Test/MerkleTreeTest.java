@@ -1,10 +1,9 @@
 package org.imageghost.Test;
 
-import org.imageghost.Wallet.MerkleTree.HashAlgorithm;
-import org.imageghost.Wallet.MerkleTree.MerkleTree;
-import org.imageghost.Wallet.MerkleTree.Node;
+import org.imageghost.Tree.MerkleTree.HashAlgorithm;
+import org.imageghost.Tree.MerkleTree.MerkleTree;
+import org.imageghost.Tree.MerkleTree.Node;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
