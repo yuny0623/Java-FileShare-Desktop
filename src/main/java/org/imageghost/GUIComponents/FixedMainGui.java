@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 
 public class FixedMainGui extends JFrame implements ActionListener {
 
@@ -14,6 +15,8 @@ public class FixedMainGui extends JFrame implements ActionListener {
     JButton clientButton = new JButton("Client");
     JButton serverButton = new JButton("Server");
     JPanel buttonPanel = new JPanel();
+
+    JTextField textField = new JTextField();
 
     public FixedMainGui(){
         setTitle("ImageGhost");
@@ -24,6 +27,7 @@ public class FixedMainGui extends JFrame implements ActionListener {
 
         buttonPanel.add("East", clientButton);
         buttonPanel.add("West", serverButton);
+        container.add("Center", textField);
         container.add("South", buttonPanel);
 
         clientButton.addActionListener(this);
