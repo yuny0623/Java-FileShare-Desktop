@@ -101,12 +101,12 @@ public class MainGui extends JFrame implements ActionListener {
 
         jpanelParent.setBackground(Color.DARK_GRAY);
 
-        this.add(panel0, BorderLayout.NORTH);   // server status 표시창
-        this.add(panel1, BorderLayout.CENTER);  // 버튼 패널 표시창
-        this.add(jpanelParent, BorderLayout.SOUTH);   // 결과 TextArea 표시창
+        this.add(panel0, BorderLayout.NORTH);
+        this.add(panel1, BorderLayout.CENTER);
+        this.add(jpanelParent, BorderLayout.SOUTH);
 
         setVisible(true);
-        setLocationRelativeTo(null); // 실행시 window 가운데에 위치
+        setLocationRelativeTo(null);
     }
 
     @Override
@@ -114,38 +114,36 @@ public class MainGui extends JFrame implements ActionListener {
         if(e.getSource() == button0){
             checkServerConnection();
         }
-        if(e.getSource() == button1){ // create symmetric key
+        if(e.getSource() == button1){
             checkServerConnection();
-            SecretKey secretKey = KeyFactory.createSymmetricKey().getAESKey(); // symmetric key 생성
+            SecretKey secretKey = KeyFactory.createSymmetricKey().getAESKey();
             SymmetricKey symmetricKey = KeyFactory.createSymmetricKey();
             try{
-                SymmetricKey existingSymmetricKey = KeyWallet.getMainKeyForSymmetricKey(); // 메인 키를 불러옴.
-                KeyWallet.saveSymmetricKey(existingSymmetricKey); // 일반 키로 저장
-            }catch(NoKeyException error){ // Main AES Key가 없을 경우 NoKeyException 발생
+                SymmetricKey existingSymmetricKey = KeyWallet.getMainSymmetricKey();
+                KeyWallet.saveSymmetricKey(existingSymmetricKey);
+            }catch(NoKeyException error){
                 error.printStackTrace();
-                KeyWallet.saveMainSymmetricKey(symmetricKey); // 메인 키로 저장
+                KeyWallet.saveMainSymmetricKey(symmetricKey);
             }
-            textArea2.setText(secretKey.getEncoded().toString()); // 출력
-        }else if(e.getSource() == button2){ // create asymmetric key
+            textArea2.setText(secretKey.getEncoded().toString());
+        }else if(e.getSource() == button2){
             checkServerConnection();
-            // asymmetric key pair 생성
-            ASymmetricKey aSymmetricKey = KeyFactory.createAsymmetricKey(); // 비대칭키 생성
+            ASymmetricKey aSymmetricKey = KeyFactory.createAsymmetricKey();
 
-            StringBuffer stringBufferOfPublicKey = new StringBuffer();  // public key string
+            StringBuffer stringBufferOfPublicKey = new StringBuffer();
             stringBufferOfPublicKey.append("-----BEGIN PUBLIC KEY-----\n");
             stringBufferOfPublicKey.append(aSymmetricKey.getPublicKey());
             stringBufferOfPublicKey.append("-----END PUBLIC KEY-----\n");
 
-            StringBuffer stringBufferOfPrivateKey = new StringBuffer(); // private key string
+            StringBuffer stringBufferOfPrivateKey = new StringBuffer();
             stringBufferOfPrivateKey.append("-----BEGIN PRIVATE KEY-----\n");
             stringBufferOfPrivateKey.append(aSymmetricKey.getPrivateKey());
             stringBufferOfPrivateKey.append("-----END PRIVATE KEY-----\n");
 
-            textArea2.setText(stringBufferOfPublicKey.append(stringBufferOfPrivateKey).toString()); // 출력
-        }else if(e.getSource() == button3){ // send to server
+            textArea2.setText(stringBufferOfPublicKey.append(stringBufferOfPrivateKey).toString());
+        }else if(e.getSource() == button3){
             checkServerConnection();
-            // 서버로 CipherText 전송
-            String filePath = textArea1.getText(); // 파일 경로를 읽어들임.
+            String filePath = textArea1.getText();
             String cipherText = null;
             if(filePath.equals("file path.")){
                 new AlertGui("File path is required!", false);
@@ -154,9 +152,9 @@ public class MainGui extends JFrame implements ActionListener {
 
                 try {
                     HashMap<String, String> sendData = new HashMap<>();
-                    ASymmetricKey aSymmetricKey = KeyWallet.getMainKeyForASymmetricKey();   // 식별자로 사용할 Main 비대칭키 불러오기
-                    sendData.put(aSymmetricKey.getPublicKey(), cipherText);                 // Main 비대칭키의 public Key가 서버의 사용자 식별자
-                    HTTPConnection.httpPostRequest(Config.ORIGINAL_SERVER_URL + "/test1", sendData); // Server에 Post 요청
+                    ASymmetricKey aSymmetricKey = KeyWallet.getMainASymmetricKey();
+                    sendData.put(aSymmetricKey.getPublicKey(), cipherText);
+                    HTTPConnection.httpPostRequest(Config.ORIGINAL_SERVER_URL + "/test1", sendData);
                 }catch(NoServerException error){
                     new AlertGui("Server is not running! due to:" + error.getMessage(), false);
                     error.printStackTrace();
@@ -165,7 +163,7 @@ public class MainGui extends JFrame implements ActionListener {
         }else if(e.getSource() == button4){
             checkServerConnection();
             String result = HTTPConnection.httpGetRequest(
-                    Config.ORIGINAL_SERVER_URL + "/test-get/", KeyWallet.getMainKeyForASymmetricKey().getPublicKey());
+                    Config.ORIGINAL_SERVER_URL + "/test-get/", KeyWallet.getMainASymmetricKey().getPublicKey());
             textArea2.setText(result);
         }
     }

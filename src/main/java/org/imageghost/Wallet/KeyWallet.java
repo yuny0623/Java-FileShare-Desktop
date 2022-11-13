@@ -16,6 +16,15 @@ public class KeyWallet implements Wallet{
     private static int numberForSymmetricKey = 0;
     private static int numberForASymmetricKey = 0;
 
+    public KeyWallet(){
+
+    }
+
+    public void init() {
+        mainASymmetricKey = KeyFactory.createAsymmetricKey();
+        mainSymmetricKey = KeyFactory.createSymmetricKey();
+    }
+
     public static void saveSymmetricKey(SymmetricKey encKey){
         symmetricKeyMap.put(String.valueOf(numberForSymmetricKey++), encKey);
     }
@@ -60,4 +69,5 @@ public class KeyWallet implements Wallet{
         asymmetricKeyMap.clear();
         numberForASymmetricKey = 0;
     }
+
 }

@@ -1,5 +1,7 @@
 package org.imageghost.OpenChat;
 
+import org.imageghost.SecureAlgorithm.Utils.AsymmEnc;
+
 import javax.crypto.Cipher;
 import java.io.*;
 import java.net.Socket;
@@ -54,12 +56,13 @@ public class ServerSocketThread extends Thread{
                         String receiverName = strIn.substring(1, tempIdx);
                         String message = strIn.substring(tempIdx, strIn.length());
                         String receiverPublicKey = ChatServer.publicKeyList.get(receiverName);
-                        String encodedMessage = encode(message.getBytes(), receiverPublicKey);
+                        String encodedMessage = AsymmEnc.encode(message.getBytes(), receiverPublicKey);
                         server.broadCasting("[" + name + "]" + encodedMessage);
                     }
                 }else {
                     server.broadCasting("[" + name + "]" + strIn);
                 }
+                // server.broadCasting("[" + name + "]" + strIn);
             }
         }catch(IOException e){
             System.out.println(threadName + " 님이 퇴장했습니다.");
@@ -71,44 +74,5 @@ public class ServerSocketThread extends Thread{
                 e.printStackTrace();
             }
         }
-    }
-
-    public String encode(byte[] plainData, String stringPublicKey) {
-        String encryptedData = null;
-        try {
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            byte[] bytePublicKey = Base64.getDecoder().decode(stringPublicKey.getBytes());
-            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(bytePublicKey);
-            PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
-
-            Cipher cipher = Cipher.getInstance("RSA");
-            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-
-            byte[] byteEncryptedData = cipher.doFinal(plainData);
-            encryptedData = Base64.getEncoder().encodeToString(byteEncryptedData);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return encryptedData;
-    }
-
-    public byte[] decode(String encryptedData, String stringPrivateKey) {
-        byte[] byteDecryptedData = null;
-
-        try {
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            byte[] bytePrivateKey = Base64.getDecoder().decode(stringPrivateKey.getBytes());
-            PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(bytePrivateKey);
-            PrivateKey privateKey = keyFactory.generatePrivate(privateKeySpec);
-
-            Cipher cipher = Cipher.getInstance("RSA");
-            cipher.init(Cipher.DECRYPT_MODE, privateKey);
-
-            byte[] byteEncryptedData = Base64.getDecoder().decode(encryptedData.getBytes());
-            byteDecryptedData = cipher.doFinal(byteEncryptedData);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return byteDecryptedData;
     }
 }

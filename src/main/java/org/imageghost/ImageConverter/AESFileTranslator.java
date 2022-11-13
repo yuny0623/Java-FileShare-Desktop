@@ -20,13 +20,13 @@ public class AESFileTranslator {
     public static String image2CipherText(String imagePath){
         SymmetricKey symmetricKey = null;
         try {
-            symmetricKey = KeyWallet.getMainKeyForSymmetricKey();
+            symmetricKey = KeyWallet.getMainSymmetricKey();
         }catch(NoKeyException e){
             String cipherText = null;
             try {
                 symmetricKey = KeyFactory.createSymmetricKey();
                 KeyWallet.saveMainSymmetricKey(symmetricKey);
-                symmetricKey = KeyWallet.getMainKeyForSymmetricKey();
+                symmetricKey = KeyWallet.getMainSymmetricKey();
                 String plainTextOfFile = FileTranslator.transferFile2Text(new File(imagePath));
                 cipherText = AESCipherMaker.encrypt(plainTextOfFile, (SecretKey) symmetricKey.getKey());
             } catch(Exception err){
@@ -56,7 +56,7 @@ public class AESFileTranslator {
     public static Object cipherText2Image(byte[] aesCipherText) {
         Key symmetricKey = null;
         try {
-            symmetricKey = KeyWallet.getMainKeyForSymmetricKey();
+            symmetricKey = KeyWallet.getMainSymmetricKey();
         } catch (NoKeyException e) {
             e.printStackTrace();
             return null;
