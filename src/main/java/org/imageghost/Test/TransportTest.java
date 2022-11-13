@@ -8,10 +8,8 @@ public class TransportTest {
 
     @Test
     public void TCP_클라이언트_서버_테스트() throws InterruptedException {
-        new Thread(() -> {
-            ServerAction serverAction = new ServerAction();
-            serverAction.action();
-        }).start();
+        Thread thread = new Thread(new ServerAction());
+        thread.start();
         Thread.sleep(10000000);
     }
 

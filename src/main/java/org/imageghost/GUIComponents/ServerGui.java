@@ -30,11 +30,8 @@ public class ServerGui extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == serverStartButton) {
-//            ServerAction serverAction = new ServerAction();
-//            serverAction.action();
             Thread thread = new Thread(new ServerAction());
             thread.start();
         }
     }
-
 }
