@@ -11,7 +11,7 @@ public class CustomOutputStream extends OutputStream {
     public CustomOutputStream(JTextArea jTextArea){
         this.jTextArea = jTextArea;
     }
-    
+
     @Override
     public void write(int b) throws IOException {
         jTextArea.append(String.valueOf((char)b));
