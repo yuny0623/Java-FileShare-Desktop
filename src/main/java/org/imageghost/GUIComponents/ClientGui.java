@@ -1,7 +1,5 @@
 package org.imageghost.GUIComponents;
 
-import org.imageghost.TcpTransport.ClientAction;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;

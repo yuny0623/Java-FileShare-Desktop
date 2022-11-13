@@ -1,7 +1,6 @@
 package org.imageghost.GUIComponents;
 
 import org.imageghost.Config;
-import org.imageghost.TcpTransport.ClientAction;
 
 import javax.swing.*;
 import java.awt.*;

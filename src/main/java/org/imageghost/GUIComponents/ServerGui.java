@@ -1,6 +1,6 @@
 package org.imageghost.GUIComponents;
 
-import org.imageghost.TcpTransport.ServerAction;
+import org.imageghost.OpenChat.ServerAction;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,9 +11,10 @@ public class ServerGui extends JFrame implements ActionListener{
     Container container = getContentPane();
     JTextArea jTextArea = new JTextArea();
     JScrollPane scrollPane = new JScrollPane(jTextArea);
-    JButton serverStartButton = new JButton("Server Start");
+    JButton serverStartButton = new JButton("Start Open Chat Server");
+
     public ServerGui(){
-        setTitle("ServerLog");
+        setTitle("ServerLogGui");
         setSize(550, 400);
         setLocation(400, 400);
         setVisible(true);

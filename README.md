@@ -1,11 +1,11 @@
-ImageGhostClient for Desktop User 
+ImageGhostClient for Desktop
 =================================
 
 1. 프로젝트 소개
 ---------------
    자신의 신원을 노출시키지 않고 타인과 파일을 공유하거나 이야기할 수 있는 클라이언트 프로그램임. 서버에서 지원받는 기능이 존재하지만
    클라이언트 프로그램만으로도 사용할 수 있도록 TCP/IP를 활용한 소켓 통신을 구현하였음. 
-   암복호화가 프로젝트의 가장 핵심 기능이며 그 예로 PGP, Diffie-Hellman이 주로 사용되었음. 
+   암복호화가 프로젝트의 가장 핵심 기능이며 그 예로 PGP Structure가 주로 사용되었음. 
 
 2. 프로젝트를 진행한 이유
 -----------------------
@@ -34,10 +34,7 @@ ImageGhostClient for Desktop User
    - RSA:
      선정 이유:
    
-   - PGP:
-     선정 이유:
-   
-   - Diffie-Hellman:
+   - PGP Structure:
      선정 이유:
    
    - TCP/IP 통신:
@@ -52,10 +49,8 @@ ImageGhostClient for Desktop User
 6. 기능 소개 
 ----------------------------
    - 공개키 암복호화 기능
-   > 안녕하세요 , 
    - 대칭키 암복호화 기능 
    - PGP 구조 구현
-   - Diffie-Hellman 알고리즘 구현
    - 파일 암복호화
    - 이미지 암복호화 
    - 파일지갑
@@ -87,19 +82,16 @@ ImageGhostClient for Desktop User
 2) RSA encryption and decryption:
    - 
 
-4) AES implementation:
+3) AES implementation:
    - 
 
-5) PGP structure:
+4) PGP structure:
+   -
+
+5) TCP/IP client server example: 
    - 
 
-6) Diffie-Hellman
-   - 
-
-6) TCP/IP client server example: 
-   - 
-
-7) Extra: 
+6) Extra: 
    - 
 
 

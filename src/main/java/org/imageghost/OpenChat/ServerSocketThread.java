@@ -1,4 +1,4 @@
-package org.imageghost.TcpTransport;
+package org.imageghost.OpenChat;
 
 import java.io.*;
 import java.net.Socket;
@@ -32,11 +32,16 @@ public class ServerSocketThread extends Thread{
             sendMessage("입력창에 닉네임을 넣으세요");
             name =  in.readLine();
             server.broadCasting("[" + name + "] 님이 입장하였습니다.");
+            sendMessage("입력창에 publicKey를 넣으세요");
+            String publicKey = in.readLine();
+            ChatServer.publicKeyList.put(name, publicKey);
+            server.broadCasting("[" + name + "] 님이 준비되었습니다.");
 
             while(true){
                 String strIn = in.readLine();
                 server.broadCasting("[" + name + "]" + strIn);
             }
+
         }catch(IOException e){
             System.out.println(threadName + " 님이 퇴장했습니다.");
             server.removeClient(this);

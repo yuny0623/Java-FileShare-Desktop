@@ -1,4 +1,4 @@
-package org.imageghost.TcpTransport;
+package org.imageghost.OpenChat;
 
 import org.imageghost.Config;
 
@@ -6,15 +6,19 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ChatServer {
     ServerSocket serverSocket;
     Socket socket;
     List<Thread> list;
+    static HashMap<String, String> publicKeyList;
 
     public ChatServer(){
         list = new ArrayList<Thread>();
+        publicKeyList = new HashMap<>();
+
         System.out.println("서버가 시작되었습니다.");
     }
 

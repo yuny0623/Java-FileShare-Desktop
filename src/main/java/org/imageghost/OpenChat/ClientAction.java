@@ -1,4 +1,4 @@
-package org.imageghost.TcpTransport;
+package org.imageghost.OpenChat;
 
 import org.imageghost.Config;
 import org.imageghost.GUIComponents.ClientGui;

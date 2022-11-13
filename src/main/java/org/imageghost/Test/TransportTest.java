@@ -1,7 +1,7 @@
 package org.imageghost.Test;
 
-import org.imageghost.TcpTransport.ClientAction;
-import org.imageghost.TcpTransport.ServerAction;
+import org.imageghost.OpenChat.ClientAction;
+import org.imageghost.OpenChat.ServerAction;
 import org.junit.Test;
 
 public class TransportTest {

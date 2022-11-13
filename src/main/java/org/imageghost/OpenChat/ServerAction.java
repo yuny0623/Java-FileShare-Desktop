@@ -1,4 +1,4 @@
-package org.imageghost.TcpTransport;
+package org.imageghost.OpenChat;
 
 public class ServerAction implements Runnable{
     public ServerAction(){
