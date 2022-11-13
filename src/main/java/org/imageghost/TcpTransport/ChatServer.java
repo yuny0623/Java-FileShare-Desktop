@@ -41,7 +41,7 @@ public class ChatServer {
 
     public synchronized void removeClient(Thread thread){
         list.remove(thread);
-        System.out.println("Client 1명 입장. 총" + list.size() + "명");
+        System.out.println("Client 1명 이탈. 총" + list.size() + "명");
     }
 
     public synchronized void broadCasting(String str){

@@ -1,13 +1,13 @@
 package org.imageghost.GUIComponents;
 
+import org.imageghost.Config;
 import org.imageghost.TcpTransport.ClientAction;
-import org.imageghost.TcpTransport.ServerAction;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
+import java.net.InetAddress;
 
 public class FixedMainGui extends JFrame implements ActionListener {
 
@@ -16,7 +16,6 @@ public class FixedMainGui extends JFrame implements ActionListener {
     JButton serverButton = new JButton("Server");
     JPanel buttonPanel = new JPanel();
 
-    JTextField textField = new JTextField();
     JTextArea jTextArea = new JTextArea();
     JScrollPane scrollPane = new JScrollPane(jTextArea);
 
@@ -25,6 +24,7 @@ public class FixedMainGui extends JFrame implements ActionListener {
         setSize(550, 400);
         setLocation(400, 400);
         setVisible(true);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         container.setLayout(new BorderLayout());
 
         buttonPanel.add("East", clientButton);
@@ -34,25 +34,23 @@ public class FixedMainGui extends JFrame implements ActionListener {
 
         clientButton.addActionListener(this);
         serverButton.addActionListener(this);
-
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent e){
         if(e.getSource() == clientButton){
-            serverButton.setEnabled(false);
-            ClientAction clientAction = new ClientAction();
-            clientAction.action();
+            try {
+                InetAddress ia = InetAddress.getLocalHost();
+                String ipStr = ia.toString();
+                // ia.toString() -> "DESKTOP-5QRSVM2/192.168.70.1"
+                String ip = ipStr.substring(ipStr.indexOf("/") + 1);
+                new ClientGui(ip, Config.TCP_IP_CONNECTION_DEFAULT_PORT);
+            }catch(Exception err){
+                err.printStackTrace();
+            }
         }
         else if(e.getSource() == serverButton){
-            PrintStream printStream = new PrintStream(new CustomOutputStream(jTextArea));
-            System.setOut(printStream);
-            System.setErr(printStream);
-
-            clientButton.setEnabled(false);
-            ServerAction serverAction = new ServerAction();
-            serverAction.action();
+            new ServerGui();
         }
     }
 }

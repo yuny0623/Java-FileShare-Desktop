@@ -29,7 +29,7 @@ public class ServerSocketThread extends Thread{
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 
-            sendMessage("대화자 이름을 넣으세요");
+            sendMessage("입력창에 닉네임을 넣으세요");
             name =  in.readLine();
             server.broadCasting("[" + name + "] 님이 입장하였습니다.");
 

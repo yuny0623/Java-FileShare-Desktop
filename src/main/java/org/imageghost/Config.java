@@ -9,7 +9,7 @@ public class Config {
     public static String FILE_SAVE_PATH = "../Image";
     public static String HEALTH_CHECK_URL = "http://localhost:8080/health-check";
     public static String ORIGINAL_SERVER_URL = "http://localhost:8080";
-    public static int TCP_IP_CONNECTION_DEFAULT_PORT = 8083;
+    public static int TCP_IP_CONNECTION_DEFAULT_PORT = 8080;
     public static HashMap<String, String> KNOWN_IP = new HashMap<>();
     public static HashMap<String, String> PUBLIC_IP = new HashMap<>();
 }

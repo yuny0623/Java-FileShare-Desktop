@@ -1,4 +1,4 @@
-package org.imageghost.GUIComponents;
+package org.imageghost.Utils;
 
 import javax.swing.*;
 import java.io.IOException;
