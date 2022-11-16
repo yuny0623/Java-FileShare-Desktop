@@ -108,6 +108,7 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
                 str = in.readLine();
                 if(str.length() >= 18 && str.substring(0, 17 + 1).equals("[userInfoResponse]")){
                     String[] info = str.split(" ");
+                    System.out.printf("this is the string received from server: " + str);
                     for(int i = 1; i < info.length; i+=2){
                         userMap.put(info[i], info[i+1]);
                     }

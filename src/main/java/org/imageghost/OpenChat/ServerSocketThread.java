@@ -40,7 +40,7 @@ public class ServerSocketThread extends Thread{
             publicKey = in.readLine();
 
             if(nickname != null && publicKey != null){
-                ChatServer.publicKeyList.put("name", publicKey);
+                ChatServer.publicKeyList.put(nickname, publicKey);
             }else{
                 throw new IOException("이름과 publicKey가 없습니다.");
             }
