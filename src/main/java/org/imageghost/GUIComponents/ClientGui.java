@@ -70,14 +70,33 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
 
         menuBar = new JMenuBar();
         roomMenu = new JMenu("Room");
-        JMenuItem menuItem = new JMenuItem(new AbstractAction("[userInfoRequest]") {
+        JMenuItem menuItem1 = new JMenuItem(new AbstractAction("[userInfoRequest]") {
             public void actionPerformed(ActionEvent e) {
                 String request = "[userInfoRequest]";
                 System.out.println(request);
                 out.println(request);
             }
         });
-        roomMenu.add(menuItem);
+        JMenuItem menuItem2 = new JMenuItem(new AbstractAction("[userInfoResponse]") {
+            public void actionPerformed(ActionEvent e) {
+                StringBuffer sb = new StringBuffer();
+                for(Map.Entry<String, String> entry: userMap.entrySet()){
+                    sb.append("[" + entry.getKey() +":"+ entry.getValue()+"]\n");
+                }
+                new UserInfoResponseGui(sb.toString());
+            }
+        });
+        JMenuItem menuItem3 = new JMenuItem(new AbstractAction("[DirectMessage]") {
+            public void actionPerformed(ActionEvent e) {
+                /*
+                    Direct message 구현
+                 */
+            }
+        });
+
+        roomMenu.add(menuItem1);
+        roomMenu.add(menuItem2);
+        roomMenu.add(menuItem3);
         menuBar.add(roomMenu);
 
         this.setJMenuBar(menuBar);
@@ -112,11 +131,6 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
                     for(int i = 1; i < info.length; i+=2){
                         userMap.put(info[i], info[i+1]);
                     }
-                    StringBuffer sb = new StringBuffer();
-                    for(Map.Entry<String, String> entry: userMap.entrySet()){
-                        sb.append("[" + entry.getKey() +":"+ entry.getValue()+"]\n");
-                    }
-                    textArea.append(sb + "\n");
                     continue;
                 }
                 textArea.append(str + "\n");
