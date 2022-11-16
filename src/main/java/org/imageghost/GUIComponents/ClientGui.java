@@ -1,5 +1,7 @@
 package org.imageghost.GUIComponents;
 
+import org.imageghost.Wallet.KeyWallet;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -7,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.UUID;
 
 public class ClientGui extends JFrame implements ActionListener, Runnable {
 
@@ -20,7 +23,13 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
     BufferedReader in;
     String str;
 
+    String nickname;
+    String publicKey;
+
     public ClientGui(String ip, int port){
+        nickname = UUID.randomUUID().toString();
+        publicKey = KeyWallet.getMainASymmetricKey().getPublicKey();
+
         setTitle("Chatting");
         setSize(550, 400);
         setLocation(400, 400);
@@ -66,6 +75,10 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
 
     @Override
     public void run() {
+        textArea.append("서버로 닉네임과 pubilcKey를 전송합니다.\n");
+        out.println(nickname);
+        out.println(publicKey);
+
         while(true){
             try{
                 str = in.readLine();
