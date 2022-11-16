@@ -12,7 +12,7 @@ public class ServerSocketThread extends Thread{
     ChatServer server;
     BufferedReader in;
     PrintWriter out;
-    String name;
+    String nickname;
     String threadName;
     String publicKey;
 
@@ -35,19 +35,19 @@ public class ServerSocketThread extends Thread{
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 
-            name = in.readLine();
+            nickname = in.readLine();
             publicKey = in.readLine();
 
-            if(name != null && publicKey != null){
+            if(nickname != null && publicKey != null){
                 ChatServer.publicKeyList.put("name", publicKey);
             }else{
                 throw new IOException("이름과 publicKey가 없습니다.");
             }
 
-            server.broadCasting("[" + name + "]:["+ publicKey +"] 님이 입장하였습니다.");
+            server.broadCasting("[" + nickname + "]:["+ publicKey +"] 님이 입장하였습니다.");
             while(true){
                 String strIn = in.readLine();
-                server.broadCasting("[" + name + "]" + strIn);
+                server.broadCasting("[" + nickname + "]" + strIn);
             }
 
         }catch(IOException e){
@@ -62,20 +62,3 @@ public class ServerSocketThread extends Thread{
         }
     }
 }
-
-/*
-                if(strIn.charAt(0) == '@'){
-                    int tempIdx = strIn.indexOf(':');
-                    if(tempIdx == -1){
-                        server.broadCasting("[" + name + "]" + strIn);
-                    }else{
-                        String receiverName = strIn.substring(1, tempIdx);
-                        String message = strIn.substring(tempIdx, strIn.length());
-                        String receiverPublicKey = ChatServer.publicKeyList.get(receiverName);
-                        String encodedMessage = RSAUtil.encode(message.getBytes(), receiverPublicKey);
-                        server.broadCasting("[" + name + "]" + encodedMessage);
-                    }
-                }else {
-                    server.broadCasting("[" + name + "]" + strIn);
-                }
- */

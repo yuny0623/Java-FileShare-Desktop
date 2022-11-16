@@ -15,8 +15,9 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
 
     Container container = getContentPane();
     JTextArea textArea = new JTextArea();
-    JScrollPane scrollPane = new JScrollPane(textArea);
+    JScrollPane scrollPane;
     JTextField textField = new JTextField();
+    JTextArea publicKeyListTextArea = new JTextArea();
 
     Socket socket;
     PrintWriter out;
@@ -27,7 +28,7 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
     String publicKey;
 
     public ClientGui(String ip, int port){
-        nickname = UUID.randomUUID().toString();
+        nickname = JOptionPane.showInputDialog("닉네임을 입력하세요");
         publicKey = KeyWallet.getMainASymmetricKey().getPublicKey();
 
         setTitle("Chatting");
@@ -57,6 +58,10 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
 
     public void init(){
         container.setLayout(new BorderLayout());
+
+        textArea.setBackground(Color.WHITE); // new Color(153, 51, 255)
+        scrollPane = new JScrollPane(textArea);
+
         container.add("Center", scrollPane);
         container.add("South", textField);
     }
