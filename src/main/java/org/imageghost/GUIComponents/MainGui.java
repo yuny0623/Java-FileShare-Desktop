@@ -128,7 +128,7 @@ public class MainGui extends JFrame implements ActionListener {
             textArea2.setText(secretKey.getEncoded().toString());
         }else if(e.getSource() == button2){
             checkServerConnection();
-            ASymmetricKey aSymmetricKey = KeyFactory.createAsymmetricKey();
+            ASymmetricKey aSymmetricKey = KeyFactory.createASymmetricKey();
 
             StringBuffer stringBufferOfPublicKey = new StringBuffer();
             stringBufferOfPublicKey.append("-----BEGIN PUBLIC KEY-----\n");

@@ -1,11 +1,12 @@
 package org.imageghost.Test;
 
-import org.imageghost.Config;
 import org.imageghost.Key.KeyFactory;
 import org.imageghost.Key.Keys.ASymmetricKey;
 import org.imageghost.SecureAlgorithm.Utils.RSAUtil;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.io.UnsupportedEncodingException;
 
 public class UtilTest {
 
@@ -22,34 +23,20 @@ public class UtilTest {
     }
 
     @Test
-    public void Mnemonic문자열array테스트(){
+    public void RSAUtil_암복호화테스트() throws UnsupportedEncodingException {
         // given
-        int length = Config.MNEMONIC_WORDS.length;
-
-        // when
-
-        // then
-        Assert.assertEquals(length, 2048);
-    }
-
-    @Test
-    public void RSAUtil_암복호화테스트(){
-        // given
-        ASymmetricKey aSymmetricKey = KeyFactory.createAsymmetricKey();
+        ASymmetricKey aSymmetricKey = KeyFactory.createASymmetricKey();
         String privateKey = aSymmetricKey.getPrivateKey();
         String publicKey = aSymmetricKey.getPublicKey();
-
-        System.out.println(privateKey);
-        System.out.println(publicKey);
-
-        String plainText = "this is test.";
+        String plainText = "This is plainText.";
 
         // when
         String cipherText = RSAUtil.encode(plainText.getBytes(), publicKey);
         byte[] decryptedText = RSAUtil.decode(cipherText, privateKey);
+        String fixedDecryptedText = new String(decryptedText, "UTF-8");
+        System.out.println(fixedDecryptedText);
 
         // then
-        System.out.println(decryptedText);
-        Assert.assertEquals(plainText, decryptedText.toString());
+        Assert.assertEquals(plainText, fixedDecryptedText);
     }
 }

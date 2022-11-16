@@ -41,7 +41,6 @@ public class RSAUtil {
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
 
             byte[] byteEncryptedData = Base64.getDecoder().decode(encryptedData.getBytes());
-            // byte[] byteEncryptedData = Base64.getMimeDecoder().decode(encryptedData);
             byteDecryptedData = cipher.doFinal(byteEncryptedData);
         } catch (Exception e) {
             e.printStackTrace();

@@ -5,13 +5,11 @@ import org.imageghost.Key.Keys.ASymmetricKey;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.HashMap;
-
 public class MnemonicTest {
     @Test
     public void privatekey_publickey_길이_테스트(){
         // given
-        ASymmetricKey aSymmetricKey = KeyFactory.createAsymmetricKey();
+        ASymmetricKey aSymmetricKey = KeyFactory.createASymmetricKey();
         String privateKey = aSymmetricKey.getPrivateKey();
         String publicKey = aSymmetricKey.getPublicKey();
 

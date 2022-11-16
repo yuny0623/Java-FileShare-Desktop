@@ -26,11 +26,11 @@ public class PGPTest {
 
     @Before
     public void setupKeys(){
-        senderAsymmetricKey = KeyFactory.createAsymmetricKey();
+        senderAsymmetricKey = KeyFactory.createASymmetricKey();
         senderPublicKey = senderAsymmetricKey.getPublicKey();
         senderPrivateKey = senderAsymmetricKey.getPrivateKey();
 
-        receiverAsymmetricKey = KeyFactory.createAsymmetricKey();
+        receiverAsymmetricKey = KeyFactory.createASymmetricKey();
         receiverPublicKey = receiverAsymmetricKey.getPublicKey();
         receiverPrivateKey = receiverAsymmetricKey.getPrivateKey();
 
@@ -194,12 +194,13 @@ public class PGPTest {
         // when
         String cipherText = pgp.encode(secretKey.getEncoded(), receiverPublicKey);
         byte[] plainText = pgp.decode(cipherText, receiverPrivateKey);
-        String a = new String(secretKey.getEncoded(), "UTF-8");
-        String b =  new String(plainText, "UTF-8");
-        SecretKey secretKeyA = new SecretKeySpec(a.getBytes(), "AES");
-        SecretKey secretKeyB = new SecretKeySpec(b.getBytes(), "AES");
+        String encodedKey = new String(secretKey.getEncoded(), "UTF-8");
+        String decodedKey =  new String(plainText, "UTF-8");
+        SecretKey secretKeyA = new SecretKeySpec(encodedKey.getBytes(), "AES");
+        SecretKey secretKeyB = new SecretKeySpec(decodedKey.getBytes(), "AES");
 
         // then
+        Assert.assertEquals(encodedKey, decodedKey);
         Assert.assertEquals(secretKeyA, secretKeyB);
         Assert.assertEquals(new String(secretKey.getEncoded()), new String(plainText));
     }
@@ -227,7 +228,7 @@ public class PGPTest {
         HashMap<String, String> bodyMap = pgp.bodySplitter(decryptedBody);
         String receivedPlainText = bodyMap.get("receivedPlainText");
         String receivedDigitalSignature = bodyMap.get("digitalSignature");
-        String receivedMAC = pgp.solveDigitalSignature(receivedDigitalSignature, senderPublicKey); 
+        String receivedMAC = pgp.solveDigitalSignature(receivedDigitalSignature, senderPublicKey);
         String hashPlainText = pgp.hashPlainText(receivedPlainText);
 
         // then
