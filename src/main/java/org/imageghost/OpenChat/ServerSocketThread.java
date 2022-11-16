@@ -43,11 +43,10 @@ public class ServerSocketThread extends Thread{
             }else{
                 throw new IOException("이름과 publicKey가 없습니다.");
             }
-
             server.broadCasting("[" + nickname + "]:["+ publicKey +"] 님이 입장하였습니다.");
             while(true){
                 String strIn = in.readLine();
-                server.broadCasting("[" + nickname + "]" + strIn);
+                server.broadCastingMessage("[" + nickname + "]" + strIn, publicKey);
             }
 
         }catch(IOException e){

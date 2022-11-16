@@ -35,15 +35,15 @@ public class ServerGui extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == serverStartButton) {
             serverStartButton.setEnabled(false);
-            
-            PrintStream printStream = null;
-            try {
-                printStream = new PrintStream(new CustomOutputStream(jTextArea), true, "UTF-8");
-            } catch (UnsupportedEncodingException ex) {
-                throw new RuntimeException(ex);
-            }
-            System.setOut(printStream);
-            System.setErr(printStream);
+//            // swing 으로 출력
+//            PrintStream printStream = null;
+//            try {
+//                printStream = new PrintStream(new CustomOutputStream(jTextArea), true, "UTF-8");
+//            } catch (UnsupportedEncodingException ex) {
+//                throw new RuntimeException(ex);
+//            }
+//            System.setOut(printStream);
+//            System.setErr(printStream);
 
             Thread thread = new Thread(new ServerAction());
             thread.start();

@@ -133,7 +133,6 @@ public class PGP {
             Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(Cipher.DECRYPT_MODE, publicKey);
 
-            // 암호문 public key 로 복호화
             decryptedText = new String(cipher.doFinal(Base64.getDecoder().decode(cipherText.getBytes())));
         }catch(Exception e){
             e.printStackTrace();

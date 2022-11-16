@@ -1,5 +1,6 @@
 package org.imageghost.GUIComponents;
 
+import org.imageghost.SecureAlgorithm.Utils.RSAUtil;
 import org.imageghost.Wallet.KeyWallet;
 
 import javax.swing.*;
@@ -18,6 +19,7 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
     JScrollPane scrollPane;
     JTextField textField = new JTextField();
     JMenuBar menuBar;
+    JMenu roomMenu;
 
     Socket socket;
     PrintWriter out;
@@ -26,10 +28,12 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
 
     String nickname;
     String publicKey;
+    String privateKey;
 
     public ClientGui(String ip, int port){
         nickname = JOptionPane.showInputDialog("닉네임을 입력하세요");
         publicKey = KeyWallet.getMainASymmetricKey().getPublicKey();
+        privateKey = KeyWallet.getMainASymmetricKey().getPrivateKey();
 
         setTitle("Chatting");
         setSize(550, 400);
@@ -61,7 +65,9 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
         scrollPane = new JScrollPane(textArea);
 
         menuBar = new JMenuBar();
-        JMenu roomMenu = new JMenu("Room");
+        roomMenu = new JMenu("Room");
+        roomMenu.add(new JMenuItem("users"));
+        roomMenu.addActionListener(this);
 
         menuBar.add(roomMenu);
         this.setJMenuBar(menuBar);
@@ -77,6 +83,9 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
 
     @Override
     public void actionPerformed(ActionEvent e){
+        if(e.getSource() == roomMenu){
+
+        }
         str = textField.getText();
         out.println(str);
         textField.setText("");
@@ -91,7 +100,9 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
         while(true){
             try{
                 str = in.readLine();
-                textArea.append(str + "\n");
+                byte[] plainText = RSAUtil.decode(str, privateKey);
+                // 여기서 복호화 진행
+                textArea.append(plainText + "\n");
             }catch(IOException e){
                 e.printStackTrace();
             }
