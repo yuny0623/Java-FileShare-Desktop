@@ -52,18 +52,11 @@ ImageGhostClient for Desktop
    - 대칭키 암복호화 기능 
    - PGP 구조 구현
    - 파일 암복호화
-   - 이미지 암복호화 
-   - 파일지갑
+   - 이미지 암복호화
    - 키지갑
    - TCP/IP 통신
    
 7. 진행사항
-----------------------------
-
-8. 성과
-----------------------------
-
-9. Simple Overview 
 ----------------------------
 
 10. 향후 방향성
@@ -72,7 +65,6 @@ ImageGhostClient for Desktop
 
 11. Reference 
 ----------------------------
-
 1) Merkle Tree:
    - https://www.pranaybathini.com/2021/05/merkle-tree.html
    - https://www.lesstif.com/security/merkle-tree-125305097.html 
@@ -80,19 +72,30 @@ ImageGhostClient for Desktop
    - https://academy.binance.com/ko/articles/merkle-trees-and-merkle-roots-explained 
 
 2) RSA encryption and decryption:
-   - 
+   - https://this-programmer.tistory.com/259
 
 3) AES implementation:
-   - 
+   - https://stackoverflow.com/questions/15900831/difference-between-stringvalue-and-value-tostring-new-longvalue-and-lon
+    
+4) Digtal Signature: 
+   - https://cornswrold.tistory.com/49
 
 4) PGP structure:
-   -
+   - https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=wnrjsxo&logNo=221161639001
+   - https://www.javatpoint.com/computer-network-pgp
 
 5) TCP/IP client server example: 
-   - 
+   - https://ssons.tistory.com/50
 
 6) Extra: 
-   - 
+   - javax.crpto.SecretKey: https://tmxhsk99.tistory.com/204
+   - String: https://stackoverflow.com/questions/15900831/difference-between-stringvalue-and-value-tostring-new-longvalue-and-lon
+   - Blockchain: https://medium.com/programmers-blockchain/blockchain-development-mega-guide-5a316e6d10df
+   - Blockchain: https://medium.com/programmers-blockchain/create-simple-blockchain-java-tutorial-from-scratch-6eeed3cb03fa
+   - Blockchain: https://medium.com/programmers-blockchain/creating-your-first-blockchain-with-java-part-2-transactions-2cdac335e0ce
+   - Change consol log to Swing: https://www.codejava.net/java-se/swing/redirect-standard-output-streams-to-jtextarea
+   - Diffie-Hellman: https://docs.oracle.com/javase/7/docs/technotes/guides/security/crypto/CryptoSpec.html#DH2Ex
+
 
 
 
