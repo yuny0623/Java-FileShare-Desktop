@@ -10,6 +10,8 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class ClientGui extends JFrame implements ActionListener, Runnable {
@@ -29,6 +31,8 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
     String nickname;
     String publicKey;
     String privateKey;
+
+    HashMap<String, String> userMap = new HashMap<>();
 
     public ClientGui(String ip, int port){
         nickname = JOptionPane.showInputDialog("닉네임을 입력하세요");
@@ -66,12 +70,17 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
 
         menuBar = new JMenuBar();
         roomMenu = new JMenu("Room");
-        roomMenu.add(new JMenuItem("users"));
-        roomMenu.addActionListener(this);
-
+        JMenuItem menuItem = new JMenuItem(new AbstractAction("[userInfoRequest]") {
+            public void actionPerformed(ActionEvent e) {
+                String request = "[userInfoRequest]";
+                System.out.println(request);
+                out.println(request);
+            }
+        });
+        roomMenu.add(menuItem);
         menuBar.add(roomMenu);
-        this.setJMenuBar(menuBar);
 
+        this.setJMenuBar(menuBar);
         container.add("Center", scrollPane);
         container.add("South", textField);
     }
@@ -83,12 +92,9 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
 
     @Override
     public void actionPerformed(ActionEvent e){
-        if(e.getSource() == roomMenu){
-
-        }
-        str = textField.getText();
-        out.println(str);
-        textField.setText("");
+            str = textField.getText();
+            out.println(str);
+            textField.setText("");
     }
 
     @Override
@@ -100,6 +106,18 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
         while(true){
             try{
                 str = in.readLine();
+                if(str.length() >= 18 && str.substring(0, 17 + 1).equals("[userInfoResponse]")){
+                    String[] info = str.split(" ");
+                    for(int i = 1; i < info.length; i+=2){
+                        userMap.put(info[i], info[i+1]);
+                    }
+                    StringBuffer sb = new StringBuffer();
+                    for(Map.Entry<String, String> entry: userMap.entrySet()){
+                        sb.append("[" + entry.getKey() +":"+ entry.getValue()+"]\n");
+                    }
+                    textArea.append(sb + "\n");
+                    continue;
+                }
                 textArea.append(str + "\n");
             }catch(IOException e){
                 e.printStackTrace();

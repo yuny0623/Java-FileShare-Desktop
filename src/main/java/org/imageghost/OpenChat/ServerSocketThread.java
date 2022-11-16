@@ -6,6 +6,7 @@ import org.imageghost.Wallet.KeyWallet;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.Charset;
+import java.util.Map;
 
 public class ServerSocketThread extends Thread{
     Socket socket;
@@ -46,9 +47,17 @@ public class ServerSocketThread extends Thread{
             server.broadCasting("[" + nickname + "] 님이 입장하였습니다.");
             while(true){
                 String strIn = in.readLine();
+                if(strIn.length() >= 17 && strIn.substring(0, 16 + 1).equals("[userInfoRequest]")){
+                    StringBuffer sb = new StringBuffer();
+                    for(Map.Entry<String, String> entry: ChatServer.publicKeyList.entrySet()){
+                        sb.append(entry.getKey() + " ");
+                        sb.append(entry.getValue()+ " ");
+                    }
+                    sendMessage("[userInfoResponse] " + sb.toString());
+                    continue;
+                }
                 server.broadCasting("[" + nickname + "]" + strIn);
             }
-
         }catch(IOException e){
             System.out.println(threadName + " 님이 퇴장했습니다.");
             server.removeClient(this);
