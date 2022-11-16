@@ -34,6 +34,8 @@ public class ServerGui extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == serverStartButton) {
+            serverStartButton.setEnabled(false);
+            
             PrintStream printStream = null;
             try {
                 printStream = new PrintStream(new CustomOutputStream(jTextArea), true, "UTF-8");

@@ -17,7 +17,7 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
     JTextArea textArea = new JTextArea();
     JScrollPane scrollPane;
     JTextField textField = new JTextField();
-    JTextArea publicKeyListTextArea = new JTextArea();
+    JMenuBar menuBar;
 
     Socket socket;
     PrintWriter out;
@@ -58,9 +58,13 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
 
     public void init(){
         container.setLayout(new BorderLayout());
-
-        textArea.setBackground(Color.WHITE); // new Color(153, 51, 255)
         scrollPane = new JScrollPane(textArea);
+
+        menuBar = new JMenuBar();
+        JMenu roomMenu = new JMenu("Room");
+
+        menuBar.add(roomMenu);
+        this.setJMenuBar(menuBar);
 
         container.add("Center", scrollPane);
         container.add("South", textField);
