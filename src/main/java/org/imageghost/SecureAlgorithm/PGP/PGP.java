@@ -1,6 +1,7 @@
 package org.imageghost.SecureAlgorithm.PGP;
 import org.imageghost.SecureAlgorithm.Utils.MessageOutput;
 import org.imageghost.SecureAlgorithm.Utils.MessageInput;
+import org.imageghost.Wallet.KeyWallet;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
@@ -295,7 +296,8 @@ public class PGP {
             String originalMAC = this.generateMAC(plainText);
             String originalDigitalSignature = this.generateDigitalSignature(originalMAC, senderPrivateKey);
             String body = this.generateBody(plainText, originalDigitalSignature);
-            SecretKey secretKeyOriginal = this.generateSymmetricKey();
+            SecretKey secretKeyOriginal = KeyWallet.getMainSymmetricKey().getAESKey();
+            // SecretKey secretKeyOriginal = this.generateSymmetricKey();
             String encryptedBody = this.encryptBody(body, secretKeyOriginal);
             String ee = this.createEE(secretKeyOriginal.getEncoded(), receiverPublicKey);
             finalResult = this.appendEEWithBody(ee, encryptedBody);

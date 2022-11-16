@@ -39,6 +39,9 @@ public class UtilTest {
         String privateKey = aSymmetricKey.getPrivateKey();
         String publicKey = aSymmetricKey.getPublicKey();
 
+        System.out.println(privateKey);
+        System.out.println(publicKey);
+
         String plainText = "this is test.";
 
         // when
