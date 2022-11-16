@@ -17,6 +17,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 
+/*
+    will deprecate
+ */
 public class MainGui extends JFrame implements ActionListener {
     JButton button0 = null; 
     JButton button1 = null;
@@ -51,7 +54,6 @@ public class MainGui extends JFrame implements ActionListener {
         button3 = new JButton("Send to server");
         button4 = new JButton("Get File From Server");
 
-        // Server Check 전까지는 버튼 사용 불가
         button1.setEnabled(false);
         button2.setEnabled(false);
         button3.setEnabled(false);

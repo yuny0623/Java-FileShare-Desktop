@@ -88,9 +88,7 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
         });
         JMenuItem menuItem3 = new JMenuItem(new AbstractAction("[DirectMessage]") {
             public void actionPerformed(ActionEvent e) {
-                /*
-                    Direct message 구현
-                 */
+                new DirectMessageGui();
             }
         });
 
