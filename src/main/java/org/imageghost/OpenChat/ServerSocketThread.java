@@ -31,18 +31,29 @@ public class ServerSocketThread extends Thread{
         try{
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-            // out = new PrintWriter(socket.getOutputStream(), true,  Charset.forName("UTF-8"));
 
             sendMessage("입력창에 닉네임을 넣으세요");
             name =  in.readLine();
             server.broadCasting("[" + name + "] 님이 입장하였습니다.");
-            sendMessage("입력창에 publicKey를 넣으세요");
-            String publicKey = in.readLine();
-            ChatServer.publicKeyList.put(name, publicKey);
-            server.broadCasting("[" + name + "] 님이 준비되었습니다.");
 
             while(true){
                 String strIn = in.readLine();
+                server.broadCasting("[" + name + "]" + strIn);
+            }
+        }catch(IOException e){
+            System.out.println(threadName + " 님이 퇴장했습니다.");
+            server.removeClient(this);
+        }finally {
+            try{
+                socket.close();
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+/*
                 if(strIn.charAt(0) == '@'){
                     int tempIdx = strIn.indexOf(':');
                     if(tempIdx == -1){
@@ -57,17 +68,4 @@ public class ServerSocketThread extends Thread{
                 }else {
                     server.broadCasting("[" + name + "]" + strIn);
                 }
-                // server.broadCasting("[" + name + "]" + strIn);
-            }
-        }catch(IOException e){
-            System.out.println(threadName + " 님이 퇴장했습니다.");
-            server.removeClient(this);
-        }finally {
-            try{
-                socket.close();
-            }catch(IOException e){
-                e.printStackTrace();
-            }
-        }
-    }
-}
+ */
