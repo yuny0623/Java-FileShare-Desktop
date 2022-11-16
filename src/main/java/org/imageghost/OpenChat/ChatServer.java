@@ -54,16 +54,7 @@ public class ChatServer {
     public synchronized void broadCasting(String str){
         for(int i = 0; i < list.size(); i++){
             ServerSocketThread thread = (ServerSocketThread) list.get(i);
-            // 여기서 암호화하면 될듯?
             thread.sendMessage(str);
-        }
-    }
-    public synchronized void broadCastingMessage(String str, String publicKey){
-        for(int i = 0; i < list.size(); i++){
-            ServerSocketThread thread = (ServerSocketThread) list.get(i);
-            // 여기서 암호화 진행
-            String cipherText = RSAUtil.encode(str.getBytes(), publicKey);
-            thread.sendMessage(cipherText);
         }
     }
 }

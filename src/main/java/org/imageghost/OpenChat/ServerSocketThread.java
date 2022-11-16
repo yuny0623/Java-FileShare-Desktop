@@ -46,7 +46,7 @@ public class ServerSocketThread extends Thread{
             server.broadCasting("[" + nickname + "] 님이 입장하였습니다.");
             while(true){
                 String strIn = in.readLine();
-                server.broadCastingMessage("[" + nickname + "]" + strIn, publicKey);
+                server.broadCasting("[" + nickname + "]" + strIn);
             }
 
         }catch(IOException e){

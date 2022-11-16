@@ -100,9 +100,7 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
         while(true){
             try{
                 str = in.readLine();
-                byte[] plainText = RSAUtil.decode(str, privateKey);
-                // 여기서 복호화 진행
-                textArea.append(plainText + "\n");
+                textArea.append(str + "\n");
             }catch(IOException e){
                 e.printStackTrace();
             }
