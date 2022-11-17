@@ -8,7 +8,7 @@ public class Main {
         try {
             new ImageGhostMainGui();
         } catch(Exception e){
-            new AlertGui("Filed while loading. due to0 " + e.getMessage(), true);
+            new AlertGui("Filed while loading. due to: " + e.getMessage(), true);
             e.printStackTrace();
         }
     }
