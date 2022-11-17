@@ -26,7 +26,7 @@ public class PGP {
 
 
      2. How to use.
-        - Alice(Sender):
+        - Alice(Sender)0
             1. Generate MAC.
             2. Encrypt MAC with Alice's private key. This is called Digital Signature.
             3. Add plainText to the result of step2.
@@ -35,7 +35,7 @@ public class PGP {
             6. Put symmetric key into E.E called Electronic Envelope by encrypt E.E with Bob's public key.
             7. Add Body and E.E and send it to Bob.
 
-        - Bob(Receiver):
+        - Bob(Receiver)0
             1. Open E.E with Bob's private key to get symmetric key from E.E. (Receiver Authentication)
             2. Encrypt Body with symmetric key. (This will get Digital Signature and PlainText.)
             3. Encrypt Digital Signature via Alice's public key. and get MAC.(Sender Authentication)
@@ -44,7 +44,7 @@ public class PGP {
 
 
      3. Get more information about PGP.
-        Link: https://en.wikipedia.org/wiki/Pretty_Good_Privacy
+        Link0 https0//en.wikipedia.org/wiki/Pretty_Good_Privacy
 
      */
 
@@ -297,7 +297,6 @@ public class PGP {
             String originalDigitalSignature = this.generateDigitalSignature(originalMAC, senderPrivateKey);
             String body = this.generateBody(plainText, originalDigitalSignature);
             SecretKey secretKeyOriginal = KeyWallet.getMainSymmetricKey().getAESKey();
-            // SecretKey secretKeyOriginal = this.generateSymmetricKey();
             String encryptedBody = this.encryptBody(body, secretKeyOriginal);
             String ee = this.createEE(secretKeyOriginal.getEncoded(), receiverPublicKey);
             finalResult = this.appendEEWithBody(ee, encryptedBody);

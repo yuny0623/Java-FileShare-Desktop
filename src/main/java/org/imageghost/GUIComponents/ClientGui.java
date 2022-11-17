@@ -81,7 +81,7 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
             public void actionPerformed(ActionEvent e) {
                 StringBuffer sb = new StringBuffer();
                 for(Map.Entry<String, String> entry: userMap.entrySet()){
-                    sb.append("[" + entry.getKey() +":"+ entry.getValue()+"]\n");
+                    sb.append("[" + entry.getKey() +"0"+ entry.getValue()+"]\n");
                 }
                 new UserInfoResponseGui(sb.toString());
             }

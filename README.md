@@ -77,23 +77,23 @@ ImageGhostClient for Desktop
 3) AES implementation:
    - https://stackoverflow.com/questions/15900831/difference-between-stringvalue-and-value-tostring-new-longvalue-and-lon
     
-4) Digtal Signature: 
+4) Digtal Signature:
    - https://cornswrold.tistory.com/49
 
 4) PGP structure:
    - https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=wnrjsxo&logNo=221161639001
    - https://www.javatpoint.com/computer-network-pgp
 
-5) TCP/IP client server example: 
+5) TCP/IP client server example:
    - https://ssons.tistory.com/50
 
-6) Extra: 
+6) Extra:
    - javax.crpto.SecretKey: https://tmxhsk99.tistory.com/204
    - String: https://stackoverflow.com/questions/15900831/difference-between-stringvalue-and-value-tostring-new-longvalue-and-lon
    - Blockchain: https://medium.com/programmers-blockchain/blockchain-development-mega-guide-5a316e6d10df
    - Blockchain: https://medium.com/programmers-blockchain/create-simple-blockchain-java-tutorial-from-scratch-6eeed3cb03fa
    - Blockchain: https://medium.com/programmers-blockchain/creating-your-first-blockchain-with-java-part-2-transactions-2cdac335e0ce
-   - Change consol log to Swing: https://www.codejava.net/java-se/swing/redirect-standard-output-streams-to-jtextarea
+   - Change console log to Swing: https://www.codejava.net/java-se/swing/redirect-standard-output-streams-to-jtextarea
    - Diffie-Hellman: https://docs.oracle.com/javase/7/docs/technotes/guides/security/crypto/CryptoSpec.html#DH2Ex
 
 
