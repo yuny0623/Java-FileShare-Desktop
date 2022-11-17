@@ -31,7 +31,6 @@ public class ServerSocketThread extends Thread{
 
     @Override
     public void run(){
-        int i = 0;
         try{
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);

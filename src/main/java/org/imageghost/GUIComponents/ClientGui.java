@@ -1,5 +1,6 @@
 package org.imageghost.GUIComponents;
 
+import org.imageghost.Config;
 import org.imageghost.SecureAlgorithm.Utils.RSAUtil;
 import org.imageghost.Wallet.KeyWallet;
 
@@ -8,6 +9,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashMap;
@@ -88,7 +90,15 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
         });
         JMenuItem menuItem3 = new JMenuItem(new AbstractAction("[DirectMessage]") {
             public void actionPerformed(ActionEvent e) {
-                new DirectMessageGui();
+                try {
+                    InetAddress ia = InetAddress.getLocalHost();
+                    String ipStr = ia.toString();
+                    String ip = ipStr.substring(ipStr.indexOf("/") + 1);
+
+                    new DirectMessageGui(ip, Config.TCP_IP_CONNECTION_DEFAULT_PORT, socket);
+                }catch(UnknownHostException err){
+                    err.printStackTrace();
+                }
             }
         });
 
