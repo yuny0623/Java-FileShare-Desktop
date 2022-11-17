@@ -43,7 +43,9 @@ public class ServerSocketThread extends Thread{
             }else{
                 throw new IOException("이름과 publicKey가 없습니다.");
             }
+
             server.broadCasting("[" + nickname + "] 님이 입장하였습니다.");
+
             while(true){
                 String strIn = in.readLine();
                 if(strIn.length() >= 17 && strIn.substring(0, 16 + 1).equals("[userInfoRequest]")){

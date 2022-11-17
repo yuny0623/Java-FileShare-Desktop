@@ -1,6 +1,7 @@
 package org.imageghost.GUIComponents;
 
 import org.imageghost.Config;
+import org.imageghost.SecureAlgorithm.PGP.PGP;
 import org.imageghost.SecureAlgorithm.Utils.RSAUtil;
 import org.imageghost.Wallet.KeyWallet;
 
@@ -24,6 +25,8 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
     JTextField textField = new JTextField();
     JMenuBar menuBar;
     JMenu roomMenu;
+
+    PGP pgp;
 
     Socket socket;
     PrintWriter out;
@@ -95,6 +98,12 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
                     String ipStr = ia.toString();
                     String ip = ipStr.substring(ipStr.indexOf("/") + 1);
 
+                    // create PGP
+                    pgp = new PGP();
+                    // pgp.setSenderPublicKey();
+                    // pgp.setSenderPrivateKey();
+                    //  pgp.setReceiverPublicKey()
+
                     new DirectMessageGui(ip, Config.TCP_IP_CONNECTION_DEFAULT_PORT, socket);
                 }catch(UnknownHostException err){
                     err.printStackTrace();
@@ -128,7 +137,7 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
     public void run() {
         textArea.append("서버로 닉네임과 pubilcKey를 전송합니다.\n");
         out.println(nickname);
-        out.println(publicKey);
+        out.println(publicKey);;
 
         while(true){
             try{

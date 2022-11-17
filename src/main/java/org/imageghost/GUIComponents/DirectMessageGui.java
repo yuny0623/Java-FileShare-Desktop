@@ -88,9 +88,9 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
     @Override
     public void run() {
         pgp = new PGP();
-        pgp.setReceiverPublicKey();
-        pgp.setSenderPrivateKey();
-        pgp.setSenderPublicKey();
+        // pgp.setReceiverPublicKey();
+        // pgp.setSenderPrivateKey();
+        // pgp.setSenderPublicKey();
 
         while(true){
             try{
