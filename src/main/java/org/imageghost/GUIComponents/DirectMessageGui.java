@@ -29,23 +29,22 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
     String str;
     String receiverPublicKey;
     SecretKey commonSecretKey;
+    String myNickname;
+    String opponentNickname;
 
-    String nickname;
-    String publicKey;
-    String privateKey;
-    String symmetricKey;
-
-    public DirectMessageGui(String ip, int port, Socket socket, String receiverPublicKey){
+    public DirectMessageGui(String ip, int port, Socket socket, String receiverPublicKey, String myNickname, String opponentNickname){
         setTitle("DirectMessage");
         setSize(500, 500);
         setLocation(300, 300);
         init();
         start();
         setVisible(true);
+        initNet(ip, port);
+
         this.socket = socket;
         this.receiverPublicKey = receiverPublicKey;
-        initNet(ip, port);
-        System.out.println("ip = " + ip);
+        this.myNickname = myNickname;
+        this.opponentNickname = opponentNickname;
     }
 
     public void initNet(String ip, int port){
@@ -54,7 +53,7 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
         }catch(UnknownHostException e){
-            System.out.println("IP주소가 다릅니다. ");
+            System.out.println("IP 주소가 다릅니다. ");
         }catch(IOException e){
             System.out.println("접속 실패");
         }
@@ -89,7 +88,7 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
         }else{
             str = textField.getText();
             try {
-                out.println(AESCipherMaker.decrypt(str.getBytes(), commonSecretKey));
+                out.println(AESCipherMaker.encryptWithBase64(str, commonSecretKey));
                 textField.setText("");
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
@@ -117,7 +116,7 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
                     System.out.println("Message Integrity failed.");
                     continue;
                 }
-                textArea.append(messageOutput.getPlainText() + "\n");
+                textArea.append("[" + opponentNickname+ "]" + messageOutput.getPlainText() + "\n");
                 if(commonSecretKey!=null){
                     break;
                 }
@@ -129,8 +128,8 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
         while(true){
             try {
                 str = in.readLine();
-                String receivedPlainText = AESCipherMaker.encrypt(str, commonSecretKey);
-                textArea.append(receivedPlainText + "\n");
+                String receivedPlainText = AESCipherMaker.decryptWithBase64(str, commonSecretKey);
+                textArea.append("[" + opponentNickname+ "]" + receivedPlainText + "\n");
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

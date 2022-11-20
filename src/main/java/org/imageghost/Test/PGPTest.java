@@ -43,7 +43,7 @@ public class PGPTest {
     }
 
     @Test
-    public void 대칭키_암복호화_테스트() throws Exception {
+    public void 대칭키_암복호화_테스트(){
         // given
         String plainText = "테스트입니다.";
         String receivedPlainText = "";

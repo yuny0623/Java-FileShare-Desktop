@@ -62,6 +62,7 @@ public class ChatServer {
             thread.sendMessage(str);
         }
     }
+
     public synchronized  void sendMessageTo(String str, String publicKey){
         ServerSocketThread thread = (ServerSocketThread) threadList.get(publicKey);
         thread.sendMessage(str);
