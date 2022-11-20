@@ -6,7 +6,6 @@
 # Reference0 https0//intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 ### Gradle ###
-.gradle
 **/build/
 !src/**/build/
 
@@ -74,7 +73,6 @@ cat.jpg
 .build/
 build/
 
-build.gradle
 gradlew
 gradlew.bat
 settings.gradle
