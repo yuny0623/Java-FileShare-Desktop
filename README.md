@@ -82,14 +82,14 @@ ImageGhostClient for Desktop
    - Direct Message 기능 구현중... 
 
 -----------------------
-### 10. 향후 방향성(향후 추가할 수 있는 기능)
+### 8. 향후 방향성(향후 추가할 수 있는 기능)
    > - 웹 백엔드 구현 이후 백엔드에서 통신 가능한 다른 사용자들의 publicKey 리스트를 가져올 수 있도록 발전.
    > - 대용량 파일 전송 기능 추가하기 
    > - 대용량 파일 전송 시 Merkle Tree 활용하기 
    > - 비디오 및 오디오 전송 기능 추가 가능
 
 ----------------------
-### 11. Reference 
+### 9. Reference 
 
 1) Merkle Tree:
    - https://www.pranaybathini.com/2021/05/merkle-tree.html
