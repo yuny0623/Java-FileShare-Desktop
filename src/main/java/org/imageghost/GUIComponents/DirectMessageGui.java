@@ -32,23 +32,24 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
     String myNickname;
     String opponentNickname;
 
-    public DirectMessageGui(String ip, int port, Socket socket, String receiverPublicKey){
+    public DirectMessageGui(Socket socket, String receiverPublicKey){
+        System.out.printf("DirectMessage socket info: %s\n", socket.getInetAddress());
         setTitle("DirectMessage");
-        setSize(500, 500);
+        setSize(300, 300);
         setLocation(300, 300);
         init();
         start();
         setVisible(true);
-        initNet(ip, port);
-
         this.socket = socket;
         this.receiverPublicKey = receiverPublicKey;
+
+        initNet();
     }
 
-    public void initNet(String ip, int port){
+    public void initNet(){
         try{
-            in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-            out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(this.socket.getOutputStream())), true);
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
         }catch(UnknownHostException e){
             System.out.println("IP 주소가 다릅니다. ");
         }catch(IOException e){
@@ -67,7 +68,7 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
     }
 
     public void start(){
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         textField.addActionListener(this);
     }
 
@@ -95,16 +96,16 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
 
     @Override
     public void run() {
-        pgp = new PGP();
-        pgp.setReceiverPublicKey(this.receiverPublicKey);
-        pgp.setSenderPrivateKey(KeyWallet.getMainASymmetricKey().getPrivateKey());
-        pgp.setSenderPublicKey(KeyWallet.getMainASymmetricKey().getPublicKey());
+        this.pgp = new PGP();
+        this.pgp.setReceiverPublicKey(this.receiverPublicKey);
+        this.pgp.setSenderPrivateKey(KeyWallet.getMainASymmetricKey().getPrivateKey());
+        this.pgp.setSenderPublicKey(KeyWallet.getMainASymmetricKey().getPublicKey());
 
         while(true){
             try{
                 str = in.readLine();
-                MessageOutput messageOutput = pgp.receive(str);
-                commonSecretKey = pgp.decryptedSecretKey;
+                MessageOutput messageOutput = this.pgp.receive(str);
+                commonSecretKey = this.pgp.decryptedSecretKey;
                 if(messageOutput.isError()){
                     System.out.println(messageOutput.getErrorMessage());
                     continue;

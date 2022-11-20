@@ -45,18 +45,19 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
         privateKey = KeyWallet.getMainASymmetricKey().getPrivateKey();
 
         setTitle("Chatting");
-        setSize(550, 400);
+        setSize(300, 300);
         setLocation(400, 400);
-        init();
         start();
         setVisible(true);
         initNet(ip, port);
+        init();
         System.out.println("ip = " + ip);
     }
 
     public void initNet(String ip, int port){
         try{
             socket = new Socket(ip, port);
+
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out =  new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
         }catch(UnknownHostException e){
@@ -99,8 +100,9 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
                 try {
                     InetAddress ia = InetAddress.getLocalHost();
                     String ipStr = ia.toString();
-                    String ip = ipStr.substring(ipStr.indexOf("/") + 1);
-                    new DirectMessageGui(ip, Config.TCP_IP_CONNECTION_DEFAULT_PORT, socket, receiverPublicKey);
+//                    String ip = ipStr.substring(ipStr.indexOf("/") + 1);
+                    System.out.printf("Before DirectMessage socket info: %s\n", socket.getInetAddress());
+                    new DirectMessageGui(socket, receiverPublicKey);
                 }catch(UnknownHostException err){
                     err.printStackTrace();
                 }
@@ -133,7 +135,7 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
     public void run() {
         textArea.append("서버로 닉네임과 pubilcKey를 전송합니다.\n");
         out.println(nickname);
-        out.println(publicKey);;
+        out.println(publicKey);
 
         while(true){
             try{

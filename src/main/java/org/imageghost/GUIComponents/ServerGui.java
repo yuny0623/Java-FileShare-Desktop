@@ -18,10 +18,10 @@ public class ServerGui extends JFrame implements ActionListener{
 
     public ServerGui(){
         setTitle("ServerLogGui");
-        setSize(550, 400);
+        setSize(300, 300);
         setLocation(400, 400);
         setVisible(true);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         container.setLayout(new BorderLayout());
 

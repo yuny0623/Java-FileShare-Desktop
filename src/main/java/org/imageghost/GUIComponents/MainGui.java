@@ -40,8 +40,8 @@ public class MainGui extends JFrame implements ActionListener {
 
     public MainGui(){
         setTitle("ImageGhostClient");
-        setSize(1000, 500);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setSize(300, 300);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.getContentPane().setBackground(Color.DARK_GRAY);
 
         panel0 = new JPanel();
