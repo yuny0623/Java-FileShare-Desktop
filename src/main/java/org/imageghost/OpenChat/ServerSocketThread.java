@@ -53,14 +53,13 @@ public class ServerSocketThread extends Thread{
                     StringBuffer sb = new StringBuffer();
                     for(Map.Entry<String, String> entry: ChatServer.publicKeyList.entrySet()){
                         sb.append(entry.getKey() + " ");
-                        sb.append(entry.getValue()+ " ");
+                        sb.append(entry.getValue() + " ");
                     }
                     sendMessage("[userInfoResponse] " + sb.toString());
-                }else if(strIn.length() >= 17 && strIn.substring(0, 16 + 1).equals("[DirectMessageTo:")){
+                } else if(strIn.length() >= 17 && strIn.substring(0, 16 + 1).equals("[DirectMessageTo:")){
                     String receiverPublicKey = strIn.substring(16, strIn.indexOf("]"));
                     server.sendMessageTo(strIn, receiverPublicKey);
-                }
-                else {
+                } else {
                     server.broadCasting("[" + nickname + "]" + strIn);
                 }
             }

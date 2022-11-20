@@ -100,7 +100,6 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
                 try {
                     InetAddress ia = InetAddress.getLocalHost();
                     String ipStr = ia.toString();
-//                    String ip = ipStr.substring(ipStr.indexOf("/") + 1);
                     System.out.printf("Before DirectMessage socket info: %s\n", socket.getInetAddress());
                     new DirectMessageGui(socket, receiverPublicKey);
                 }catch(UnknownHostException err){

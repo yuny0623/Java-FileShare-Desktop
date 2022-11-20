@@ -43,6 +43,11 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
         this.socket = socket;
         this.receiverPublicKey = receiverPublicKey;
 
+        this.pgp = new PGP();
+        this.pgp.setReceiverPublicKey(this.receiverPublicKey);
+        this.pgp.setSenderPrivateKey(KeyWallet.getMainASymmetricKey().getPrivateKey());
+        this.pgp.setSenderPublicKey(KeyWallet.getMainASymmetricKey().getPublicKey());
+
         initNet();
     }
 
@@ -96,25 +101,20 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
 
     @Override
     public void run() {
-        this.pgp = new PGP();
-        this.pgp.setReceiverPublicKey(this.receiverPublicKey);
-        this.pgp.setSenderPrivateKey(KeyWallet.getMainASymmetricKey().getPrivateKey());
-        this.pgp.setSenderPublicKey(KeyWallet.getMainASymmetricKey().getPublicKey());
-
         while(true){
+            System.out.println("DirectMessage is running... first loop");
             try{
                 str = in.readLine();
-                MessageOutput messageOutput = this.pgp.receive(str);
-                commonSecretKey = this.pgp.decryptedSecretKey;
+                MessageOutput messageOutput = pgp.receive(str);
+                commonSecretKey = pgp.decryptedSecretKey;
                 if(messageOutput.isError()){
-                    System.out.println(messageOutput.getErrorMessage());
                     continue;
                 }
                 if(!messageOutput.isIntegrity()){
-                    System.out.println("Message Integrity failed.");
                     continue;
                 }
-                textArea.append(messageOutput.getPlainText() + "\n");
+                System.out.printf("messageOutput.getPlainText: %s\n", messageOutput.getPlainText());
+                textArea.append("messageOutput:" + messageOutput.getPlainText() + "\n");
                 if(commonSecretKey!=null){
                     break;
                 }
@@ -124,9 +124,11 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
         }
 
         while(true){
+            System.out.println("DirectMessage is running... second loop");
             try {
                 str = in.readLine();
                 String receivedPlainText = AESCipherMaker.decryptWithBase64(str, commonSecretKey);
+                System.out.printf("receivedPlainText: %s\n", receivedPlainText);
                 textArea.append(receivedPlainText + "\n");
             } catch (Exception e) {
                 throw new RuntimeException(e);
