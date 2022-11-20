@@ -33,13 +33,6 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
     String opponentNickname;
 
     public DirectMessageGui(Socket socket, String receiverPublicKey){
-        System.out.printf("DirectMessage socket info: %s\n", socket.getInetAddress());
-        setTitle("DirectMessage");
-        setSize(300, 300);
-        setLocation(300, 300);
-        init();
-        start();
-        setVisible(true);
         this.socket = socket;
         this.receiverPublicKey = receiverPublicKey;
 
@@ -48,6 +41,12 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
         this.pgp.setSenderPrivateKey(KeyWallet.getMainASymmetricKey().getPrivateKey());
         this.pgp.setSenderPublicKey(KeyWallet.getMainASymmetricKey().getPublicKey());
 
+        setTitle("DirectMessage");
+        setSize(300, 300);
+        setLocation(300, 600);
+        init();
+        start();
+        setVisible(true);
         initNet();
     }
 
@@ -56,9 +55,9 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
         }catch(UnknownHostException e){
-            System.out.println("IP 주소가 다릅니다. ");
+            System.out.println("Different IP Address.");
         }catch(IOException e){
-            System.out.println("접속 실패");
+            System.out.println("Connection failed.");
         }
 
         Thread thread = new Thread(this);
@@ -102,7 +101,6 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
     @Override
     public void run() {
         while(true){
-            System.out.println("DirectMessage is running... first loop");
             try{
                 str = in.readLine();
                 MessageOutput messageOutput = pgp.receive(str);
@@ -113,7 +111,6 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
                 if(!messageOutput.isIntegrity()){
                     continue;
                 }
-                System.out.printf("messageOutput.getPlainText: %s\n", messageOutput.getPlainText());
                 textArea.append("messageOutput:" + messageOutput.getPlainText() + "\n");
                 if(commonSecretKey!=null){
                     break;
@@ -124,11 +121,9 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
         }
 
         while(true){
-            System.out.println("DirectMessage is running... second loop");
             try {
                 str = in.readLine();
                 String receivedPlainText = AESCipherMaker.decryptWithBase64(str, commonSecretKey);
-                System.out.printf("receivedPlainText: %s\n", receivedPlainText);
                 textArea.append(receivedPlainText + "\n");
             } catch (Exception e) {
                 throw new RuntimeException(e);

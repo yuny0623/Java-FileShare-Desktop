@@ -18,7 +18,7 @@ public class ImageGhostMainGui extends JFrame implements ActionListener {
     public ImageGhostMainGui(){
         setTitle("ImageGhost");
         setSize(300, 300);
-        setLocation(400, 400);
+        setLocation(550, 550);
         setVisible(true);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         container.setLayout(new BorderLayout());

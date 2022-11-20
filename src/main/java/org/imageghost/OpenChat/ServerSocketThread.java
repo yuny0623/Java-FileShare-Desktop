@@ -1,11 +1,7 @@
 package org.imageghost.OpenChat;
 
-import org.imageghost.SecureAlgorithm.Utils.RSAUtil;
-import org.imageghost.Wallet.KeyWallet;
-
 import java.io.*;
 import java.net.Socket;
-import java.nio.charset.Charset;
 import java.util.Map;
 
 public class ServerSocketThread extends Thread{
@@ -21,7 +17,7 @@ public class ServerSocketThread extends Thread{
         this.server = server;
         this.socket = socket;
         threadName = super.getName();
-        System.out.println(socket.getInetAddress() + " 님이 입장하였습니다.");
+        System.out.println(socket.getInetAddress() + ": entered.");
         System.out.println("Thread Name: " + threadName);
     }
 
@@ -42,10 +38,10 @@ public class ServerSocketThread extends Thread{
                 ChatServer.publicKeyList.put(nickname, publicKey);
                 ChatServer.threadList.put(publicKey, this);
             }else{
-                throw new IOException("이름과 publicKey가 없습니다.");
+                throw new IOException("No Nickname and No PublicKey");
             }
 
-            server.broadCasting("[" + nickname + "] 님이 입장하였습니다.");
+            server.broadCasting("[" + nickname + "] entered.");
 
             while(true){
                 String strIn = in.readLine();
@@ -64,7 +60,7 @@ public class ServerSocketThread extends Thread{
                 }
             }
         }catch(IOException e){
-            System.out.println(threadName + " 님이 퇴장했습니다.");
+            System.out.println(threadName + ": removed.");
             server.removeClient(this);
         }finally {
             try{

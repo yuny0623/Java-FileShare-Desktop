@@ -46,7 +46,7 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
 
         setTitle("Chatting");
         setSize(300, 300);
-        setLocation(400, 400);
+        setLocation(300, 300);
         start();
         setVisible(true);
         initNet(ip, port);
@@ -61,9 +61,9 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out =  new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
         }catch(UnknownHostException e){
-            System.out.println("IP 주소가 다릅니다.");
+            System.out.println("Different Ip Address");
         }catch(IOException e){
-            System.out.println("접속 실패");
+            System.out.println("Connection failed.");
         }
 
         Thread thread = new Thread(this);
@@ -132,7 +132,6 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
 
     @Override
     public void run() {
-        textArea.append("서버로 닉네임과 pubilcKey를 전송합니다.\n");
         out.println(nickname);
         out.println(publicKey);
 

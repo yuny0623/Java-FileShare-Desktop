@@ -4,7 +4,7 @@ import javax.swing.*;
 public class UserInfoResponseGui extends JFrame {
     public UserInfoResponseGui(String info){
         setTitle("userInfoResponse");
-        setBounds(0, 0, 900, 300);
+        setBounds(100, 100, 900, 300);
         setVisible(true);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 

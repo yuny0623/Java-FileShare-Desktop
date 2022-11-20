@@ -16,6 +16,7 @@ public class ChatServer {
     ServerSocket serverSocket;
     Socket socket;
     List<Thread> list;
+    List<Thread> directMessageRoomList;
     static HashMap<String, String> publicKeyList;
     static HashMap<String, Thread> threadList;
 
@@ -24,7 +25,7 @@ public class ChatServer {
         publicKeyList = new HashMap<>();
         threadList = new HashMap<>();
 
-        System.out.println("서버가 시작되었습니다.");
+        System.out.println("Server start.");
     }
 
     public void giveAndTake(){
@@ -45,12 +46,12 @@ public class ChatServer {
 
     private synchronized void addClient(ServerSocketThread thread){
         list.add(thread);
-        System.out.println("Client 1명 입장. 총 " + list.size() + "명");
+        System.out.println("Client 1 user entered. Total:" + list.size());
     }
 
     public synchronized void removeClient(Thread thread){
         list.remove(thread);
-        System.out.println("Client 1명 이탈. 총" + list.size() + "명");
+        System.out.println("Client 1 user removed. Total: " + list.size());
     }
 
     public synchronized void broadCasting(String str){
