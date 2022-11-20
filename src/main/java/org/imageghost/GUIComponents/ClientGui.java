@@ -87,7 +87,7 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
             public void actionPerformed(ActionEvent e) {
                 StringBuffer sb = new StringBuffer();
                 for(Map.Entry<String, String> entry: userMap.entrySet()){
-                    sb.append("[" + entry.getKey() +"0"+ entry.getValue()+"]\n");
+                    sb.append("[" + entry.getKey() +":"+ entry.getValue()+"]\n");
                 }
                 new UserInfoResponseGui(sb.toString());
             }
@@ -95,13 +95,12 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
 
         JMenuItem menuItem3 = new JMenuItem(new AbstractAction("[DirectMessage]") {
             public void actionPerformed(ActionEvent e) {
-                String receiverPublicKey = JOptionPane.showInputDialog(null, "내용", "임시입력값");
+                String receiverPublicKey = JOptionPane.showInputDialog(null, "publicKey", "publicKey");
                 try {
                     InetAddress ia = InetAddress.getLocalHost();
                     String ipStr = ia.toString();
                     String ip = ipStr.substring(ipStr.indexOf("/") + 1);
                     new DirectMessageGui(ip, Config.TCP_IP_CONNECTION_DEFAULT_PORT, socket, receiverPublicKey);
-
                 }catch(UnknownHostException err){
                     err.printStackTrace();
                 }
@@ -147,7 +146,7 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
                     }
                     continue;
                 }
-                textArea.append(str + "\n");
+                textArea.append(str+ "\n");
             }catch(IOException e){
                 e.printStackTrace();
             }

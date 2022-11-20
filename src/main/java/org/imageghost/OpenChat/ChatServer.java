@@ -35,9 +35,6 @@ public class ChatServer {
             while(true){
                 socket = serverSocket.accept();
                 ServerSocketThread thread = new ServerSocketThread(this, socket);
-                // added.
-                threadList.put(socket.getInetAddress().toString(), thread);
-                // -----
                 addClient(thread);
                 thread.start();
             }

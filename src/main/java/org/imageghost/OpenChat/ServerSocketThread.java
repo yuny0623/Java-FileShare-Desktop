@@ -21,7 +21,7 @@ public class ServerSocketThread extends Thread{
         this.server = server;
         this.socket = socket;
         threadName = super.getName();
-        System.out.println(socket.getInetAddress() + "님이 입장하였습니다.");
+        System.out.println(socket.getInetAddress() + " 님이 입장하였습니다.");
         System.out.println("Thread Name: " + threadName);
     }
 
@@ -40,6 +40,7 @@ public class ServerSocketThread extends Thread{
 
             if(nickname != null && publicKey != null){
                 ChatServer.publicKeyList.put(nickname, publicKey);
+                ChatServer.threadList.put(publicKey, this);
             }else{
                 throw new IOException("이름과 publicKey가 없습니다.");
             }
@@ -55,6 +56,9 @@ public class ServerSocketThread extends Thread{
                         sb.append(entry.getValue()+ " ");
                     }
                     sendMessage("[userInfoResponse] " + sb.toString());
+                }else if(strIn.length() >= 17 && strIn.substring(0, 16 + 1).equals("[DirectMessageTo:")){
+                    String receiverPublicKey = strIn.substring(16, strIn.indexOf("]"));
+                    server.sendMessageTo(strIn, receiverPublicKey);
                 }
                 else {
                     server.broadCasting("[" + nickname + "]" + strIn);
