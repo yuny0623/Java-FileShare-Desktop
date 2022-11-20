@@ -32,7 +32,7 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
     String myNickname;
     String opponentNickname;
 
-    public DirectMessageGui(String ip, int port, Socket socket, String receiverPublicKey, String myNickname, String opponentNickname){
+    public DirectMessageGui(String ip, int port, Socket socket, String receiverPublicKey){
         setTitle("DirectMessage");
         setSize(500, 500);
         setLocation(300, 300);
@@ -43,8 +43,8 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
 
         this.socket = socket;
         this.receiverPublicKey = receiverPublicKey;
-        this.myNickname = myNickname;
-        this.opponentNickname = opponentNickname;
+        // this.myNickname = myNickname;
+        // this.opponentNickname = opponentNickname;
     }
 
     public void initNet(String ip, int port){

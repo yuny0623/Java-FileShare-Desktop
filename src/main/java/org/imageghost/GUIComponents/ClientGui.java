@@ -82,6 +82,7 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
                 out.println(request);
             }
         });
+
         JMenuItem menuItem2 = new JMenuItem(new AbstractAction("[userInfoResponse]") {
             public void actionPerformed(ActionEvent e) {
                 StringBuffer sb = new StringBuffer();
@@ -91,14 +92,16 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
                 new UserInfoResponseGui(sb.toString());
             }
         });
+
         JMenuItem menuItem3 = new JMenuItem(new AbstractAction("[DirectMessage]") {
             public void actionPerformed(ActionEvent e) {
+                String receiverPublicKey = JOptionPane.showInputDialog(null, "내용", "임시입력값");
                 try {
                     InetAddress ia = InetAddress.getLocalHost();
                     String ipStr = ia.toString();
                     String ip = ipStr.substring(ipStr.indexOf("/") + 1);
-                    String receiverPublicKey = "";
                     new DirectMessageGui(ip, Config.TCP_IP_CONNECTION_DEFAULT_PORT, socket, receiverPublicKey);
+
                 }catch(UnknownHostException err){
                     err.printStackTrace();
                 }
