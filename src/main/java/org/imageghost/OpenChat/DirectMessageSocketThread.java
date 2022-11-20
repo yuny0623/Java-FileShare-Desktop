@@ -1,10 +1,10 @@
 package org.imageghost.OpenChat;
 
 import javax.crypto.SecretKey;
-import java.io.BufferedReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.sql.SQLOutput;
+import java.util.Map;
 
 public class DirectMessageSocketThread extends Thread{
     Socket socket;
@@ -34,8 +34,24 @@ public class DirectMessageSocketThread extends Thread{
 
     @Override
     public void run() {
-        /*
-            Direct Message logic
-         */
+        try{
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+
+            while(true){
+                String strIn = in.readLine();
+                server.broadCasting("[" + nickname + "]" + strIn);
+
+            }
+        }catch(IOException e){
+            System.out.println(threadName + ": removed.");
+            server.removeClient(this);
+        }finally {
+            try{
+                socket.close();
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+        }
     }
 }

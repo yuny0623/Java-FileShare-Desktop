@@ -31,13 +31,14 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
     SecretKey commonSecretKey;
     String myNickname;
     String opponentNickname;
+    String receiverNickname;
 
-    public DirectMessageGui(Socket socket, String receiverPublicKey){
+    public DirectMessageGui(Socket socket, String receiverNickname, String receiverPublicKey){
         this.socket = socket;
-        this.receiverPublicKey = receiverPublicKey;
+        this.receiverNickname = receiverNickname;
 
         this.pgp = new PGP();
-        this.pgp.setReceiverPublicKey(this.receiverPublicKey);
+        this.pgp.setReceiverPublicKey(receiverPublicKey);
         this.pgp.setSenderPrivateKey(KeyWallet.getMainASymmetricKey().getPrivateKey());
         this.pgp.setSenderPublicKey(KeyWallet.getMainASymmetricKey().getPublicKey());
 
@@ -84,13 +85,13 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
             if (messageInput.isError()) {
                 str = messageInput.getErrorMessage();
             } else {
-                out.println("[DirectMessageTo:"+receiverPublicKey+"]" + messageInput.getCipherText());
+                out.println("[DirectMessageTo:" + receiverNickname + "]" + messageInput.getCipherText());
                 textField.setText("");
             }
         }else{
             str = textField.getText();
             try {
-                out.println("[DirectMessageTo:"+receiverPublicKey+"]" + AESCipherMaker.encryptWithBase64(str, commonSecretKey));
+                out.println("[DirectMessageTo:" + receiverNickname + "]" + AESCipherMaker.encryptWithBase64(str, commonSecretKey));
                 textField.setText("");
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
@@ -124,7 +125,7 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
             try {
                 str = in.readLine();
                 String receivedPlainText = AESCipherMaker.decryptWithBase64(str, commonSecretKey);
-                textArea.append(receivedPlainText + "\n");
+                textArea.append("messageOutput: " + receivedPlainText + "\n");
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

@@ -2,7 +2,10 @@ package org.imageghost.OpenChat;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 public class ServerSocketThread extends Thread{
     Socket socket;
@@ -13,10 +16,13 @@ public class ServerSocketThread extends Thread{
     String threadName;
     String publicKey;
 
+    Queue<HashMap<String, String>> messageQueue;
+
     public ServerSocketThread(ChatServer server, Socket socket){
         this.server = server;
         this.socket = socket;
         threadName = super.getName();
+        messageQueue = new LinkedList<>();
         System.out.println(socket.getInetAddress() + ": entered.");
         System.out.println("Thread Name: " + threadName);
     }
@@ -36,7 +42,7 @@ public class ServerSocketThread extends Thread{
 
             if(nickname != null && publicKey != null){
                 ChatServer.publicKeyList.put(nickname, publicKey);
-                ChatServer.threadList.put(publicKey, this);
+                ChatServer.threadList.put(nickname, this);
             }else{
                 throw new IOException("No Nickname and No PublicKey");
             }
@@ -53,8 +59,9 @@ public class ServerSocketThread extends Thread{
                     }
                     sendMessage("[userInfoResponse] " + sb.toString());
                 } else if(strIn.length() >= 17 && strIn.substring(0, 16 + 1).equals("[DirectMessageTo:")){
-                    String receiverPublicKey = strIn.substring(16, strIn.indexOf("]"));
-                    server.sendMessageTo(strIn, receiverPublicKey);
+                    String nickname = strIn.substring(16, strIn.indexOf("]"));
+                    String receivedMessage = strIn.substring(strIn.indexOf("]") + 1);
+                    server.sendDirectMessage(receivedMessage, nickname, publicKey);
                 } else {
                     server.broadCasting("[" + nickname + "]" + strIn);
                 }

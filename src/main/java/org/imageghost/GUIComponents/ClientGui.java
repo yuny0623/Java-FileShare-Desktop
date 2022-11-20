@@ -96,21 +96,22 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
 
         JMenuItem menuItem3 = new JMenuItem(new AbstractAction("[DirectMessage]") {
             public void actionPerformed(ActionEvent e) {
-                String receiverPublicKey = JOptionPane.showInputDialog(null, "publicKey", "publicKey");
-                try {
-                    InetAddress ia = InetAddress.getLocalHost();
-                    String ipStr = ia.toString();
-                    System.out.printf("Before DirectMessage socket info: %s\n", socket.getInetAddress());
-                    new DirectMessageGui(socket, receiverPublicKey);
-                }catch(UnknownHostException err){
-                    err.printStackTrace();
-                }
+                String receiverPublicKey = JOptionPane.showInputDialog(null, "Receiver PublicKey", "publicKey");
+                String receiverNickname = JOptionPane.showInputDialog(null, "Receiver Nickname", "Nickname");
+                new DirectMessageGui(socket, receiverNickname, receiverPublicKey);
             }
         });
+
+//        JMenuItem menuItem4 = new JMenuItem(new AbstractAction("[receivedDirectMessage]") {
+//            public void actionPerformed(ActionEvent e) {
+//                new DirectMessageGui(socket, receiverNickname, receiverPublicKey);
+//            }
+//        });
 
         roomMenu.add(menuItem1);
         roomMenu.add(menuItem2);
         roomMenu.add(menuItem3);
+        // roomMenu.add(menuItem4);
         menuBar.add(roomMenu);
 
         this.setJMenuBar(menuBar);
@@ -138,6 +139,9 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
         while(true){
             try{
                 str = in.readLine();
+                if(str == null){
+                    continue;
+                }
                 if(str.length() >= 18 && str.substring(0, 17 + 1).equals("[userInfoResponse]")){
                     String[] info = str.split(" ");
                     System.out.printf("this is the string received from server: " + str);

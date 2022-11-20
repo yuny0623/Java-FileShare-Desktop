@@ -8,9 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLOutput;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class ChatServer {
     ServerSocket serverSocket;
@@ -38,6 +36,13 @@ public class ChatServer {
                 ServerSocketThread thread = new ServerSocketThread(this, socket);
                 addClient(thread);
                 thread.start();
+
+                StringBuffer sb = new StringBuffer();
+                for(Map.Entry<String, Thread> entry: ChatServer.threadList.entrySet()){
+                    sb.append(entry.getKey() + " ");
+                    sb.append(entry.getValue().getName() + " ");
+                }
+                System.out.println("ChatServer.threadList: " + sb.toString());
             }
         }catch(IOException e){
             e.printStackTrace();
@@ -61,8 +66,20 @@ public class ChatServer {
         }
     }
 
-    public synchronized  void sendMessageTo(String str, String publicKey){
-        ServerSocketThread thread = (ServerSocketThread) threadList.get(publicKey);
+    public synchronized  void sendMessageTo(String str, String nickname){
+        ServerSocketThread thread = (ServerSocketThread) threadList.get(nickname);
         thread.sendMessage(str);
+    }
+
+    public synchronized void sendDirectMessage(String str, String nickname, String senderPublicKey){
+        ServerSocketThread thread = (ServerSocketThread) threadList.get(nickname);
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put(senderPublicKey, str);
+        thread.messageQueue.add(hashMap);
+    }
+
+    public synchronized Queue<HashMap<String, String>> getMyDirectMessage(String nickname){
+        ServerSocketThread thread = (ServerSocketThread) threadList.get(nickname);
+        return thread.messageQueue;
     }
 }
