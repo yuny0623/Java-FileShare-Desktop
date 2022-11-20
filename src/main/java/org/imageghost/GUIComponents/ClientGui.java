@@ -125,9 +125,9 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
 
     @Override
     public void actionPerformed(ActionEvent e){
-            str = textField.getText();
-            out.println(str);
-            textField.setText("");
+        str = textField.getText();
+        out.println(str);
+        textField.setText("");
     }
 
     @Override
