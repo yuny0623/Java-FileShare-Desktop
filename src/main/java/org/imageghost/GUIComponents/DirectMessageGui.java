@@ -1,20 +1,19 @@
 package org.imageghost.GUIComponents;
 
+import org.imageghost.AesEncryption.AESCipherMaker;
 import org.imageghost.SecureAlgorithm.PGP.PGP;
 import org.imageghost.SecureAlgorithm.Utils.MessageInput;
 import org.imageghost.SecureAlgorithm.Utils.MessageOutput;
-import org.junit.internal.runners.statements.RunAfters;
+import org.imageghost.Wallet.KeyWallet;
 
-import javax.crypto.spec.SecretKeySpec;
+import javax.crypto.SecretKey;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.sql.SQLOutput;
 
 public class DirectMessageGui extends JFrame implements ActionListener, Runnable {
 
@@ -28,13 +27,15 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
     PrintWriter out;
     BufferedReader in;
     String str;
+    String receiverPublicKey;
+    SecretKey commonSecretKey;
 
     String nickname;
     String publicKey;
     String privateKey;
     String symmetricKey;
 
-    public DirectMessageGui(String ip, int port, Socket socket){
+    public DirectMessageGui(String ip, int port, Socket socket, String receiverPublicKey){
         setTitle("DirectMessage");
         setSize(500, 500);
         setLocation(300, 300);
@@ -42,6 +43,7 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
         start();
         setVisible(true);
         this.socket = socket;
+        this.receiverPublicKey = receiverPublicKey;
         initNet(ip, port);
         System.out.println("ip = " + ip);
     }
@@ -75,27 +77,38 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        str = textField.getText();
-        MessageInput messageInput = pgp.send(str);
-        if(messageInput.isError()){
-            str = messageInput.getErrorMessage();
-        }else {
-            out.println(messageInput.getCipherText());
-            textField.setText("");
+        if(commonSecretKey == null) {
+            str = textField.getText();
+            MessageInput messageInput = pgp.send(str);
+            if (messageInput.isError()) {
+                str = messageInput.getErrorMessage();
+            } else {
+                out.println(messageInput.getCipherText());
+                textField.setText("");
+            }
+        }else{
+            str = textField.getText();
+            try {
+                out.println(AESCipherMaker.decrypt(str.getBytes(), commonSecretKey));
+                textField.setText("");
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
 
     @Override
     public void run() {
         pgp = new PGP();
-        // pgp.setReceiverPublicKey();
-        // pgp.setSenderPrivateKey();
-        // pgp.setSenderPublicKey();
+        pgp.setReceiverPublicKey(this.receiverPublicKey);
+        pgp.setSenderPrivateKey(KeyWallet.getMainASymmetricKey().getPrivateKey());
+        pgp.setSenderPublicKey(KeyWallet.getMainASymmetricKey().getPublicKey());
 
         while(true){
             try{
                 str = in.readLine();
                 MessageOutput messageOutput = pgp.receive(str);
+                commonSecretKey = pgp.decryptedSecretKey;
                 if(messageOutput.isError()){
                     System.out.println(messageOutput.getErrorMessage());
                     continue;
@@ -105,8 +118,21 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
                     continue;
                 }
                 textArea.append(messageOutput.getPlainText() + "\n");
+                if(commonSecretKey!=null){
+                    break;
+                }
             }catch(IOException e){
                 e.printStackTrace();
+            }
+        }
+
+        while(true){
+            try {
+                str = in.readLine();
+                String receivedPlainText = AESCipherMaker.encrypt(str, commonSecretKey);
+                textArea.append(receivedPlainText + "\n");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         }
     }

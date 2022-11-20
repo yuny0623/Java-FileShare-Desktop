@@ -55,9 +55,10 @@ public class ServerSocketThread extends Thread{
                         sb.append(entry.getValue()+ " ");
                     }
                     sendMessage("[userInfoResponse] " + sb.toString());
-                    continue;
                 }
-                server.broadCasting("[" + nickname + "]" + strIn);
+                else {
+                    server.broadCasting("[" + nickname + "]" + strIn);
+                }
             }
         }catch(IOException e){
             System.out.println(threadName + " 님이 퇴장했습니다.");

@@ -17,10 +17,12 @@ public class ChatServer {
     Socket socket;
     List<Thread> list;
     static HashMap<String, String> publicKeyList;
+    static HashMap<String, Thread> threadList;
 
     public ChatServer(){
         list = new ArrayList<Thread>();
         publicKeyList = new HashMap<>();
+        threadList = new HashMap<>();
 
         System.out.println("서버가 시작되었습니다.");
     }
@@ -33,6 +35,9 @@ public class ChatServer {
             while(true){
                 socket = serverSocket.accept();
                 ServerSocketThread thread = new ServerSocketThread(this, socket);
+                // added.
+                threadList.put(socket.getInetAddress().toString(), thread);
+                // -----
                 addClient(thread);
                 thread.start();
             }
@@ -56,5 +61,9 @@ public class ChatServer {
             ServerSocketThread thread = (ServerSocketThread) list.get(i);
             thread.sendMessage(str);
         }
+    }
+    public synchronized  void sendMessageTo(String str, String publicKey){
+        ServerSocketThread thread = (ServerSocketThread) threadList.get(publicKey);
+        thread.sendMessage(str);
     }
 }

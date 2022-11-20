@@ -97,14 +97,8 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
                     InetAddress ia = InetAddress.getLocalHost();
                     String ipStr = ia.toString();
                     String ip = ipStr.substring(ipStr.indexOf("/") + 1);
-
-                    // create PGP
-                    pgp = new PGP();
-                    // pgp.setSenderPublicKey();
-                    // pgp.setSenderPrivateKey();
-                    //  pgp.setReceiverPublicKey()
-
-                    new DirectMessageGui(ip, Config.TCP_IP_CONNECTION_DEFAULT_PORT, socket);
+                    String receiverPublicKey = "";
+                    new DirectMessageGui(ip, Config.TCP_IP_CONNECTION_DEFAULT_PORT, socket, receiverPublicKey);
                 }catch(UnknownHostException err){
                     err.printStackTrace();
                 }

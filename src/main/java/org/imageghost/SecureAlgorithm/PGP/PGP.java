@@ -53,6 +53,9 @@ public class PGP {
     private String receiverPublicKey;
     private String receiverPrivateKey;
 
+    public SecretKey decryptedSecretKey;
+    public SecretKey secretKeyOriginal;
+
     public PGP(){
 
     }
@@ -295,7 +298,7 @@ public class PGP {
             String originalMAC = this.generateMAC(plainText);
             String originalDigitalSignature = this.generateDigitalSignature(originalMAC, senderPrivateKey);
             String body = this.generateBody(plainText, originalDigitalSignature);
-            SecretKey secretKeyOriginal = KeyWallet.getMainSymmetricKey().getAESKey();
+            secretKeyOriginal = KeyWallet.getMainSymmetricKey().getAESKey();
             String encryptedBody = this.encryptBody(body, secretKeyOriginal);
             String ee = this.createEE(secretKeyOriginal.getEncoded(), receiverPublicKey);
             finalResult = this.appendEEWithBody(ee, encryptedBody);
@@ -313,7 +316,7 @@ public class PGP {
             String receivedBody = dataMap.get("body");
             String receivedEE = dataMap.get("ee");
             byte[] aesKey = this.openEE(receivedEE, receiverPrivateKey);
-            SecretKey decryptedSecretKey = new SecretKeySpec(aesKey, "AES");
+            decryptedSecretKey = new SecretKeySpec(aesKey, "AES");
             String decryptedBody = this.decryptBody(receivedBody, decryptedSecretKey);
             HashMap<String, String> bodyMap = this.bodySplitter(decryptedBody);
             receivedPlainText = bodyMap.get("receivedPlainText");

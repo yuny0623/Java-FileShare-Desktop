@@ -187,7 +187,7 @@ public class PGPTest {
     }
 
     @Test
-    public void AES키_암복호화_테스트() throws Exception{
+    public void 전달받은_AES키_도출하기_테스트() throws Exception{
         // given
         SecretKey secretKey = pgp.generateSymmetricKey();
 
