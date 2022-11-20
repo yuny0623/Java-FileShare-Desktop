@@ -1,5 +1,6 @@
 package org.imageghost.Test;
 
+import org.imageghost.AesEncryption.AESCipherMaker;
 import org.imageghost.Key.KeyFactory;
 import org.imageghost.Key.Keys.ASymmetricKey;
 import org.imageghost.Key.Keys.SymmetricKey;
@@ -39,6 +40,21 @@ public class PGPTest {
         pgp.setSenderPrivateKey(senderPrivateKey);
         pgp.setReceiverPublicKey(receiverPublicKey);
         pgp.setReceiverPrivateKey(receiverPrivateKey);
+    }
+
+    @Test
+    public void 대칭키_암복호화_테스트() throws Exception {
+        // given
+        String plainText = "테스트입니다.";
+        String receivedPlainText = "";
+        SecretKey commonSecretKey = KeyFactory.createSymmetricKey().getAESKey();
+
+        // when
+        String cipherText = AESCipherMaker.encryptWithBase64(plainText, commonSecretKey);
+        receivedPlainText = AESCipherMaker.decryptWithBase64(cipherText, commonSecretKey);
+
+        // then
+        Assert.assertEquals(plainText, receivedPlainText);
     }
 
     @Test
