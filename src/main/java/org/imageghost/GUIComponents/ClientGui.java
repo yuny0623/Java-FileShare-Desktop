@@ -79,7 +79,6 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
         JMenuItem menuItem1 = new JMenuItem(new AbstractAction("[userInfoRequest]") {
             public void actionPerformed(ActionEvent e) {
                 String request = "[userInfoRequest]";
-                System.out.println(request);
                 out.println(request);
             }
         });
@@ -102,16 +101,9 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
             }
         });
 
-//        JMenuItem menuItem4 = new JMenuItem(new AbstractAction("[receivedDirectMessage]") {
-//            public void actionPerformed(ActionEvent e) {
-//                new DirectMessageGui(socket, receiverNickname, receiverPublicKey);
-//            }
-//        });
-
         roomMenu.add(menuItem1);
         roomMenu.add(menuItem2);
         roomMenu.add(menuItem3);
-        // roomMenu.add(menuItem4);
         menuBar.add(roomMenu);
 
         this.setJMenuBar(menuBar);
@@ -144,7 +136,6 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
                 }
                 if(str.length() >= 18 && str.substring(0, 17 + 1).equals("[userInfoResponse]")){
                     String[] info = str.split(" ");
-                    System.out.printf("this is the string received from server: " + str);
                     for(int i = 1; i < info.length; i+=2){
                         userMap.put(info[i], info[i+1]);
                     }

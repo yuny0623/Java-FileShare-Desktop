@@ -70,6 +70,19 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
         scrollPane = new JScrollPane(textArea);
         container.add("Center", scrollPane);
         container.add("South", textField);
+
+        JMenuBar menuBar = new JMenuBar();
+        JMenu directMessageMenu = new JMenu("[MyDirectMessage]");
+        JMenuItem menuItem = new JMenuItem(new AbstractAction("[MyDirectMessage]") {
+            public void actionPerformed(ActionEvent e) {
+                String request = "[MyDirectMessage]";
+                out.println(request);
+            }
+        });
+
+        directMessageMenu.add(menuItem);
+        menuBar.add(directMessageMenu);
+        this.setJMenuBar(menuBar);
     }
 
     public void start(){
