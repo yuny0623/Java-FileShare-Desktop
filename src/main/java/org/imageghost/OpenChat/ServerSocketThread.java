@@ -1,24 +1,23 @@
 package org.imageghost.OpenChat;
 
-import org.imageghost.SecureAlgorithm.Utils.RSAUtil;
-
 import java.io.*;
 import java.net.Socket;
-import java.nio.charset.Charset;
+import java.util.Map;
 
 public class ServerSocketThread extends Thread{
     Socket socket;
     ChatServer server;
     BufferedReader in;
     PrintWriter out;
-    String name;
+    String nickname;
     String threadName;
+    String publicKey;
 
     public ServerSocketThread(ChatServer server, Socket socket){
         this.server = server;
         this.socket = socket;
         threadName = super.getName();
-        System.out.println(socket.getInetAddress() + "님이 입장하였습니다.");
+        System.out.println(socket.getInetAddress() + ": entered.");
         System.out.println("Thread Name: " + threadName);
     }
 
@@ -31,36 +30,37 @@ public class ServerSocketThread extends Thread{
         try{
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-            // out = new PrintWriter(socket.getOutputStream(), true,  Charset.forName("UTF-8"));
 
-            sendMessage("입력창에 닉네임을 넣으세요");
-            name =  in.readLine();
-            server.broadCasting("[" + name + "] 님이 입장하였습니다.");
-            sendMessage("입력창에 publicKey를 넣으세요");
-            String publicKey = in.readLine();
-            ChatServer.publicKeyList.put(name, publicKey);
-            server.broadCasting("[" + name + "] 님이 준비되었습니다.");
+            nickname = in.readLine();
+            publicKey = in.readLine();
+
+            if(nickname != null && publicKey != null){
+                ChatServer.publicKeyList.put(nickname, publicKey);
+                ChatServer.threadList.put(publicKey, this);
+            }else{
+                throw new IOException("No Nickname and No PublicKey");
+            }
+
+            server.broadCasting("[" + nickname + "] entered.");
 
             while(true){
                 String strIn = in.readLine();
-                if(strIn.charAt(0) == '@'){
-                    int tempIdx = strIn.indexOf(':');
-                    if(tempIdx == -1){
-                        server.broadCasting("[" + name + "]" + strIn);
-                    }else{
-                        String receiverName = strIn.substring(1, tempIdx);
-                        String message = strIn.substring(tempIdx, strIn.length());
-                        String receiverPublicKey = ChatServer.publicKeyList.get(receiverName);
-                        String encodedMessage = RSAUtil.encode(message.getBytes(), receiverPublicKey);
-                        server.broadCasting("[" + name + "]" + encodedMessage);
+                if(strIn.length() >= 17 && strIn.substring(0, 16 + 1).equals("[userInfoRequest]")){
+                    StringBuffer sb = new StringBuffer();
+                    for(Map.Entry<String, String> entry: ChatServer.publicKeyList.entrySet()){
+                        sb.append(entry.getKey() + " ");
+                        sb.append(entry.getValue() + " ");
                     }
-                }else {
-                    server.broadCasting("[" + name + "]" + strIn);
+                    sendMessage("[userInfoResponse] " + sb.toString());
+                } else if(strIn.length() >= 17 && strIn.substring(0, 16 + 1).equals("[DirectMessageTo:")){
+                    String receiverPublicKey = strIn.substring(16, strIn.indexOf("]"));
+                    server.sendMessageTo(strIn, receiverPublicKey);
+                } else {
+                    server.broadCasting("[" + nickname + "]" + strIn);
                 }
-                // server.broadCasting("[" + name + "]" + strIn);
             }
         }catch(IOException e){
-            System.out.println(threadName + " 님이 퇴장했습니다.");
+            System.out.println(threadName + ": removed.");
             server.removeClient(this);
         }finally {
             try{

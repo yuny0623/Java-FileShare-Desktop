@@ -1,8 +1,12 @@
 package org.imageghost.Test;
 
-import org.imageghost.Config;
+import org.imageghost.Key.KeyFactory;
+import org.imageghost.Key.Keys.ASymmetricKey;
+import org.imageghost.SecureAlgorithm.Utils.RSAUtil;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.io.UnsupportedEncodingException;
 
 public class UtilTest {
 
@@ -19,13 +23,20 @@ public class UtilTest {
     }
 
     @Test
-    public void Mnemonic문자열array테스트(){
+    public void RSAUtil_암복호화테스트() throws UnsupportedEncodingException {
         // given
-        int length = Config.MNEMONIC_WORDS.length;
+        ASymmetricKey aSymmetricKey = KeyFactory.createASymmetricKey();
+        String privateKey = aSymmetricKey.getPrivateKey();
+        String publicKey = aSymmetricKey.getPublicKey();
+        String plainText = "This is plainText.";
 
         // when
+        String cipherText = RSAUtil.encode(plainText.getBytes(), publicKey);
+        byte[] decryptedText = RSAUtil.decode(cipherText, privateKey);
+        String fixedDecryptedText = new String(decryptedText, "UTF-8");
+        System.out.println(fixedDecryptedText);
 
         // then
-        Assert.assertEquals(length, 2048);
+        Assert.assertEquals(plainText, fixedDecryptedText);
     }
 }

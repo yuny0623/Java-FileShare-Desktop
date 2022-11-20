@@ -18,10 +18,10 @@ public class ServerGui extends JFrame implements ActionListener{
 
     public ServerGui(){
         setTitle("ServerLogGui");
-        setSize(550, 400);
+        setSize(300, 300);
         setLocation(400, 400);
         setVisible(true);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         container.setLayout(new BorderLayout());
 
@@ -34,14 +34,7 @@ public class ServerGui extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == serverStartButton) {
-            PrintStream printStream = null;
-            try {
-                printStream = new PrintStream(new CustomOutputStream(jTextArea), true, "UTF-8");
-            } catch (UnsupportedEncodingException ex) {
-                throw new RuntimeException(ex);
-            }
-            System.setOut(printStream);
-            System.setErr(printStream);
+            serverStartButton.setEnabled(false);
 
             Thread thread = new Thread(new ServerAction());
             thread.start();

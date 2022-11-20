@@ -1,6 +1,7 @@
 package org.imageghost.SecureAlgorithm.PGP;
 import org.imageghost.SecureAlgorithm.Utils.MessageOutput;
 import org.imageghost.SecureAlgorithm.Utils.MessageInput;
+import org.imageghost.Wallet.KeyWallet;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
@@ -44,7 +45,6 @@ public class PGP {
 
      3. Get more information about PGP.
         Link: https://en.wikipedia.org/wiki/Pretty_Good_Privacy
-
      */
 
     private String plainText;
@@ -52,6 +52,9 @@ public class PGP {
     private String senderPrivateKey;
     private String receiverPublicKey;
     private String receiverPrivateKey;
+
+    public SecretKey decryptedSecretKey;
+    public SecretKey secretKeyOriginal;
 
     public PGP(){
 
@@ -133,7 +136,6 @@ public class PGP {
             Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(Cipher.DECRYPT_MODE, publicKey);
 
-            // 암호문 public key 로 복호화
             decryptedText = new String(cipher.doFinal(Base64.getDecoder().decode(cipherText.getBytes())));
         }catch(Exception e){
             e.printStackTrace();
@@ -296,7 +298,7 @@ public class PGP {
             String originalMAC = this.generateMAC(plainText);
             String originalDigitalSignature = this.generateDigitalSignature(originalMAC, senderPrivateKey);
             String body = this.generateBody(plainText, originalDigitalSignature);
-            SecretKey secretKeyOriginal = this.generateSymmetricKey();
+            secretKeyOriginal = KeyWallet.getMainSymmetricKey().getAESKey();
             String encryptedBody = this.encryptBody(body, secretKeyOriginal);
             String ee = this.createEE(secretKeyOriginal.getEncoded(), receiverPublicKey);
             finalResult = this.appendEEWithBody(ee, encryptedBody);
@@ -314,7 +316,7 @@ public class PGP {
             String receivedBody = dataMap.get("body");
             String receivedEE = dataMap.get("ee");
             byte[] aesKey = this.openEE(receivedEE, receiverPrivateKey);
-            SecretKey decryptedSecretKey = new SecretKeySpec(aesKey, "AES");
+            decryptedSecretKey = new SecretKeySpec(aesKey, "AES");
             String decryptedBody = this.decryptBody(receivedBody, decryptedSecretKey);
             HashMap<String, String> bodyMap = this.bodySplitter(decryptedBody);
             receivedPlainText = bodyMap.get("receivedPlainText");

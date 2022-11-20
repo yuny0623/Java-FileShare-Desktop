@@ -21,7 +21,7 @@ public class KeyWallet implements Wallet{
     }
 
     public void init() {
-        mainASymmetricKey = KeyFactory.createAsymmetricKey();
+        mainASymmetricKey = KeyFactory.createASymmetricKey();
         mainSymmetricKey = KeyFactory.createSymmetricKey();
     }
 
@@ -59,7 +59,7 @@ public class KeyWallet implements Wallet{
 
     public static ASymmetricKey getMainASymmetricKey(){
         if(mainASymmetricKey == null){
-            ASymmetricKey aSymmetricKey = KeyFactory.createAsymmetricKey();
+            ASymmetricKey aSymmetricKey = KeyFactory.createASymmetricKey();
             mainASymmetricKey = aSymmetricKey;
         }
         return mainASymmetricKey;

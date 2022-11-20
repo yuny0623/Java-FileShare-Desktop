@@ -2,13 +2,13 @@ package org.imageghost.SecureAlgorithm.Utils;
 
 public class MessageOutput {
     String plainText;
-    boolean receive;
+    boolean integrity;
     boolean error;
     String errorMessage;
 
-    public MessageOutput(String plainText, boolean receive, boolean error, String errorMessage){
+    public MessageOutput(String plainText, boolean integrity, boolean error, String errorMessage){
         this.plainText = plainText;
-        this.receive = receive;
+        this.integrity = integrity;
         this.error = error;
         this.errorMessage = errorMessage;
     }
@@ -17,8 +17,8 @@ public class MessageOutput {
         return plainText;
     }
 
-    public boolean isReceive() {
-        return receive;
+    public boolean isIntegrity() {
+        return integrity;
     }
 
     public String getErrorMessage() {

@@ -7,7 +7,7 @@ public class KeyFactory {
     public static SymmetricKey createSymmetricKey(){
         return new SymmetricKey();
     }
-    public static ASymmetricKey createAsymmetricKey(){
+    public static ASymmetricKey createASymmetricKey(){
         return new ASymmetricKey();
     }
 }

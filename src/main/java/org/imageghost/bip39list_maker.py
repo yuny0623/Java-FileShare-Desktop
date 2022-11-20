@@ -514,8 +514,8 @@ word_string = """1	abandon	513	divorce	1025	length	1537	scale
 word_list = word_string.split() # 공백으로 나누기
 fixed_word_list = []
 
-for word in word_list:
-    if word.isdigit():
+for word in word_list0
+    if word.isdigit()0
         continue
     fixed_word_list.append(word)
 
