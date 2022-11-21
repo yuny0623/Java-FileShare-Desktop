@@ -38,13 +38,14 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
     String publicKey;
     String privateKey;
 
-    HashMap<String, String> userMap = new HashMap<>(); // nickname, public key
+    HashMap<String, String> userMap = new HashMap<>(); // nickname, publicKey
     HashMap<String, SecretKey> commonKeyMap = new HashMap<>(); // nickname, commonkey
 
     public ClientGui(String ip, int port){
         nickname = JOptionPane.showInputDialog("Enter User Nickname");
         publicKey = KeyWallet.getMainASymmetricKey().getPublicKey();
         privateKey = KeyWallet.getMainASymmetricKey().getPrivateKey();
+        userMap.put(nickname, publicKey); // 본인 추가
 
         setTitle("Chatting");
         setSize(300, 300);
@@ -102,7 +103,6 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
                 new DirectMessageGui(socket, receiverNickname, receiverPublicKey);
             }
         });
-
         roomMenu.add(menuItem1);
         roomMenu.add(menuItem2);
         roomMenu.add(menuItem3);
@@ -130,13 +130,6 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
         out.println(nickname);
         out.println(publicKey);
 
-        try {
-            String firstString = in.readLine();
-            System.out.printf("firstString: %s\n", firstString);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
         while(true){
             try{
                 str = in.readLine();
@@ -148,6 +141,12 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
                     for(int i = 1; i < info.length; i+=2){
                         userMap.put(info[i], info[i+1]);
                     }
+                    continue;
+                }else if(str.length() >= 11 && str.substring(0, 11 + 1).equals("[New Member]")){
+                    String strBody = str.substring(11+1, str.length()); // [sss:aaa]
+                    String receivedNickname = strBody.substring(1, strBody.indexOf(":"));
+                    String receivedPublicKey = strBody.substring(strBody.indexOf(":") + 1, strBody.indexOf("]"));
+                    userMap.put(receivedNickname, receivedPublicKey);
                     continue;
                 }
                 textArea.append(str+ "\n");
