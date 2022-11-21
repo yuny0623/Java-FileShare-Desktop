@@ -42,7 +42,6 @@ public class ServerGui extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == serverStartButton) {
             serverStartButton.setEnabled(false);
-
             PrintStream printStream = new PrintStream(new CustomOutputStream(jTextArea));
             System.setOut(printStream);
             System.setErr(printStream);

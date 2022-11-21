@@ -148,7 +148,7 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
      */
 
     public void start(){
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         inputField.addActionListener(this);
     }
 

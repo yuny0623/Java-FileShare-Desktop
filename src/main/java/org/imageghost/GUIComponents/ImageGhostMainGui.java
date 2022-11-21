@@ -16,7 +16,7 @@ public class ImageGhostMainGui extends JFrame implements ActionListener {
     JPanel buttonPanel = new JPanel();
 
     public ImageGhostMainGui(){
-        setTitle("ImageGhost");
+        setTitle("ImageGhostClient");
         setSize(300, 100);
         setLocation(550, 550);
         setVisible(true);
