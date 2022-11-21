@@ -35,13 +35,6 @@ public class ChatServer {
                 ServerSocketThread thread = new ServerSocketThread(this, socket);
                 addClient(thread);
                 thread.start();
-
-                StringBuffer sb = new StringBuffer();
-                for(Map.Entry<String, Thread> entry: ChatServer.threadList.entrySet()){
-                    sb.append(entry.getKey() + " ");
-                    sb.append(entry.getValue().getName() + " ");
-                }
-                System.out.println("ChatServer.threadList: " + sb.toString());
             }
         }catch(IOException e){
             e.printStackTrace();

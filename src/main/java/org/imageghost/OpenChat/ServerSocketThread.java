@@ -48,7 +48,7 @@ public class ServerSocketThread extends Thread{
                 throw new IOException("No Nickname and No PublicKey");
             }
 
-            server.broadCasting("[" + nickname + "] entered.");
+            server.broadCasting("[New Member][" + nickname + ":" + publicKey + "] entered.");
 
             while(true){
                 String strIn = in.readLine();

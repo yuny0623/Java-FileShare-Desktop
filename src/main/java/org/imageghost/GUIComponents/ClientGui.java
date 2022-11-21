@@ -5,6 +5,7 @@ import org.imageghost.SecureAlgorithm.PGP.PGP;
 import org.imageghost.SecureAlgorithm.Utils.RSAUtil;
 import org.imageghost.Wallet.KeyWallet;
 
+import javax.crypto.SecretKey;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -37,10 +38,11 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
     String publicKey;
     String privateKey;
 
-    HashMap<String, String> userMap = new HashMap<>();
+    HashMap<String, String> userMap = new HashMap<>(); // nickname, public key
+    HashMap<String, SecretKey> commonKeyMap = new HashMap<>(); // nickname, commonkey
 
     public ClientGui(String ip, int port){
-        nickname = JOptionPane.showInputDialog("닉네임을 입력하세요");
+        nickname = JOptionPane.showInputDialog("Enter User Nickname");
         publicKey = KeyWallet.getMainASymmetricKey().getPublicKey();
         privateKey = KeyWallet.getMainASymmetricKey().getPrivateKey();
 
@@ -75,15 +77,15 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
         scrollPane = new JScrollPane(textArea);
 
         menuBar = new JMenuBar();
-        roomMenu = new JMenu("Room");
-        JMenuItem menuItem1 = new JMenuItem(new AbstractAction("[userInfoRequest]") {
+        roomMenu = new JMenu("Option");
+        JMenuItem menuItem1 = new JMenuItem(new AbstractAction("UserInfoRequest") {
             public void actionPerformed(ActionEvent e) {
                 String request = "[userInfoRequest]";
                 out.println(request);
             }
         });
 
-        JMenuItem menuItem2 = new JMenuItem(new AbstractAction("[userInfoResponse]") {
+        JMenuItem menuItem2 = new JMenuItem(new AbstractAction("UserInfoResponse") {
             public void actionPerformed(ActionEvent e) {
                 StringBuffer sb = new StringBuffer();
                 for(Map.Entry<String, String> entry: userMap.entrySet()){
@@ -93,7 +95,7 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
             }
         });
 
-        JMenuItem menuItem3 = new JMenuItem(new AbstractAction("[DirectMessage]") {
+        JMenuItem menuItem3 = new JMenuItem(new AbstractAction("DirectMessage") {
             public void actionPerformed(ActionEvent e) {
                 String receiverPublicKey = JOptionPane.showInputDialog(null, "Receiver PublicKey", "publicKey");
                 String receiverNickname = JOptionPane.showInputDialog(null, "Receiver Nickname", "Nickname");
@@ -127,6 +129,13 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
     public void run() {
         out.println(nickname);
         out.println(publicKey);
+
+        try {
+            String firstString = in.readLine();
+            System.out.printf("firstString: %s\n", firstString);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         while(true){
             try{
