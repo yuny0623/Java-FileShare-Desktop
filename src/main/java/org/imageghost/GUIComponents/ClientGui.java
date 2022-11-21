@@ -23,7 +23,7 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
     Container container = getContentPane();
     JTextArea textArea = new JTextArea();
     JScrollPane scrollPane;
-    JTextField textField = new JTextField();
+    JTextField textField = new JTextField("Client Start.");
     JMenuBar menuBar;
     JMenu roomMenu;
 
@@ -107,8 +107,11 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
         roomMenu.add(menuItem2);
         roomMenu.add(menuItem3);
         menuBar.add(roomMenu);
-
         this.setJMenuBar(menuBar);
+
+        TextArea userInfo = new TextArea("UserInfo");
+        JScrollPane jScrollPane = new JScrollPane(userInfo);
+        container.add("West", jScrollPane);
         container.add("Center", scrollPane);
         container.add("South", textField);
     }
