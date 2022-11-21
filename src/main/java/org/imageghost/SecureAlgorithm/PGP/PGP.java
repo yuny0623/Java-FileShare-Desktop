@@ -12,6 +12,7 @@ import java.util.Base64;
 import java.util.HashMap;
 
 public class PGP {
+
     /**
      PGP Communication Implementation in Java.
      @Date 2022-10-20
@@ -23,7 +24,6 @@ public class PGP {
         PGP is used for signing, encrypting, and decrypting texts, e-mails, files, directories, and whole disk partitions and to increase the security of e-mail communications.
         Phil Zimmermann developed PGP in 1991.
         PGP and similar software follow the OpenPGP, an open standard of PGP encryption software, standard (RFC 4880) for encrypting and decrypting data.
-
 
      2. How to use.
         - Alice(Sender):
@@ -42,7 +42,6 @@ public class PGP {
             4. Hash the original plainText to compare with received MAC.
             5. compare the hashed PlainText and received mac. (If it is same then message integrity has guranteed.)
 
-
      3. Get more information about PGP.
         Link: https://en.wikipedia.org/wiki/Pretty_Good_Privacy
      */
@@ -55,6 +54,16 @@ public class PGP {
 
     public SecretKey decryptedSecretKey;
     public SecretKey secretKeyOriginal;
+
+
+    private static PGP pgp;
+
+    public static synchronized PGP getPGP(){
+        if(pgp == null){
+            pgp = new PGP();
+        }
+        return pgp;
+    }
 
     public PGP(){
 
