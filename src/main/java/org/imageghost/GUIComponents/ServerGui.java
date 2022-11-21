@@ -19,8 +19,8 @@ public class ServerGui extends JFrame implements ActionListener{
 
     public ServerGui(){
         setTitle("ServerGui");
-        setSize(300, 200);
-        setLocation(400, 400);
+        setSize(300, 600);
+        setLocation(100, 100);
         setVisible(true);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
