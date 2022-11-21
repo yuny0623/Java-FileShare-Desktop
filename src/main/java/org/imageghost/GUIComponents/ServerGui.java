@@ -15,18 +15,27 @@ public class ServerGui extends JFrame implements ActionListener{
     JTextArea jTextArea = new JTextArea();
     JScrollPane scrollPane = new JScrollPane(jTextArea);
     JButton serverStartButton = new JButton("Start Open Chat Server");
+    JButton serverStopButton = new JButton("Stop Open Chat Server");
 
     public ServerGui(){
         setTitle("ServerGui");
-        setSize(300, 300);
+        setSize(300, 200);
         setLocation(400, 400);
         setVisible(true);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
         jTextArea.setEditable(false);
         container.setLayout(new BorderLayout());
         container.add("Center", scrollPane);
-        container.add("South", serverStartButton);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(2, 1, 0, 0));
+        buttonPanel.add(serverStartButton);
+        buttonPanel.add(serverStopButton);
+        container.add("South", buttonPanel);
+
         serverStartButton.addActionListener(this);
+        serverStopButton.addActionListener(this);
     }
 
     @Override
@@ -34,15 +43,15 @@ public class ServerGui extends JFrame implements ActionListener{
         if(e.getSource() == serverStartButton) {
             serverStartButton.setEnabled(false);
 
-            // change print log from console to JTextArea.
             PrintStream printStream = new PrintStream(new CustomOutputStream(jTextArea));
             System.setOut(printStream);
             System.setErr(printStream);
             System.out.println("Server Thread Starting...");
 
-            // start server
             Thread thread = new Thread(new ServerAction());
             thread.start();
+        }else if(e.getSource() == serverStopButton){
+            System.exit(0);
         }
     }
 }

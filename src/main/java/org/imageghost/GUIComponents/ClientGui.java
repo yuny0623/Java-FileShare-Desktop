@@ -23,7 +23,9 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
 
     Container container = getContentPane();
     JTextArea textArea = new JTextArea();
-    JScrollPane scrollPane;
+
+    JTextArea userInfoTextArea = new JTextArea();
+    JTextArea directMessageTextArea = new JTextArea();
     JTextField inputField = new JTextField();
 
     PGP pgp;
@@ -48,7 +50,8 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
 
         setTitle("Chatting");
         setSize(300, 300);
-        setLocation(300, 300);
+        setLocationRelativeTo(null);
+
         start();
         setVisible(true);
         initNet(ip, port);
@@ -66,10 +69,32 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
         }catch(IOException e){
             System.out.println("Connection failed.");
         }
+
         Thread thread = new Thread(this);
         thread.start();
     }
 
+    public void init(){
+        getContentPane().setLayout(null);
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new BorderLayout(0, 0));
+
+        JButton jButton1 = new JButton();
+        JButton jButton2 = new JButton();
+        JButton jButton3 = new JButton();
+        JButton jButton4 = new JButton();
+
+        centerPanel.add(jButton1, BorderLayout.CENTER);
+        directMessageTextArea.setBounds(0, 0, 100, 100);
+        centerPanel.add(jButton2, BorderLayout.EAST);
+        centerPanel.add(jButton3, BorderLayout.WEST);
+        centerPanel.add(jButton4, BorderLayout.SOUTH);
+        centerPanel.setBounds(0, 0, 300, 300);
+
+        container.add(centerPanel);
+    }
+
+    /*
     public void init(){
         container.setLayout(new BorderLayout());
         scrollPane = new JScrollPane(textArea);
@@ -106,7 +131,7 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
         });
 
         southPanel.add(inputField, BorderLayout.CENTER);     // 입력창
-        centerPanel.add(scrollPane, BorderLayout.CENTER);   // 채팅 출력창
+        centerPanel.add(scrollPane, BorderLayout.CENTER);    // 채팅 출력창
         southPanel.setSize(new Dimension(300, 300));
 
         container.add(northPanel, BorderLayout.NORTH);
@@ -120,6 +145,7 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
         JPanel jpanel = new JPanel();
         jpanel.add(jScrollPane);
     }
+     */
 
     public void start(){
         setDefaultCloseOperation(EXIT_ON_CLOSE);
