@@ -293,6 +293,9 @@ public class PGP {
     }
 
     public MessageInput send(String plainText){
+        if(this.receiverPublicKey == null || this.senderPrivateKey == null || this.senderPublicKey == null){
+            return new MessageInput("", false, true, "No Key for PGP.");
+        }
         String finalResult = "";
         try {
             String originalMAC = this.generateMAC(plainText);
@@ -309,6 +312,9 @@ public class PGP {
     }
 
     public MessageOutput receive(String cipherText){
+        if(this.receiverPublicKey == null || this.senderPrivateKey == null || this.senderPublicKey == null){
+            return new MessageOutput("", false, true, "No Key for PGP.");
+        }
         String receivedPlainText = "";
         boolean integrity = false;
         try {
