@@ -24,9 +24,7 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
     Container container = getContentPane();
     JTextArea textArea = new JTextArea();
     JScrollPane scrollPane;
-    JTextField textField = new JTextField("Client Start.");
-    JMenuBar menuBar;
-    JMenu roomMenu;
+    JTextField inputField = new JTextField();
 
     PGP pgp;
 
@@ -75,8 +73,13 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
     public void init(){
         container.setLayout(new BorderLayout());
         scrollPane = new JScrollPane(textArea);
-        menuBar = new JMenuBar();
-        roomMenu = new JMenu("Option");
+
+        JPanel northPanel = new JPanel();
+        JPanel southPanel = new JPanel();
+        JPanel westPanel = new JPanel();
+        JPanel eastPanel = new JPanel();
+        JPanel centerPanel = new JPanel();
+
         JMenuItem menuItem1 = new JMenuItem(new AbstractAction("UserInfoRequest") {
             public void actionPerformed(ActionEvent e) {
                 String request = "[userInfoRequest]";
@@ -102,34 +105,32 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
             }
         });
 
-        roomMenu.add(menuItem1);
-        roomMenu.add(menuItem2);
-        roomMenu.add(menuItem3);
-        menuBar.add(roomMenu);
-        this.setJMenuBar(menuBar);
+        southPanel.add(inputField, BorderLayout.CENTER);     // 입력창
+        centerPanel.add(scrollPane, BorderLayout.CENTER);   // 채팅 출력창
+        southPanel.setSize(new Dimension(300, 300));
+
+        container.add(northPanel, BorderLayout.NORTH);
+        container.add(southPanel, BorderLayout.SOUTH);
+        container.add(westPanel, BorderLayout.WEST);
+        container.add(eastPanel, BorderLayout.EAST);
+        container.add(centerPanel, BorderLayout.CENTER);
 
         JTextArea userInfo = new JTextArea("UserInfo");
         JScrollPane jScrollPane = new JScrollPane(userInfo);
         JPanel jpanel = new JPanel();
         jpanel.add(jScrollPane);
-
-        JTextArea centerText = new JTextArea("Center");
-        container.add("West", jpanel);
-        container.add("East", scrollPane);
-        container.add("Center", centerText);
-        container.add("South", textField);
     }
 
     public void start(){
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        textField.addActionListener(this);
+        inputField.addActionListener(this);
     }
 
     @Override
     public void actionPerformed(ActionEvent e){
-        str = textField.getText();
+        str = inputField.getText();
         out.println(str);
-        textField.setText("");
+        inputField.setText("");
     }
 
     @Override

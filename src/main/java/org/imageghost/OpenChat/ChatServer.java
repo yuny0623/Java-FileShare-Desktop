@@ -22,7 +22,7 @@ public class ChatServer {
         publicKeyList = new HashMap<>();
         threadList = new HashMap<>();
 
-        System.out.println("Server start.");
+        System.out.println("Chat Server start.");
     }
 
     public void giveAndTake(){
@@ -32,6 +32,7 @@ public class ChatServer {
 
             while(true){
                 socket = serverSocket.accept();
+                System.out.println("New Socket accepted.");
                 ServerSocketThread thread = new ServerSocketThread(this, socket);
                 addClient(thread);
                 thread.start();
@@ -43,16 +44,17 @@ public class ChatServer {
 
     private synchronized void addClient(ServerSocketThread thread){
         list.add(thread);
-        System.out.println("Client 1 user entered. Total:" + list.size());
+        System.out.println("Client: 1 user entered. Total:" + list.size());
     }
 
     public synchronized void removeClient(Thread thread){
         list.remove(thread);
-        System.out.println("Client 1 user removed. Total: " + list.size());
+        System.out.println("Client: 1 user removed. Total: " + list.size());
     }
 
     public synchronized void broadCasting(String str){
         for(int i = 0; i < list.size(); i++){
+            System.out.println("Broadcasting to client from Server: " + str);
             ServerSocketThread thread = (ServerSocketThread) list.get(i);
             thread.sendMessage(str);
         }

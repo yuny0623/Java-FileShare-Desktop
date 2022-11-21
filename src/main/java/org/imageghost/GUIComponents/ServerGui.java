@@ -12,29 +12,12 @@ import java.io.UnsupportedEncodingException;
 
 public class ServerGui extends JFrame implements ActionListener{
     Container container = getContentPane();
-    String serverLogo = "\n" +
-            " _____                          \n" +
-            "/  ___|                         \n" +
-            "\\ `--.  ___ _ ____   _____ _ __ ___\n" +
-            " `--. \\/ _ \\ '__\\ \\ / / _ \\ '__|\n" +
-            "/\\__/ /  __/ |   \\ V /  __/ |  |__ |\n" +
-            "\\____/ \\___|_|    \\_/ \\___|_|   |__|\n" +
-            "                                \n" +
-            "                                \n" +
-            "                                \n" +
-            "                                \n" +
-            "                                \n" +
-            "                                \n" +
-            "                                \n" +
-            "                                \n" +
-            "                                \n" +
-            "                                \n";
-    JTextArea jTextArea = new JTextArea(serverLogo);
+    JTextArea jTextArea = new JTextArea();
     JScrollPane scrollPane = new JScrollPane(jTextArea);
     JButton serverStartButton = new JButton("Start Open Chat Server");
 
     public ServerGui(){
-        setTitle("ServerLogGui");
+        setTitle("ServerGui");
         setSize(300, 300);
         setLocation(400, 400);
         setVisible(true);
@@ -51,12 +34,13 @@ public class ServerGui extends JFrame implements ActionListener{
         if(e.getSource() == serverStartButton) {
             serverStartButton.setEnabled(false);
 
-            // change print log from consol to JTextArea.
+            // change print log from console to JTextArea.
             PrintStream printStream = new PrintStream(new CustomOutputStream(jTextArea));
             System.setOut(printStream);
             System.setErr(printStream);
+            System.out.println("Server Thread Starting...");
 
-            // server start
+            // start server
             Thread thread = new Thread(new ServerAction());
             thread.start();
         }
