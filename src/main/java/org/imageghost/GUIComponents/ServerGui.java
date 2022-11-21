@@ -50,6 +50,13 @@ public class ServerGui extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == serverStartButton) {
             serverStartButton.setEnabled(false);
+
+            // change print log from consol to JTextArea.
+            PrintStream printStream = new PrintStream(new CustomOutputStream(jTextArea));
+            System.setOut(printStream);
+            System.setErr(printStream);
+
+            // server start
             Thread thread = new Thread(new ServerAction());
             thread.start();
         }

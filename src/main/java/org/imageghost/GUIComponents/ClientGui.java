@@ -101,6 +101,7 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
                 new DirectMessageGui(socket, receiverNickname, receiverPublicKey);
             }
         });
+
         roomMenu.add(menuItem1);
         roomMenu.add(menuItem2);
         roomMenu.add(menuItem3);
