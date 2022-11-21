@@ -14,7 +14,6 @@ public class ChatServer {
     ServerSocket serverSocket;
     Socket socket;
     List<Thread> list;
-    List<Thread> directMessageRoomList;
     static HashMap<String, String> publicKeyList;
     static HashMap<String, Thread> threadList;
 
@@ -71,15 +70,10 @@ public class ChatServer {
         thread.sendMessage(str);
     }
 
-    public synchronized void sendDirectMessage(String str, String nickname, String senderPublicKey){
+    public synchronized void sendDirectMessage(String str, String nickname, String senderNickname){
         ServerSocketThread thread = (ServerSocketThread) threadList.get(nickname);
         HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put(senderPublicKey, str);
+        hashMap.put(senderNickname, str);
         thread.messageQueue.add(hashMap);
-    }
-
-    public synchronized Queue<HashMap<String, String>> getMyDirectMessage(String nickname){
-        ServerSocketThread thread = (ServerSocketThread) threadList.get(nickname);
-        return thread.messageQueue;
     }
 }

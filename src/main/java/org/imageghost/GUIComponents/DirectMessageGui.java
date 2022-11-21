@@ -117,6 +117,9 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
         while(true){
             try{
                 str = in.readLine();
+                if(str==null){
+                    continue;
+                }
                 MessageOutput messageOutput = pgp.receive(str);
                 commonSecretKey = pgp.decryptedSecretKey;
                 if(messageOutput.isError()){
@@ -137,6 +140,9 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
         while(true){
             try {
                 str = in.readLine();
+                if(str == null){
+                    continue;
+                }
                 String receivedPlainText = AESCipherMaker.decryptWithBase64(str, commonSecretKey);
                 textArea.append("messageOutput: " + receivedPlainText + "\n");
             } catch (Exception e) {
