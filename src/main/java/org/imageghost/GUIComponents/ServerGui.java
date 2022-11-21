@@ -15,7 +15,7 @@ public class ServerGui extends JFrame implements ActionListener{
     String serverLogo = "\n" +
             " _____                          \n" +
             "/  ___|                         \n" +
-            "\\ `--.  ___ _ ____   _____ _ __ \n" +
+            "\\ `--.  ___ _ ____   _____ _ __ ___\n" +
             " `--. \\/ _ \\ '__\\ \\ / / _ \\ '__|\n" +
             "/\\__/ /  __/ |   \\ V /  __/ |  |__ |\n" +
             "\\____/ \\___|_|    \\_/ \\___|_|   |__|\n" +

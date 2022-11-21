@@ -5,6 +5,7 @@ import org.imageghost.SecureAlgorithm.PGP.PGP;
 import org.imageghost.SecureAlgorithm.Utils.RSAUtil;
 import org.imageghost.Wallet.KeyWallet;
 
+import javax.crypto.NullCipher;
 import javax.crypto.SecretKey;
 import javax.swing.*;
 import java.awt.*;
@@ -132,8 +133,12 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
 
     @Override
     public void run() {
-        out.println(nickname);
-        out.println(publicKey);
+        try {
+            out.println(nickname);
+            out.println(publicKey);
+        }catch(NullPointerException e){
+            textArea.setText("[Error - Server is not running]: " + e.getMessage());
+        }
 
         while(true){
             try{
