@@ -29,13 +29,12 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
     String str;
     String receiverPublicKey;
     SecretKey commonSecretKey;
-    String myNickname;
-    String opponentNickname;
     String receiverNickname;
 
     public DirectMessageGui(Socket socket, String receiverNickname, String receiverPublicKey){
         this.socket = socket;
         this.receiverNickname = receiverNickname;
+        this.receiverPublicKey = receiverPublicKey;
 
         this.pgp = new PGP();
         this.pgp.setReceiverPublicKey(receiverPublicKey);
@@ -97,6 +96,8 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
             MessageInput messageInput = pgp.send(str);
             if (messageInput.isError()) {
                 str = messageInput.getErrorMessage();
+                textArea.setText("Error: " + str + '\n');
+                textField.setText("");
             } else {
                 out.println("[DirectMessageTo:" + receiverNickname + "]" + messageInput.getCipherText());
                 textField.setText("");
@@ -107,7 +108,8 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
                 out.println("[DirectMessageTo:" + receiverNickname + "]" + AESCipherMaker.encryptWithBase64(str, commonSecretKey));
                 textField.setText("");
             } catch (Exception ex) {
-                throw new RuntimeException(ex);
+                textArea.setText(ex.getMessage());
+                textField.setText("");
             }
         }
     }
@@ -123,9 +125,11 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
                 MessageOutput messageOutput = pgp.receive(str);
                 commonSecretKey = pgp.decryptedSecretKey;
                 if(messageOutput.isError()){
+                    textArea.setText("[Error]:"+messageOutput.getErrorMessage());
                     continue;
                 }
                 if(!messageOutput.isIntegrity()){
+                    textArea.setText("[Integrity Error]:"+messageOutput.isIntegrity());
                     continue;
                 }
                 textArea.append("messageOutput:" + messageOutput.getPlainText() + "\n");
@@ -146,7 +150,7 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
                 String receivedPlainText = AESCipherMaker.decryptWithBase64(str, commonSecretKey);
                 textArea.append("messageOutput: " + receivedPlainText + "\n");
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                textArea.setText("[Error]: "+ e.getMessage());
             }
         }
     }
