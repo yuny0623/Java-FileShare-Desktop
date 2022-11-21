@@ -38,14 +38,14 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
     String publicKey;
     String privateKey;
 
-    HashMap<String, String> userMap = new HashMap<>(); // nickname, publicKey
-    HashMap<String, SecretKey> commonKeyMap = new HashMap<>(); // nickname, commonkey
+    HashMap<String, String> userMap = new HashMap<>();         // nickname, publicKey
+    HashMap<String, SecretKey> commonKeyMap = new HashMap<>(); // nickname, commonKey -> for DirectMessage
 
     public ClientGui(String ip, int port){
         nickname = JOptionPane.showInputDialog("Enter User Nickname");
         publicKey = KeyWallet.getMainASymmetricKey().getPublicKey();
         privateKey = KeyWallet.getMainASymmetricKey().getPrivateKey();
-        userMap.put(nickname, publicKey); // 본인 추가
+        userMap.put(nickname, publicKey);
 
         setTitle("Chatting");
         setSize(300, 300);
@@ -60,7 +60,6 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
     public void initNet(String ip, int port){
         try{
             socket = new Socket(ip, port);
-
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out =  new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
         }catch(UnknownHostException e){
@@ -68,7 +67,6 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
         }catch(IOException e){
             System.out.println("Connection failed.");
         }
-
         Thread thread = new Thread(this);
         thread.start();
     }
@@ -76,7 +74,6 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
     public void init(){
         container.setLayout(new BorderLayout());
         scrollPane = new JScrollPane(textArea);
-
         menuBar = new JMenuBar();
         roomMenu = new JMenu("Option");
         JMenuItem menuItem1 = new JMenuItem(new AbstractAction("UserInfoRequest") {
@@ -109,10 +106,15 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
         menuBar.add(roomMenu);
         this.setJMenuBar(menuBar);
 
-        TextArea userInfo = new TextArea("UserInfo");
+        JTextArea userInfo = new JTextArea("UserInfo");
         JScrollPane jScrollPane = new JScrollPane(userInfo);
-        container.add("West", jScrollPane);
-        container.add("Center", scrollPane);
+        JPanel jpanel = new JPanel();
+        jpanel.add(jScrollPane);
+
+        JTextArea centerText = new JTextArea("Center");
+        container.add("West", jpanel);
+        container.add("East", scrollPane);
+        container.add("Center", centerText);
         container.add("South", textField);
     }
 
