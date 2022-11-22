@@ -1,0 +1,36 @@
+2022-11-17
+
+해야할 일:
+오늘은 다이렉트 메시지 기능을 구현해봅시다.
+-> PGP 구조 적용해서 구현해보자.
+그리고 Config 파일은 ClientConfig 랑 ServerConfig로 분리하자.
+어차피 나중에 이것도 전체 구조를 둘로 찢을 가능성이 있음.
+
+
+--> 오늘은 DirectMessage 까지만 끝내도 됨. 딱 그것까지만
+아마 thread 써야할듯?
+
+Direct Message 기능 구현할때 이걸 DM방을 만들면서 소켓을 따로 생성하려고 하면
+좀 많이 복잡해지네. 이렇게 하지말고 소켓은 그대로 유지하고 DM 방에 들어간 순간
+그 방에서 PGP 적용해서 암복호화하면서 통신하면 될듯. 물론 한번 대칭키 공유하고 나면 그 이후부터는
+그냥 대칭키로 통신해도 됨.
+
+근데 문제는... 메시지 큐를 직접 구현해서 써야할 것 같은데?
+왜 메시지 큐를 직접 구현해야하냐면요 -> 서버 소켓에서 받은 것들 중에서
+특정 소켓으로 가는길을 분류해야하기 때문임.
+마찬가지로 serverSocketThread 에 대해서도 구분할 수 있어야함. ->
+이게 분류되지 않으면 소켓을 특정할 수가 없어요.
+
+<Server>                                 <Client>
+ChatServer
+ServerSocketThread     <-->              socket
+ServerSocketThread     <-->              socket
+ServerSocketThread     <-->              socket
+ServerSocketThread     <-->              socket
+ServerSocketThread     <-->              socket
+
+DirectMessage? 어떻게 구현할래?
+clientSocket에서 자기 ServerSocketThread로 PGP 적용해서 전달하기만 하면 됨.
+
+open chatting room 은 server 의 broadcasting 기능 활용하면 되고
+그게 아니라 그냥 DM 기능은 sendMessage 기능 활용하면 됨.
