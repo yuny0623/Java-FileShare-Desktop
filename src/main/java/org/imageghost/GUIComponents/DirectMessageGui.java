@@ -29,15 +29,15 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
     String str;
     String receiverPublicKey;
     SecretKey commonSecretKey;
-    String myNickname;
-    String opponentNickname;
+    String receiverNickname;
 
-    public DirectMessageGui(Socket socket, String receiverPublicKey){
+    public DirectMessageGui(Socket socket, String receiverNickname, String receiverPublicKey){
         this.socket = socket;
+        this.receiverNickname = receiverNickname;
         this.receiverPublicKey = receiverPublicKey;
 
         this.pgp = new PGP();
-        this.pgp.setReceiverPublicKey(this.receiverPublicKey);
+        this.pgp.setReceiverPublicKey(receiverPublicKey);
         this.pgp.setSenderPrivateKey(KeyWallet.getMainASymmetricKey().getPrivateKey());
         this.pgp.setSenderPublicKey(KeyWallet.getMainASymmetricKey().getPublicKey());
 
@@ -69,6 +69,19 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
         scrollPane = new JScrollPane(textArea);
         container.add("Center", scrollPane);
         container.add("South", textField);
+
+        JMenuBar menuBar = new JMenuBar();
+        JMenu directMessageMenu = new JMenu("[MyDirectMessage]");
+        JMenuItem menuItem = new JMenuItem(new AbstractAction("[MyDirectMessage]") {
+            public void actionPerformed(ActionEvent e) {
+                String request = "[MyDirectMessage]";
+                out.println(request);
+            }
+        });
+
+        directMessageMenu.add(menuItem);
+        menuBar.add(directMessageMenu);
+        this.setJMenuBar(menuBar);
     }
 
     public void start(){
@@ -83,17 +96,20 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
             MessageInput messageInput = pgp.send(str);
             if (messageInput.isError()) {
                 str = messageInput.getErrorMessage();
+                textArea.setText("Error: " + str + '\n');
+                textField.setText("");
             } else {
-                out.println("[DirectMessageTo:"+receiverPublicKey+"]" + messageInput.getCipherText());
+                out.println("[DirectMessageTo:" + receiverNickname + "]" + messageInput.getCipherText());
                 textField.setText("");
             }
         }else{
             str = textField.getText();
             try {
-                out.println("[DirectMessageTo:"+receiverPublicKey+"]" + AESCipherMaker.encryptWithBase64(str, commonSecretKey));
+                out.println("[DirectMessageTo:" + receiverNickname + "]" + AESCipherMaker.encryptWithBase64(str, commonSecretKey));
                 textField.setText("");
             } catch (Exception ex) {
-                throw new RuntimeException(ex);
+                textArea.setText(ex.getMessage());
+                textField.setText("");
             }
         }
     }
@@ -103,12 +119,17 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
         while(true){
             try{
                 str = in.readLine();
+                if(str==null){
+                    continue;
+                }
                 MessageOutput messageOutput = pgp.receive(str);
                 commonSecretKey = pgp.decryptedSecretKey;
                 if(messageOutput.isError()){
+                    textArea.setText("[Error]:"+messageOutput.getErrorMessage());
                     continue;
                 }
                 if(!messageOutput.isIntegrity()){
+                    textArea.setText("[Integrity Error]:"+messageOutput.isIntegrity());
                     continue;
                 }
                 textArea.append("messageOutput:" + messageOutput.getPlainText() + "\n");
@@ -123,10 +144,13 @@ public class DirectMessageGui extends JFrame implements ActionListener, Runnable
         while(true){
             try {
                 str = in.readLine();
+                if(str == null){
+                    continue;
+                }
                 String receivedPlainText = AESCipherMaker.decryptWithBase64(str, commonSecretKey);
-                textArea.append(receivedPlainText + "\n");
+                textArea.append("messageOutput: " + receivedPlainText + "\n");
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                textArea.setText("[Error]: "+ e.getMessage());
             }
         }
     }

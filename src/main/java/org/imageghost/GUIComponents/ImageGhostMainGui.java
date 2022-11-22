@@ -16,13 +16,12 @@ public class ImageGhostMainGui extends JFrame implements ActionListener {
     JPanel buttonPanel = new JPanel();
 
     public ImageGhostMainGui(){
-        setTitle("ImageGhost");
-        setSize(300, 300);
+        setTitle("ImageGhostClient");
+        setSize(300, 100);
         setLocation(550, 550);
         setVisible(true);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         container.setLayout(new BorderLayout());
-
 
         buttonPanel.add("East", clientButton);
         buttonPanel.add("West", serverButton);
@@ -30,7 +29,6 @@ public class ImageGhostMainGui extends JFrame implements ActionListener {
 
         clientButton.addActionListener(this);
         serverButton.addActionListener(this);
-
     }
 
     @Override

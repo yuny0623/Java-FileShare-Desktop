@@ -8,15 +8,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLOutput;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class ChatServer {
     ServerSocket serverSocket;
     Socket socket;
     List<Thread> list;
-    List<Thread> directMessageRoomList;
     static HashMap<String, String> publicKeyList;
     static HashMap<String, Thread> threadList;
 
@@ -25,7 +22,7 @@ public class ChatServer {
         publicKeyList = new HashMap<>();
         threadList = new HashMap<>();
 
-        System.out.println("Server start.");
+        System.out.println("Chat Server start.");
     }
 
     public void giveAndTake(){
@@ -35,6 +32,7 @@ public class ChatServer {
 
             while(true){
                 socket = serverSocket.accept();
+                System.out.println("New Socket accepted.");
                 ServerSocketThread thread = new ServerSocketThread(this, socket);
                 addClient(thread);
                 thread.start();
@@ -46,23 +44,31 @@ public class ChatServer {
 
     private synchronized void addClient(ServerSocketThread thread){
         list.add(thread);
-        System.out.println("Client 1 user entered. Total:" + list.size());
+        System.out.println("Client: 1 user entered. Total:" + list.size());
     }
 
     public synchronized void removeClient(Thread thread){
         list.remove(thread);
-        System.out.println("Client 1 user removed. Total: " + list.size());
+        System.out.println("Client: 1 user removed. Total: " + list.size());
     }
 
     public synchronized void broadCasting(String str){
         for(int i = 0; i < list.size(); i++){
+            System.out.println("Broadcasting to client from Server: " + str);
             ServerSocketThread thread = (ServerSocketThread) list.get(i);
             thread.sendMessage(str);
         }
     }
 
-    public synchronized  void sendMessageTo(String str, String publicKey){
-        ServerSocketThread thread = (ServerSocketThread) threadList.get(publicKey);
+    public synchronized  void sendMessageTo(String str, String nickname){
+        ServerSocketThread thread = (ServerSocketThread) threadList.get(nickname);
         thread.sendMessage(str);
+    }
+
+    public synchronized void sendDirectMessage(String str, String nickname, String senderNickname){
+        ServerSocketThread thread = (ServerSocketThread) threadList.get(nickname);
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put(senderNickname, str);
+        thread.messageQueue.add(hashMap);
     }
 }

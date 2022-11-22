@@ -5,6 +5,8 @@ import org.imageghost.SecureAlgorithm.PGP.PGP;
 import org.imageghost.SecureAlgorithm.Utils.RSAUtil;
 import org.imageghost.Wallet.KeyWallet;
 
+import javax.crypto.NullCipher;
+import javax.crypto.SecretKey;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -21,10 +23,10 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
 
     Container container = getContentPane();
     JTextArea textArea = new JTextArea();
-    JScrollPane scrollPane;
-    JTextField textField = new JTextField();
-    JMenuBar menuBar;
-    JMenu roomMenu;
+
+    JTextArea userInfoTextArea = new JTextArea();
+    JTextArea directMessageTextArea = new JTextArea();
+    JTextField inputField = new JTextField();
 
     PGP pgp;
 
@@ -37,16 +39,19 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
     String publicKey;
     String privateKey;
 
-    HashMap<String, String> userMap = new HashMap<>();
+    HashMap<String, String> userMap = new HashMap<>();         // nickname, publicKey
+    HashMap<String, SecretKey> commonKeyMap = new HashMap<>(); // nickname, commonKey -> for DirectMessage
 
     public ClientGui(String ip, int port){
-        nickname = JOptionPane.showInputDialog("닉네임을 입력하세요");
+        nickname = JOptionPane.showInputDialog("Enter User Nickname");
         publicKey = KeyWallet.getMainASymmetricKey().getPublicKey();
         privateKey = KeyWallet.getMainASymmetricKey().getPrivateKey();
+        userMap.put(nickname, publicKey);
 
         setTitle("Chatting");
         setSize(300, 300);
-        setLocation(300, 300);
+        setLocationRelativeTo(null);
+
         start();
         setVisible(true);
         initNet(ip, port);
@@ -57,7 +62,6 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
     public void initNet(String ip, int port){
         try{
             socket = new Socket(ip, port);
-
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out =  new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
         }catch(UnknownHostException e){
@@ -71,20 +75,44 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
     }
 
     public void init(){
+        getContentPane().setLayout(null);
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new BorderLayout(0, 0));
+
+        JButton jButton1 = new JButton();
+        JButton jButton2 = new JButton();
+        JButton jButton3 = new JButton();
+        JButton jButton4 = new JButton();
+
+        centerPanel.add(jButton1, BorderLayout.CENTER);
+        directMessageTextArea.setBounds(0, 0, 100, 100);
+        centerPanel.add(jButton2, BorderLayout.EAST);
+        centerPanel.add(jButton3, BorderLayout.WEST);
+        centerPanel.add(jButton4, BorderLayout.SOUTH);
+        centerPanel.setBounds(0, 0, 300, 300);
+
+        container.add(centerPanel);
+    }
+
+    /*
+    public void init(){
         container.setLayout(new BorderLayout());
         scrollPane = new JScrollPane(textArea);
 
-        menuBar = new JMenuBar();
-        roomMenu = new JMenu("Room");
-        JMenuItem menuItem1 = new JMenuItem(new AbstractAction("[userInfoRequest]") {
+        JPanel northPanel = new JPanel();
+        JPanel southPanel = new JPanel();
+        JPanel westPanel = new JPanel();
+        JPanel eastPanel = new JPanel();
+        JPanel centerPanel = new JPanel();
+
+        JMenuItem menuItem1 = new JMenuItem(new AbstractAction("UserInfoRequest") {
             public void actionPerformed(ActionEvent e) {
                 String request = "[userInfoRequest]";
-                System.out.println(request);
                 out.println(request);
             }
         });
 
-        JMenuItem menuItem2 = new JMenuItem(new AbstractAction("[userInfoResponse]") {
+        JMenuItem menuItem2 = new JMenuItem(new AbstractAction("UserInfoResponse") {
             public void actionPerformed(ActionEvent e) {
                 StringBuffer sb = new StringBuffer();
                 for(Map.Entry<String, String> entry: userMap.entrySet()){
@@ -94,56 +122,69 @@ public class ClientGui extends JFrame implements ActionListener, Runnable {
             }
         });
 
-        JMenuItem menuItem3 = new JMenuItem(new AbstractAction("[DirectMessage]") {
+        JMenuItem menuItem3 = new JMenuItem(new AbstractAction("DirectMessage") {
             public void actionPerformed(ActionEvent e) {
-                String receiverPublicKey = JOptionPane.showInputDialog(null, "publicKey", "publicKey");
-                try {
-                    InetAddress ia = InetAddress.getLocalHost();
-                    String ipStr = ia.toString();
-                    System.out.printf("Before DirectMessage socket info: %s\n", socket.getInetAddress());
-                    new DirectMessageGui(socket, receiverPublicKey);
-                }catch(UnknownHostException err){
-                    err.printStackTrace();
-                }
+                String receiverPublicKey = JOptionPane.showInputDialog(null, "Receiver PublicKey", "publicKey");
+                String receiverNickname = JOptionPane.showInputDialog(null, "Receiver Nickname", "Nickname");
+                new DirectMessageGui(socket, receiverNickname, receiverPublicKey);
             }
         });
 
-        roomMenu.add(menuItem1);
-        roomMenu.add(menuItem2);
-        roomMenu.add(menuItem3);
-        menuBar.add(roomMenu);
+        southPanel.add(inputField, BorderLayout.CENTER);     // 입력창
+        centerPanel.add(scrollPane, BorderLayout.CENTER);    // 채팅 출력창
+        southPanel.setSize(new Dimension(300, 300));
 
-        this.setJMenuBar(menuBar);
-        container.add("Center", scrollPane);
-        container.add("South", textField);
+        container.add(northPanel, BorderLayout.NORTH);
+        container.add(southPanel, BorderLayout.SOUTH);
+        container.add(westPanel, BorderLayout.WEST);
+        container.add(eastPanel, BorderLayout.EAST);
+        container.add(centerPanel, BorderLayout.CENTER);
+
+        JTextArea userInfo = new JTextArea("UserInfo");
+        JScrollPane jScrollPane = new JScrollPane(userInfo);
+        JPanel jpanel = new JPanel();
+        jpanel.add(jScrollPane);
     }
+     */
 
     public void start(){
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        textField.addActionListener(this);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        inputField.addActionListener(this);
     }
 
     @Override
     public void actionPerformed(ActionEvent e){
-        str = textField.getText();
+        str = inputField.getText();
         out.println(str);
-        textField.setText("");
+        inputField.setText("");
     }
 
     @Override
     public void run() {
-        out.println(nickname);
-        out.println(publicKey);
+        try {
+            out.println(nickname);
+            out.println(publicKey);
+        }catch(NullPointerException e){
+            textArea.setText("[Error - Server is not running]: " + e.getMessage());
+        }
 
         while(true){
             try{
                 str = in.readLine();
+                if(str == null){
+                    continue;
+                }
                 if(str.length() >= 18 && str.substring(0, 17 + 1).equals("[userInfoResponse]")){
                     String[] info = str.split(" ");
-                    System.out.printf("this is the string received from server: " + str);
                     for(int i = 1; i < info.length; i+=2){
                         userMap.put(info[i], info[i+1]);
                     }
+                    continue;
+                }else if(str.length() >= 11 && str.substring(0, 11 + 1).equals("[New Member]")){
+                    String strBody = str.substring(11+1, str.length()); // [sss:aaa]
+                    String receivedNickname = strBody.substring(1, strBody.indexOf(":"));
+                    String receivedPublicKey = strBody.substring(strBody.indexOf(":") + 1, strBody.indexOf("]"));
+                    userMap.put(receivedNickname, receivedPublicKey);
                     continue;
                 }
                 textArea.append(str+ "\n");

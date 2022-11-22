@@ -1,8 +1,12 @@
 package org.imageghost.OpenChat;
 
+import javax.crypto.SecretKey;
 import java.io.*;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 public class ServerSocketThread extends Thread{
     Socket socket;
@@ -12,11 +16,14 @@ public class ServerSocketThread extends Thread{
     String nickname;
     String threadName;
     String publicKey;
+    SecretKey commonSecretKey;
+    Queue<HashMap<String, String>> messageQueue;
 
     public ServerSocketThread(ChatServer server, Socket socket){
         this.server = server;
         this.socket = socket;
         threadName = super.getName();
+        messageQueue = new LinkedList<>();
         System.out.println(socket.getInetAddress() + ": entered.");
         System.out.println("Thread Name: " + threadName);
     }
@@ -36,12 +43,12 @@ public class ServerSocketThread extends Thread{
 
             if(nickname != null && publicKey != null){
                 ChatServer.publicKeyList.put(nickname, publicKey);
-                ChatServer.threadList.put(publicKey, this);
+                ChatServer.threadList.put(nickname, this);
             }else{
                 throw new IOException("No Nickname and No PublicKey");
             }
 
-            server.broadCasting("[" + nickname + "] entered.");
+            server.broadCasting("[New Member][" + nickname + ":" + publicKey + "] entered.");
 
             while(true){
                 String strIn = in.readLine();
@@ -53,8 +60,19 @@ public class ServerSocketThread extends Thread{
                     }
                     sendMessage("[userInfoResponse] " + sb.toString());
                 } else if(strIn.length() >= 17 && strIn.substring(0, 16 + 1).equals("[DirectMessageTo:")){
-                    String receiverPublicKey = strIn.substring(16, strIn.indexOf("]"));
-                    server.sendMessageTo(strIn, receiverPublicKey);
+                    String nickname = strIn.substring(16 + 1, strIn.indexOf("]"));
+                    String receivedMessage = strIn.substring(strIn.indexOf("]") + 1, strIn.length());
+                    System.out.println("strIn: " + strIn);
+                    System.out.println("nickname:" + nickname);
+                    System.out.println("receivedMessage: " + receivedMessage);
+                    server.sendDirectMessage(receivedMessage, nickname, this.nickname);
+                } else if(strIn.equals("[MyDirectMessage]")) {
+                    StringBuffer sb = new StringBuffer();
+                    for(int i = 0; i < messageQueue.size(); i++){
+                        HashMap<String, String> val = messageQueue.poll();
+                        sb.append(val.toString());
+                    }
+                    sendMessage("[MyDirectMessage] " + sb.toString());
                 } else {
                     server.broadCasting("[" + nickname + "]" + strIn);
                 }
