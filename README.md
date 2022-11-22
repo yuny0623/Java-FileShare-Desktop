@@ -1,4 +1,4 @@
-ImageGhostClient for Desktop
+FileShare Desktop
 ============================
 
 ### 1. 프로젝트 소개
