@@ -7,7 +7,6 @@ import java.security.NoSuchAlgorithmException;
 public class SymmetricKey implements Key {
     private SecretKey AESKey;
     private String content;
-
     public SymmetricKey(){
         KeyGenerator generator = null;
         try {

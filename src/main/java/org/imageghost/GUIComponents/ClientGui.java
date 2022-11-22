@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.UUID;
 
 public class ClientGui extends JFrame implements ActionListener, Runnable {
-
     Container container = getContentPane();
     JTextArea textArea = new JTextArea();
 

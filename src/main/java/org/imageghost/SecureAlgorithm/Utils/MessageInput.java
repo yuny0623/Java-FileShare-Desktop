@@ -5,7 +5,6 @@ public class MessageInput {
     boolean send;
     boolean error;
     String errorMessage;
-
     public MessageInput(String cipherText, boolean send, boolean error, String errorMessage){
         this.cipherText = cipherText;
         this.send = send;

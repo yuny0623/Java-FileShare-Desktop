@@ -6,10 +6,8 @@ import java.util.HashMap;
 
 public class ASymmetricKey implements Key{
     private final int KEY_SIZE = 2048;
-
     private HashMap<String, String> keyMap = new HashMap<>();
     private String content;
-
     private String publicKey;
     private String privateKey;
 

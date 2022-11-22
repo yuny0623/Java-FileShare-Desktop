@@ -5,7 +5,6 @@ import org.imageghost.OpenChat.ServerAction;
 import org.junit.Test;
 
 public class TransportTest {
-
     @Test
     public void TCP_클라이언트_서버_테스트() throws InterruptedException {
         Thread thread = new Thread(new ServerAction());

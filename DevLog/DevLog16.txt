@@ -1,0 +1,11 @@
+2022-11-22
+
+할일:
+clientGui 단 좀 레이아웃 깔끔하게 정리하고 DirectMessage 사용하는거 messageQueue 처럼 쓰는걸로 바꿉시다.
+ClientGui 에서 userInfoResponse 볼 수 있게 정리해주고 DirectMessage 도 clientGui 에서 보낼 수 있게 합시다.
+마찬가지로 나머지 기능들도 그냥 ClientGui에 다 박아넣자.
+DirectMessage 기능 구현에 대해서는 좀 생각이 많은데 일단 큐 쓰는게 좀 합당할듯. 약간 이메일 느낌으로? 우체통에
+편지통 열어보는거랑 비슷하게 만들어보자. 
+
+진행상황:
+.gitignore 수정했음. 너무 많이 제외시켰네. build.gradle는 있어야됨.

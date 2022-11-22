@@ -46,7 +46,6 @@ public class ServerGui extends JFrame implements ActionListener{
             System.setOut(printStream);
             System.setErr(printStream);
             System.out.println("Server Thread Starting...");
-
             Thread thread = new Thread(new ServerAction());
             thread.start();
         }else if(e.getSource() == serverStopButton){

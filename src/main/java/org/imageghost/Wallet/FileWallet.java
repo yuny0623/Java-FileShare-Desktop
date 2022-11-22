@@ -4,7 +4,6 @@ public class FileWallet implements Wallet{
     String fileOwnerPublicKey;
     String fileCipherText;
     String merkleTreeRootValue;
-
     public void setFileCipherText(String fileCipherText) {
         this.fileCipherText = fileCipherText;
     }

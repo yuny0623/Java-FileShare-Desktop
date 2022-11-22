@@ -15,7 +15,6 @@ import java.util.HashMap;
 
 public class PGPTest {
     PGP pgp;
-
     ASymmetricKey senderAsymmetricKey;
     ASymmetricKey receiverAsymmetricKey;
 
@@ -85,7 +84,6 @@ public class PGPTest {
         Assert.assertEquals(originalMAC, decodedMAC);
     }
 
-
     @Test
     public void 메시지_body_생성_테스트(){
         // given
@@ -106,7 +104,6 @@ public class PGPTest {
         Assert.assertEquals(originalPlainText, receivedPlainText);
         Assert.assertEquals(originalDigitalSignature, receivedDigitalSignature);
     }
-
 
     @Test
     public void body를_AES키로_암호화_복호화_테스트(){

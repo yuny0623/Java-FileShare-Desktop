@@ -9,7 +9,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 
 public class MerkleTreeTest {
-
     @Test
     public void 머클트리_생성_테스트(){
         // given

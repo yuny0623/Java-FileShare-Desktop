@@ -1,11 +1,11 @@
 2022-10-14
-1. digital signature (encryption with private key )
-https0//cornswrold.tistory.com/49
+1. digital signature (encryption with private key)
+https://cornswrold.tistory.com/49
 
 2. javax.crypto.SecretKey 에 관하여
-https0//tmxhsk99.tistory.com/204
+https://tmxhsk99.tistory.com/204
 
-이슈0
+이슈:
 private key encryption 은 해결했음. -> 전자서명 해결됨.
 
 private key로 encryption
@@ -14,7 +14,7 @@ public key로 decryption 가능.
 이슈가 있네요... 흑
 
 new String을 지향하세요.
-https0//stackoverflow.com/questions/15900831/difference-between-stringvalue-and-value-tostring-new-longvalue-and-lon
+https://stackoverflow.com/questions/15900831/difference-between-stringvalue-and-value-tostring-new-longvalue-and-lon
 
 하... 변환 과정에서 포맷바껴서 개고생하네 ㅠㅠ
 

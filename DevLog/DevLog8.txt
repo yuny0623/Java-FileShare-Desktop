@@ -5,13 +5,13 @@
 2. Java Swing 메인 GUI 완성하기
 3. FileTree 라는 개념을 생각중인데 이것도 구현해보자. <- 그런데 이건 좀 추상적으로 생각하고 있는데 실제 구현이 가능할지는 모르겠다.
 (FileTree 같은 건 왜 없을까? MerkleTree 는 검증에만 사용되는 개념이다. 즉 트리 내에 무언가를 저장하는게 아니다.
-그런데 검증이 아니라 무언가를 저장할 수는 없나? FileTree 라는 개념을 만들어서 파일을 binary로 깐다음에 해당 String을 encryption
+그런데 검증이 아니라 무언가를 저장할 수는 없나? FileTree 라는 개념을 만들어서 파일을 binary로 깐 다음에 해당 String을 encryption
 한 cipherText를 Hash마냥 저장한 뒤 트리의 각 노드에 저장시킬 순 없을까? master key 로 쓰일 public key로 전부다 encryption을 하던
 완벽히 동일한 트리를 하나더 만들어서 key tree 로 사용하던 어떤 방법으로든 가능하지 않을까?)
 
 <Reference>
 1. Diffie-hellman usecase in oracle doc.
-0 https0//docs.oracle.com/javase/7/docs/technotes/guides/security/crypto/CryptoSpec.html#DH2Ex
+: https://docs.oracle.com/javase/7/docs/technotes/guides/security/crypto/CryptoSpec.html#DH2Ex
 
 2. Blockchain
-https0//betterprogramming.pub/the-blockchain-explained-with-a-java-implementation-27b74d478223
+https://betterprogramming.pub/the-blockchain-explained-with-a-java-implementation-27b74d478223

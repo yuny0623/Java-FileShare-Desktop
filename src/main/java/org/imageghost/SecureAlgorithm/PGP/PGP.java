@@ -12,7 +12,6 @@ import java.util.Base64;
 import java.util.HashMap;
 
 public class PGP {
-
     /**
      PGP Communication Implementation in Java.
      @Date 2022-10-20
@@ -51,11 +50,8 @@ public class PGP {
     private String senderPrivateKey;
     private String receiverPublicKey;
     private String receiverPrivateKey;
-
     public SecretKey decryptedSecretKey;
     public SecretKey secretKeyOriginal;
-
-
     private static PGP pgp;
 
     public static synchronized PGP getPGP(){
@@ -111,7 +107,6 @@ public class PGP {
     public String encryptWithPrivateKey(String plainText, String senderPrivateKey) {
         PrivateKey privateKey;
         String encryptedText = "";
-
         try {
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             byte[] bytePrivateKey = Base64.getDecoder().decode(senderPrivateKey.getBytes());
@@ -224,7 +219,6 @@ public class PGP {
         dataMap.put("ee", ee);
         dataMap.put("body", body);
         return dataMap;
-
     }
 
     public HashMap<String, String> bodySplitter(String body){
@@ -283,7 +277,6 @@ public class PGP {
 
     public byte[] decode(String encryptedData, String stringPrivateKey) {
         byte[] byteDecryptedData = null;
-
         try {
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             byte[] bytePrivateKey = Base64.getDecoder().decode(stringPrivateKey.getBytes());

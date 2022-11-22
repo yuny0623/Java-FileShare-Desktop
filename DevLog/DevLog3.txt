@@ -1,9 +1,9 @@
 2022-10-20
 
-진행상황0
+진행상황:
 시험 끝났구요 이제 행복 코딩만 합시다 ㅎㅎ...
 
-이슈0
+이슈:
 1. 테스트 코드 작성에서 좀 막혔는데 이부분만 해결하면 PGP 는 끝남.
     EE 에서 AES 키 꺼내는 부분에서 어째선지 자꾸 인코딩이 깨지네. 이것만 해결해봅시다.
 
@@ -11,9 +11,9 @@
     전자봉투 관련된 테스트만 전부 fail 뜨네.
 
 2. String 을 input 으로 줬을때 무조건 encryption, decryption 작동하는 예제가 필요했음.
-    -> 기준이 되는 예제. 찾아봤는데... 아래 참고자료에 있는게 가장 잘 작동하네.
+    -> 기준이 되는 예제를 찾아봤는데... 아래 참고자료에 있는게 가장 잘 작동하네.
 
-이슈 해결 방법0
+이슈 해결 방법:
 결국에는 최종적으로 encode, decode 하는 과정에서 String 으로 변환하게 되면 byte array 가 다른 값으로 나오게 됨.
 그래서 String 으로 굳이 변환한걸 input 으로 받고 굳이 String으로 변환해서 output 을 내주는 것보다는 그냥
 doFinal 했던 결과인 byte array 를 output 으로 리턴해주고, input으로는 secretKey.getEncoded 한 값을 그냥
@@ -25,7 +25,7 @@ new String 도 애초에 굳이 타입 맞춘다고 해줬던게 문제였음. �
 + Base64 Encoding, Decoding 문제이거나 혹은 UTF-8 변환 때문에 발생하는 문제인줄 알았는데 이것도 아닌듯...
 그냥 encode, decode 에서의 byte[] 가 문제임. 그것만 해결하면 됩니다.
 
-참고자료0
+참고자료:
 공개키 (RSA) encryption, decryption 예제 중 가장 정상적으로 작동하는 기준 예제
-https0//this-programmer.tistory.com/259
+https://this-programmer.tistory.com/259
 

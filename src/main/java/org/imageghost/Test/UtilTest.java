@@ -9,7 +9,6 @@ import org.junit.Test;
 import java.io.UnsupportedEncodingException;
 
 public class UtilTest {
-
     @Test
     public void contains메소드테스트(){
         // given
@@ -21,7 +20,6 @@ public class UtilTest {
         // then
         Assert.assertTrue(temp.contains(subString));
     }
-
     @Test
     public void RSAUtil_암복호화테스트() throws UnsupportedEncodingException {
         // given

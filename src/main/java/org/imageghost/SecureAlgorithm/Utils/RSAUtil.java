@@ -30,7 +30,6 @@ public class RSAUtil {
 
     public static byte[] decode(String encryptedData, String stringPrivateKey) {
         byte[] byteDecryptedData = null;
-
         try {
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             byte[] bytePrivateKey = Base64.getDecoder().decode(stringPrivateKey.getBytes());

@@ -9,7 +9,6 @@ import java.util.HashMap;
 public class KeyWallet implements Wallet{
     private static HashMap<String, SymmetricKey> symmetricKeyMap = new HashMap<>();
     private static HashMap<String, ASymmetricKey> asymmetricKeyMap = new HashMap<>();
-
     private static SymmetricKey mainSymmetricKey;
     private static ASymmetricKey mainASymmetricKey;
 
@@ -49,6 +48,7 @@ public class KeyWallet implements Wallet{
     public static void saveASymmetricKey(ASymmetricKey encKey){
         asymmetricKeyMap.put(String.valueOf(numberForASymmetricKey++), encKey);
     }
+
     public static void saveMainASymmetricKey(ASymmetricKey encKey){
         mainASymmetricKey = encKey;
     }

@@ -16,7 +16,6 @@ import java.io.FileNotFoundException;
 import java.util.UUID;
 
 public class AESFileTranslator {
-
     public static String image2CipherText(String imagePath){
         SymmetricKey symmetricKey = null;
         try {
@@ -42,7 +41,6 @@ public class AESFileTranslator {
         }catch(Exception e){
             e.printStackTrace();
         }
-
         String cipherText = null;
         try {
             cipherText = AESCipherMaker.encrypt(plainTextOfFile, (SecretKey) symmetricKey.getKey());
