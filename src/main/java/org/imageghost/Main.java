@@ -1,7 +1,7 @@
 package org.imageghost;
 
-import org.imageghost.GUIComponents.AlertGui;
-import org.imageghost.GUIComponents.ImageGhostMainGui;
+import org.imageghost.guicomponents.AlertGui;
+import org.imageghost.guicomponents.ImageGhostMainGui;
 
 public class Main {
     public static void main(String[] args){
