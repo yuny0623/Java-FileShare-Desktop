@@ -9,3 +9,7 @@
 singleton관련 글:
 https://javaplant.tistory.com/21
 
+남은 과제:
+client Gui 쪽을 만져주기로 했음.
+그런데 tcp 상에서 client - server 통신할때 json 써서 해도 될듯?
+그게 좀 더 편할 것 같음.
