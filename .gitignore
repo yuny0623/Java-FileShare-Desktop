@@ -46,6 +46,10 @@
 # *.iml
 # *.ipr
 
+# development log
+/devLog
+/.devLog
+
 # CMake
 cmake-build-*/
 
